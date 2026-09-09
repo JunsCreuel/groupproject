@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Experience from './Experience.jsx';
-import { MAX_AMMO, RELOAD_MS, TOTAL_TARGETS, POINTS_PER_HIT } from './constants.js';
+import { MAX_AMMO, TOTAL_AMMO, RELOAD_MS, KILL_HITS } from './constants.js';
 import { getVolume, setVolume, onVolumeChange } from './volume.js';
 import './index.css';
 
@@ -11,8 +11,9 @@ const BGM_BASE_VOLUME = 0.35; // 배경음악은 효과음보다 작게 — 여�
 // 이 페이지로 넘어온다. 여기서는 그 플래시로 덮인 채로 시작해서 서서히
 // 걷어내, 페이지가 끊기지 않고 이어지는 것처럼 보이게 한다.
 export default function App() {
-  const [hits, setHits] = useState(0);
-  const [ammo, setAmmo] = useState(MAX_AMMO);
+  const [hits, setHits] = useState(0); // 외계인에게 누적으로 맞힌 횟수 — KILL_HITS에 도달하면 처치
+  const [ammo, setAmmo] = useState(MAX_AMMO); // 현재 탄창
+  const [reserveAmmo, setReserveAmmo] = useState(TOTAL_AMMO - MAX_AMMO); // 재장전으로 채워 넣을 수 있는 예비 탄약
   const [reloading, setReloading] = useState(false);
   const [paused, setPaused] = useState(false);
   const [entering, setEntering] = useState(true);
@@ -26,8 +27,16 @@ export default function App() {
   }, []);
   const reloadingRef = useRef(reloading);
   const ammoRef = useRef(ammo);
+  const reserveRef = useRef(reserveAmmo);
   reloadingRef.current = reloading;
   ammoRef.current = ammo;
+  reserveRef.current = reserveAmmo;
+
+  // 승패 판정 — 100대를 채우면 승리, 그 전에 탄약(탄창+예비)이 완전히
+  // 떨어지면 패배. 둘 다 state 없이 매 렌더마다 현재 값으로 계산한다.
+  const won = hits >= KILL_HITS;
+  const lost = !won && ammo <= 0 && reserveAmmo <= 0;
+  const gameOver = won || lost;
 
   // 총 뷰모델(gun-fps.png)은 3D가 아니라 HTML 이미지라, Three.js 프레임 루프 대신
   // 클래스 토글 + CSS 애니메이션으로 반동/총구 플래시를 재생한다 (메인 사이트
@@ -118,23 +127,25 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  // R키와 RELOAD 버튼이 공유하는 재장전 로직. ref로 최신 ammo/reloading을
-  // 참조해서, Experience에 매번 새 함수를 내려보내지 않고도 최신 상태로 판정한다.
+  // R키와 RELOAD 버튼이 공유하는 재장전 로직. ref로 최신 ammo/reloading/예비
+  // 탄약을 참조해서, Experience에 매번 새 함수를 내려보내지 않고도 최신
+  // 상태로 판정한다. 예비 탄약(reserve)에서 탄창(MAX_AMMO)만큼 채워 넣되,
+  // 예비 탄약이 그보다 적으면 남은 만큼만 채운다 — 총 탄약은 TOTAL_AMMO(120)를
+  // 넘지 않는다.
   const reload = () => {
-    if (reloadingRef.current || ammoRef.current >= MAX_AMMO) return;
+    if (reloadingRef.current || ammoRef.current >= MAX_AMMO || reserveRef.current <= 0) return;
     setReloading(true);
     reloadSound.currentTime = 0;
     reloadSound.volume = getVolume();
     reloadSound.play().catch(() => {});
     setTimeout(() => {
-      setAmmo(MAX_AMMO);
+      const need = MAX_AMMO - ammoRef.current;
+      const take = Math.min(need, reserveRef.current);
+      setAmmo(ammoRef.current + take);
+      setReserveAmmo(reserveRef.current - take);
       setReloading(false);
     }, RELOAD_MS);
   };
-
-  const score = hits * POINTS_PER_HIT;
-  const targetsCleared = Math.min(hits, TOTAL_TARGETS);
-  const cleared = targetsCleared >= TOTAL_TARGETS;
 
   return (
     <>
@@ -143,13 +154,14 @@ export default function App() {
 
       <Canvas className="range-canvas" gl={{ alpha: true }} camera={{ fov: 60, position: [0, 0, 0] }}>
         <Experience
-          onHit={() => setHits((h) => h + 1)}
+          onHit={() => setHits((h) => Math.min(h + 1, KILL_HITS))}
           onFire={triggerFire}
           ammo={ammo}
           setAmmo={setAmmo}
           reloading={reloading}
           onReload={reload}
           paused={paused}
+          disabled={gameOver}
         />
       </Canvas>
 
@@ -168,29 +180,25 @@ export default function App() {
       <img src="images/Recticle.png" alt="" className="crosshair" ref={crosshairRef} />
       <div className="crt-overlay" />
 
-      {/* 상단 좌측 — 브랜드 로고 + 타이틀 + 점수/목표 패널 (참고 이미지 스타일).
-          로고는 메인 사이트에서 어떤 오브제로 넘어와도 항상 좌측 상단에 있어야
-          해서, 다른 서브 화면이 생겨도 이 자리에 그대로 두면 된다 */}
+      {/* 상단 좌측 — 브랜드 로고 + 타이틀. 로고는 메인 사이트에서 어떤
+          오브제로 넘어와도 항상 좌측 상단에 있어야 해서, 다른 서브 화면이
+          생겨도 이 자리에 그대로 두면 된다 */}
       <div className="lab-header">
         <a className="brand-logo" href="../index.html">
           <img src="images/CSL-logo.png" alt="CSL — Cyber Stress Lab" />
         </a>
         <h1 className="lab-title">SHOOT LAB<span className="star-accent">*</span></h1>
         <p className="lab-subtitle">SAME STRESS, DIFFERENT OUTCOME.</p>
+      </div>
 
-        <div className="stat-panel">
-          <div className="stat-block">
-            <span className="stat-label">SCORE</span>
-            <span className="stat-value">{String(score).padStart(4, '0')}</span>
-          </div>
-          <div className="stat-divider" />
-          <div className="stat-block">
-            <span className="stat-label">TARGETS</span>
-            <span className="stat-value">{targetsCleared} / {TOTAL_TARGETS}</span>
-          </div>
-          <div className="stat-progress">
-            <div className="stat-progress-fill" style={{ width: `${(targetsCleared / TOTAL_TARGETS) * 100}%` }} />
-          </div>
+      {/* 상단 중앙 — 외계인 체력바. 100대 맞으면 처치(승리) */}
+      <div className="hp-panel">
+        <div className="hp-label">
+          <span>ALIEN HP</span>
+          <span>{Math.max(KILL_HITS - hits, 0)} / {KILL_HITS}</span>
+        </div>
+        <div className="hp-track">
+          <div className="hp-fill" style={{ width: `${Math.max(0, 100 - (hits / KILL_HITS) * 100)}%` }} />
         </div>
       </div>
 
@@ -225,12 +233,21 @@ export default function App() {
             ))}
           </div>
           <div className="ammo-row">
-            <span className="ammo-text">AMMO {ammo} / ∞</span>
-            <button className="reload-btn" onClick={reload} disabled={reloading || ammo >= MAX_AMMO}>
+            <span className="ammo-text">AMMO {ammo} / {reserveAmmo}</span>
+            <button
+              className="reload-btn"
+              onClick={reload}
+              disabled={reloading || ammo >= MAX_AMMO || reserveAmmo <= 0}
+            >
               {reloading ? '재장전 중…' : 'RELOAD (R)'}
             </button>
           </div>
-          {ammo === 0 && !reloading && <p className="empty-hint">탄창이 비었어요 — R로 재장전!</p>}
+          {ammo === 0 && reserveAmmo > 0 && !reloading && (
+            <p className="empty-hint">탄창이 비었어요 — R로 재장전!</p>
+          )}
+          {ammo === 0 && reserveAmmo <= 0 && !won && (
+            <p className="empty-hint">탄약이 모두 떨어졌어요…</p>
+          )}
         </div>
       </div>
 
@@ -246,7 +263,7 @@ export default function App() {
       <a className="back-link" href="../index.html">
         <img src="images/sticker-back.png" alt="뒤로가기" />
       </a>
-      <p className="hint">마우스로 조준 · 클릭해서 발사 · R로 재장전 · ESC로 일시정지</p>
+      <p className="hint">마우스로 조준 · 누르고 있으면 연사 · R로 재장전 · ESC로 일시정지</p>
 
       {/* 팀원이 만든 장식용 스티커들 — 화면 가장자리 빈 공간에 로커에 붙은
           스티커처럼 흩어 놓는다. 게임 로직과는 무관한 순수 장식 요소. */}
@@ -256,11 +273,23 @@ export default function App() {
       <img src="images/sticker-warning.png" alt="" className="hud-sticker sticker-warning" />
       <img src="images/sticker-lab-03.png" alt="" className="hud-sticker sticker-lab-03" />
 
-      {cleared && (
-        <div className="cleared-banner">LAB CLEARED — STRESS RELEASED*</div>
+      {won && (
+        <div className="result-overlay result-win">
+          <h2>STRESS RELEASED<span className="star-accent">*</span></h2>
+          <p>외계인을 쓰러뜨렸어요. 오늘의 스트레스, 여기 두고 가세요.</p>
+          <a className="result-btn" href="../index.html">메인화면으로 돌아가기</a>
+        </div>
       )}
 
-      {paused && (
+      {lost && (
+        <div className="result-overlay result-lose">
+          <h2>스트레스 해소 실패</h2>
+          <p>탄약을 다 썼는데 외계인이 아직 쓰러지지 않았어요.</p>
+          <a className="result-btn" href="../index.html">메인화면으로 돌아가기</a>
+        </div>
+      )}
+
+      {paused && !gameOver && (
         <div className="pause-overlay">
           <p>PAUSED</p>
           <span>ESC를 다시 눌러 계속하기</span>
