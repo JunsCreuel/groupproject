@@ -29,6 +29,26 @@ export default function App() {
   reloadingRef.current = reloading;
   ammoRef.current = ammo;
 
+  // 총 뷰모델(gun-fps.png)은 3D가 아니라 HTML 이미지라, Three.js 프레임 루프 대신
+  // 클래스 토글 + CSS 애니메이션으로 반동/총구 플래시를 재생한다 (메인 사이트
+  // script.js의 pulse() 헬퍼와 같은 방식).
+  const gunRef = useRef(null);
+  const muzzleFlashRef = useRef(null);
+  const triggerFire = () => {
+    const gunEl = gunRef.current;
+    const flashEl = muzzleFlashRef.current;
+    if (gunEl) {
+      gunEl.classList.remove('is-firing');
+      void gunEl.offsetWidth; // 리플로우 강제 — 연속 발사 시 애니메이션 재시작
+      gunEl.classList.add('is-firing');
+    }
+    if (flashEl) {
+      flashEl.classList.remove('is-flashing');
+      void flashEl.offsetWidth;
+      flashEl.classList.add('is-flashing');
+    }
+  };
+
   // 음량 슬라이더를 움직이면 재생 중인 배경음악에 바로 반영한다
   useEffect(() => {
     bgm.volume = BGM_BASE_VOLUME * volume;
@@ -93,9 +113,13 @@ export default function App() {
 
   return (
     <>
-      <Canvas className="range-canvas" camera={{ fov: 60, position: [0, 0, 0] }}>
+      {/* 팀원이 만든 실사 배경 — Canvas는 이 위에 투명하게 표적만 그린다 */}
+      <div className="lab-backdrop" style={{ backgroundImage: "url('images/lab-bg.png')" }} />
+
+      <Canvas className="range-canvas" gl={{ alpha: true }} camera={{ fov: 60, position: [0, 0, 0] }}>
         <Experience
           onHit={() => setHits((h) => h + 1)}
+          onFire={triggerFire}
           ammo={ammo}
           setAmmo={setAmmo}
           reloading={reloading}
@@ -103,6 +127,12 @@ export default function App() {
           paused={paused}
         />
       </Canvas>
+
+      {/* 총 뷰모델 — 실사 합성 이미지(gun-fps.png)를 화면 우하단에 고정 */}
+      <div className="gun-viewmodel" ref={gunRef}>
+        <img src="images/gun-fps.png" alt="" className="gun-sprite" />
+        <div className="muzzle-flash" ref={muzzleFlashRef} />
+      </div>
 
       <div className="crosshair" />
       <div className="crt-overlay" />
@@ -148,20 +178,24 @@ export default function App() {
         />
       </div>
 
-      {/* 하단 좌측 — 탄약 패널 + 재장전 버튼 */}
+      {/* 하단 좌측 — 팀원이 만든 AMMO 아트 + 실제 탄약 수치/재장전 버튼.
+          아트 속 총알 그림은 장식이고, 진짜 탄약 상태는 아래 카드가 보여준다. */}
       <div className="ammo-panel">
-        <div className="ammo-dots">
-          {Array.from({ length: MAX_AMMO }, (_, i) => (
-            <span key={i} className={`ammo-dot${i < ammo ? ' is-loaded' : ''}`} />
-          ))}
+        <img src="images/ammo-ui.png" alt="" className="ammo-art" />
+        <div className="ammo-controls">
+          <div className="ammo-dots">
+            {Array.from({ length: MAX_AMMO }, (_, i) => (
+              <span key={i} className={`ammo-dot${i < ammo ? ' is-loaded' : ''}`} />
+            ))}
+          </div>
+          <div className="ammo-row">
+            <span className="ammo-text">AMMO {ammo} / ∞</span>
+            <button className="reload-btn" onClick={reload} disabled={reloading || ammo >= MAX_AMMO}>
+              {reloading ? '재장전 중…' : 'RELOAD (R)'}
+            </button>
+          </div>
+          {ammo === 0 && !reloading && <p className="empty-hint">탄창이 비었어요 — R로 재장전!</p>}
         </div>
-        <div className="ammo-row">
-          <span className="ammo-text">AMMO {ammo} / ∞</span>
-          <button className="reload-btn" onClick={reload} disabled={reloading || ammo >= MAX_AMMO}>
-            {reloading ? '재장전 중…' : 'RELOAD (R)'}
-          </button>
-        </div>
-        {ammo === 0 && !reloading && <p className="empty-hint">탄창이 비었어요 — R로 재장전!</p>}
       </div>
 
       {/* 하단 우측 — 장식용 미니맵 */}
