@@ -305,16 +305,31 @@ body {
 
 .star-accent { color: var(--pink); }
 
+/* h1(헤드라인)과 인스타그램 배지를 감싸는 행 — 배지와 정확히 같은 너비의
+   투명 스페이서를 반대쪽에 둬서, 배지 유무와 상관없이 h1 텍스트가 셀 안에서
+   진짜 중앙에 오도록 만든다 */
+.headline-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.ig-spacer {
+  width: 2.4rem;
+  visibility: hidden;
+}
+
 .ig-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.4rem;
   height: 2.4rem;
-  margin-left: 0.6rem;
   border-radius: 50%;
   overflow: hidden; /* instagram.png가 배경 없는 누끼가 아니라서, 원형으로 잘라내 모서리 배경을 가림 */
-  vertical-align: middle;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem; /* 헤드라인 마지막 줄 텍스트 베이스라인 근처에 오도록 살짝 올림 */
   transition: transform 0.15s ease;
 }
 

@@ -91,12 +91,16 @@
 
   <!-- HEADLINE -->
   <div class="cell cell-headline">
-    <h1 class="headline">
-      YOU LOOK<br>STRESSED<span class="star-accent">*</span>.
+    <!-- 인스타그램 배지가 h1 안에 인라인으로 붙어있으면 그 무게 때문에 텍스트가
+         시각적으로 중앙에서 살짝 밀려 보여서, 반대편에 같은 너비의 투명 스페이서를
+         둬서 h1 자체는 완전히 중앙정렬되게 하고 배지만 오른쪽에 따로 붙인다 -->
+    <div class="headline-row">
+      <span class="ig-spacer" aria-hidden="true"></span>
+      <h1 class="headline">YOU LOOK<br>STRESSED<span class="star-accent">*</span>.</h1>
       <a class="ig-badge" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
         <img src="assets/images/instagram.png" alt="Instagram">
       </a>
-    </h1>
+    </div>
     <p class="subhead">HOW DO YOU WANNA LET IT OUT?</p>
     <button class="pick-lab" id="pickLabBtn">PICK A LAB ↓</button>
 
