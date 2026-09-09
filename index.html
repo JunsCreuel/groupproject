@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSL — Cyber Stress Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!--
+  메인 화면 구조 (CSL - Cyber Stress Lab)
+  - .topbar   : 로고 / 네비게이션 / 사운드 토글
+  - .board    : 오브제 10개가 흩어져 있는 콜라주 그리드 (CSS grid-template-areas로 배치, style.css 참고)
+  - .footer   : 하단 정보
+
+  지금 각 오브제는 이모지로 된 자리표시자(placeholder)이다.
+  실제 오브제 PNG(투명 배경)가 준비되면 .obj-* 요소의 배경 이미지만
+  교체하면 되고, 태그 클릭 시 동작하는 애니메이션 로직(script.js)은 그대로 재사용한다.
+-->
+
+<header class="topbar">
+  <div class="logo">
+    CSL<span class="star">*</span>
+    <span class="logo-sub">CYBER STRESS LAB <sup>TM</sup></span>
+  </div>
+  <div class="tagline">DON'T<br>HOLD IT IN.<br>LET IT OUT.</div>
+  <nav class="nav">
+    <a href="#" class="active">LAB</a>
+    <a href="#about">ABOUT</a>
+    <button id="soundToggle" class="sound-toggle">SOUND <span id="soundState">🔇 OFF</span></button>
+  </nav>
+  <button class="random-lab">RANDOM LAB ↗</button>
+</header>
+
+<main class="board">
+
+  <div class="sticky-note note-topright">A HEALTHIER<br>YOU ONLINE<br>:)</div>
+
+  <!-- SCREAM -->
+  <div class="cell cell-scream">
+    <p class="callout callout-left">STRESS<br>HAS A<br>TEXTURE.</p>
+    <div class="obj obj-mouth" id="obj-scream" data-obj="mouth">👄</div>
+    <span class="tag tag-pink tag-scream">SCREAM →</span>
+    <p class="marker-note note-louder">LOUDER!!</p>
+  </div>
+
+  <!-- SQUISH -->
+  <div class="cell cell-squish">
+    <span class="heart">♡</span>
+    <div class="obj obj-blob" id="obj-squish" data-obj="slime_pink">🩷</div>
+    <span class="tag tag-purple tag-squish">SQUISH →</span>
+    <p class="marker-note note-touch">TOUCH<br>IT!</p>
+  </div>
+
+  <!-- CRACK -->
+  <div class="cell cell-crack">
+    <div class="obj obj-glassball" id="obj-crack" data-obj="wax_ball" data-hits="0">🔮</div>
+    <span class="tag tag-pink tag-crack">CRACK →</span>
+    <p class="marker-note note-break">BREAK<br>IT!</p>
+  </div>
+
+  <!-- THROW -->
+  <div class="cell cell-throw">
+    <div class="obj obj-paperball" id="obj-paper" data-obj="overthinking">📄
+      <span class="paper-label">OVERTHINKING</span>
+    </div>
+    <div class="trash" id="obj-trash" data-obj="trash">🗑️</div>
+    <span class="tag tag-blue tag-throw">THROW →</span>
+    <p class="marker-note note-bye">BYE!</p>
+    <p class="callout callout-right">SMALL<br>ACTIONS<br>MAKE A<br>LIGHTER<br>MIND</p>
+  </div>
+
+  <!-- SHOOT -->
+  <div class="cell cell-shoot">
+    <div class="obj obj-gun" id="obj-gun" data-obj="gun">🔫</div>
+    <span class="tag tag-lime tag-shoot">SHOOT →</span>
+    <p class="marker-note note-target">TARGET<br>STRESS!</p>
+  </div>
+
+  <!-- HEADLINE -->
+  <div class="cell cell-headline">
+    <h1 class="headline">YOU LOOK<br>STRESSED<span class="star-accent">*</span>.</h1>
+    <p class="subhead">HOW DO YOU WANNA LET IT OUT?</p>
+    <button class="pick-lab">PICK A LAB ↓</button>
+  </div>
+
+  <!-- SMASH -->
+  <div class="cell cell-smash">
+    <div class="obj obj-monitor" id="obj-monitor" data-obj="monitor">🖥️</div>
+    <div class="obj obj-hammer" id="obj-hammer" data-obj="hammer">🔨</div>
+    <span class="tag tag-orange tag-smash">SMASH →</span>
+    <p class="marker-note note-hit">HIT IT!</p>
+  </div>
+
+  <!-- CLICK -->
+  <div class="cell cell-click">
+    <div class="obj obj-esckey" id="obj-esc" data-obj="esc_key">ESC</div>
+    <span class="tag tag-blue tag-click">CLICK →</span>
+    <p class="marker-note note-tap">TAP<br>TAP<br>TAP</p>
+  </div>
+
+  <!-- STRETCH -->
+  <div class="cell cell-stretch">
+    <div class="obj obj-slime2" id="obj-slime" data-obj="slime">🫧</div>
+    <span class="tag tag-lime tag-stretch">STRETCH →</span>
+    <p class="marker-note note-pull">PULL IT!</p>
+  </div>
+
+  <!-- DANCE -->
+  <div class="cell cell-dance">
+    <div class="obj obj-dancer" id="obj-dancer" data-obj="dancing_woman">💃</div>
+    <span class="tag tag-pink tag-dance">DANCE →</span>
+    <p class="marker-note note-move">MOVE IT!</p>
+  </div>
+
+  <!-- SCRIBBLE -->
+  <div class="cell cell-scribble">
+    <div class="obj obj-scribble" id="obj-scribble" data-obj="scribble">✏️</div>
+    <span class="tag tag-purple tag-scribble">SCRIBBLE →</span>
+    <p class="marker-note note-draw">DRAW<br>IT OUT!</p>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-left">
+    CSL<br>
+    CYBER STRESS LAB<br>
+    © 2026&nbsp;&nbsp;RELEASE A BETTER YOU.
+  </div>
+  <div class="footer-center">SCROLL DOWN ↓</div>
+  <div class="footer-right">INSTAGRAM &nbsp;✕&nbsp; CONTACT</div>
+</footer>
+
+<audio id="bgMusic" loop>
+  <source src="assets/audio/bgm.mp3" type="audio/mpeg">
+</audio>
+
+<script src="script.js"></script>
+</body>
+</html>

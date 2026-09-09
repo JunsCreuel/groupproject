@@ -1,0 +1,436 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --pink: #ff3d94;
+  --purple: #b39cff;
+  --blue: #5ec8f0;
+  --lime: #cdfa4d;
+  --orange: #ff8c42;
+  --ink: #111;
+}
+
+body {
+  font-family: "Space Grotesk", "Pretendard", sans-serif;
+  background: #fdfdfb;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ---------- topbar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem 2rem 0;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.logo .star {
+  color: var(--pink);
+}
+
+.logo-sub {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.tagline {
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.4;
+  max-width: 8rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.nav a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav a.active {
+  text-decoration: underline;
+}
+
+.sound-toggle {
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.random-lab {
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.random-lab:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---------- board (main collage grid) ---------- */
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "scream squish crack throw"
+    "shoot headline headline smash"
+    "click stretch dance scribble";
+  gap: 1rem;
+  padding: 2rem 3rem 4rem;
+  min-height: 90vh;
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.cell-scream   { grid-area: scream; }
+.cell-squish   { grid-area: squish; }
+.cell-crack    { grid-area: crack; }
+.cell-throw    { grid-area: throw; }
+.cell-shoot    { grid-area: shoot; }
+.cell-headline { grid-area: headline; }
+.cell-smash    { grid-area: smash; }
+.cell-click    { grid-area: click; }
+.cell-stretch  { grid-area: stretch; }
+.cell-dance    { grid-area: dance; }
+.cell-scribble { grid-area: scribble; }
+
+.sticky-note {
+  position: absolute;
+  top: 0.5rem;
+  right: 2rem;
+  background: #ff9ecb;
+  padding: 0.8rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.3;
+  transform: rotate(4deg);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+/* ---------- objects (placeholder — 실제 오브제 PNG로 교체될 자리) ---------- */
+
+.obj {
+  font-size: 6rem;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.obj-mouth   { font-size: 7rem; filter: grayscale(1) contrast(1.2); }
+.obj-blob    { font-size: 8rem; }
+.obj-glassball { font-size: 7rem; }
+.obj-gun     { font-size: 5rem; filter: grayscale(1); transform: rotate(-10deg); }
+.obj-monitor { font-size: 6rem; filter: grayscale(1); position: absolute; left: 20%; }
+.obj-hammer  { font-size: 5.5rem; filter: grayscale(1); position: relative; left: 25%; transform-origin: bottom center; }
+.obj-esckey  {
+  font-size: 1.6rem;
+  font-weight: 700;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 10px;
+  background: linear-gradient(#e8e8e8, #bbb);
+  border: 2px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 0 #888;
+}
+.obj-slime2  { font-size: 7rem; }
+.obj-dancer  { font-size: 8rem; filter: grayscale(1) brightness(0.2); }
+.obj-scribble { font-size: 5rem; }
+
+.paperball-wrap { display: flex; flex-direction: column; align-items: center; }
+
+.obj-paperball {
+  font-size: 6rem;
+  filter: grayscale(1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.paper-label {
+  position: absolute;
+  top: -1.5rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: #fff;
+  padding: 0.1rem 0.4rem;
+  white-space: nowrap;
+}
+
+.trash {
+  font-size: 5rem;
+  position: absolute;
+  right: 10%;
+  bottom: 0.5rem;
+}
+
+/* ---------- tags (colored sticky labels with arrow) ---------- */
+
+.tag {
+  position: absolute;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.9);
+  cursor: pointer;
+  white-space: nowrap;
+  transform: rotate(-4deg);
+  bottom: 0.5rem;
+  left: 50%;
+  translate: -50% 0;
+}
+
+.tag:hover { filter: brightness(1.05); }
+.tag:active { transform: rotate(-4deg) translateY(2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.9); }
+
+.tag-pink   { background: var(--pink); color: #fff; }
+.tag-purple { background: var(--purple); color: var(--ink); }
+.tag-blue   { background: var(--blue); color: var(--ink); }
+.tag-lime   { background: var(--lime); color: var(--ink); }
+.tag-orange { background: var(--orange); color: var(--ink); }
+
+/* ---------- handwritten annotations ---------- */
+
+.marker-note {
+  position: absolute;
+  font-family: "Permanent Marker", "Comic Sans MS", "Segoe Print", cursive;
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.2;
+  transform: rotate(-6deg);
+}
+
+.callout {
+  position: absolute;
+  font-family: "Permanent Marker", "Comic Sans MS", "Segoe Print", cursive;
+  font-size: 0.85rem;
+  color: var(--pink);
+  line-height: 1.3;
+  max-width: 6rem;
+}
+
+.callout-left  { top: 0; left: 0; transform: rotate(-4deg); }
+.callout-right { bottom: 0; right: -1rem; color: #999; }
+
+.heart { position: absolute; top: 0.5rem; left: 1rem; font-size: 1.4rem; color: var(--pink); }
+
+.note-louder { top: -0.5rem; right: 0.5rem; }
+.note-touch  { top: -0.5rem; right: 0; }
+.note-break  { bottom: -0.5rem; right: 0; }
+.note-bye    { top: 35%; right: -1.6rem; }
+.note-target { top: -1rem; right: 0.5rem; }
+.note-hit    { bottom: 0.5rem; right: 0; }
+.note-tap    { bottom: 0; left: -1.5rem; }
+.note-pull   { bottom: -1rem; left: 1rem; }
+.note-move   { bottom: 1rem; right: -1rem; }
+.note-draw   { bottom: 0; right: -1.5rem; }
+
+/* ---------- headline ---------- */
+
+.cell-headline {
+  flex-direction: column;
+  text-align: center;
+  gap: 0.8rem;
+}
+
+.headline {
+  font-family: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  font-size: 4rem;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+
+.star-accent { color: var(--pink); }
+
+.subhead {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.pick-lab {
+  margin-top: 0.5rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pick-lab:hover { background: var(--ink); color: #fff; }
+
+/* ---------- footer ---------- */
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1.5rem 3rem 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ---------- interaction animations ---------- */
+
+.obj-mouth.is-screaming { animation: mouth-scream 0.25s ease infinite alternate; }
+@keyframes mouth-scream {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(1.35) scale(1.05); }
+}
+
+.obj-blob.is-squished { animation: squish-pulse 0.35s ease; }
+@keyframes squish-pulse {
+  0%   { transform: scale(1, 1); }
+  40%  { transform: scale(1.35, 0.65); }
+  100% { transform: scale(1, 1); }
+}
+
+.obj-glassball.crack-1 { transform: scale(0.97) rotate(-2deg); filter: saturate(1.1); }
+.obj-glassball.crack-2 { transform: scale(0.93) rotate(2deg); filter: saturate(1.3) contrast(1.1); }
+.obj-glassball.crack-3 { transform: scale(0.88) rotate(-3deg); filter: saturate(1.5) contrast(1.2); }
+.obj-glassball.crack-shatter {
+  animation: glass-shatter 0.5s ease forwards;
+}
+@keyframes glass-shatter {
+  to { transform: scale(1.8) rotate(20deg); opacity: 0; }
+}
+
+.cell-throw.is-thrown .obj-paperball {
+  animation: paper-throw 0.5s ease forwards;
+}
+@keyframes paper-throw {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(120px, 40px) rotate(360deg); opacity: 0; }
+}
+
+.obj-gun.is-firing { animation: gun-recoil 0.15s ease; }
+@keyframes gun-recoil {
+  0%   { transform: rotate(-10deg) translateX(0); }
+  40%  { transform: rotate(-18deg) translateX(-10px); }
+  100% { transform: rotate(-10deg) translateX(0); }
+}
+
+.obj-hammer.is-smashing { animation: hammer-swing 0.3s ease; }
+@keyframes hammer-swing {
+  0%   { transform: rotate(0deg) translateY(0); }
+  40%  { transform: rotate(-45deg) translateY(-20px); }
+  70%  { transform: rotate(10deg) translateY(5px); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+
+.obj-monitor.is-cracked { filter: grayscale(1) contrast(1.4) brightness(0.85); }
+
+.obj-esckey.is-pressed { transform: translateY(4px); box-shadow: 0 2px 0 #888; }
+
+.obj-slime2.is-stretching { transform: scale(1.6, 0.7); }
+
+.obj-dancer { animation: dance-loop 1s ease-in-out infinite; transform-origin: bottom center; }
+.obj-dancer.is-paused { animation-play-state: paused; }
+@keyframes dance-loop {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  25%      { transform: rotate(-6deg) translateX(-6px); }
+  75%      { transform: rotate(6deg) translateX(6px); }
+}
+
+.obj-scribble.is-drawing { animation: scribble-shake 0.2s ease 2; }
+@keyframes scribble-shake {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(15deg); }
+}
+
+/* ====================================================================
+   하이프(HYPED) 모드
+   스페이스바를 누르면 script.js가 <body>에 .hyped 클래스를 붙인다.
+   "노래가 커지는" 느낌을 주기 위해, 평소엔 클릭했을 때만 재생되던
+   각 오브제의 애니메이션을 전부 무한 반복(infinite)으로 덮어써서
+   화면 전체 오브제가 음악에 맞춰 동시에 계속 움직이게 만든다.
+   ==================================================================== */
+
+body.hyped .obj-dancer    { animation: dance-loop 0.4s ease-in-out infinite; }
+body.hyped .obj-mouth     { animation: mouth-scream 0.2s ease-in-out infinite alternate; }
+body.hyped .obj-blob      { animation: squish-pulse 0.5s ease-in-out infinite; }
+body.hyped .obj-slime2    { animation: squish-pulse 0.45s ease-in-out infinite; }
+body.hyped .obj-hammer    { animation: hammer-swing 0.5s ease-in-out infinite; }
+body.hyped .obj-gun       { animation: gun-recoil 0.35s ease-in-out infinite; }
+body.hyped .obj-esckey    { animation: esc-bounce 0.3s ease-in-out infinite; }
+body.hyped .obj-scribble  { animation: scribble-shake 0.25s ease-in-out infinite; }
+body.hyped .obj-glassball { animation: glass-wobble 0.4s ease-in-out infinite; }
+body.hyped .obj-paperball { animation: paper-jitter 0.3s ease-in-out infinite; }
+
+@keyframes esc-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+@keyframes glass-wobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50%      { transform: rotate(6deg) scale(1.05); }
+}
+
+@keyframes paper-jitter {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50%      { transform: translate(3px, -3px) rotate(-8deg); }
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .board {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "scream squish"
+      "crack throw"
+      "shoot smash"
+      "headline headline"
+      "click stretch"
+      "dance scribble";
+  }
+  .headline { font-size: 2.6rem; }
+}
