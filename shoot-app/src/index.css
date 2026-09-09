@@ -56,9 +56,17 @@ html, body, #root {
   width: min(36vw, 500px);
   z-index: 3;
   pointer-events: none;
+  transition: transform 0.05s linear; /* 마우스 sway를 살짝 부드럽게 */
 }
 
-.gun-viewmodel.is-firing {
+/* 반동 애니메이션 전용 안쪽 래퍼 — 바깥(.gun-viewmodel)의 sway와 transform이
+   겹치지 않도록 분리했다 */
+.gun-recoil {
+  position: relative;
+  width: 100%;
+}
+
+.gun-recoil.is-firing {
   animation: gun-recoil 0.14s ease-out;
 }
 
@@ -142,6 +150,23 @@ html, body, #root {
   left: 1.5rem;
   z-index: 6;
   color: #fff;
+}
+
+/* 브랜드 로고 — 원본이 흰 배경 그대로라 어두운 씬 위에 바로 얹으면
+   흰 사각형처럼 보여서, 작은 흰 배지 카드에 얹어 자연스럽게 붙인다 */
+.brand-logo {
+  display: inline-block;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.brand-logo img {
+  display: block;
+  height: 1.1rem;
+  width: auto;
 }
 
 .lab-title {
@@ -504,11 +529,13 @@ html, body, #root {
 
 /* 메인 화면에서 SHOOT 클릭 시 덮이는 플래시와 같은 색으로 시작해서
    서서히 걷어내, 두 페이지 사이 전환이 끊기지 않게 이어붙인다 */
+/* 메인 사이트 SHOOT 태그 색(#cdfa4d, 라임)과 맞춰서 전환이 끊기지 않고
+   이어지는 것처럼 보이게 한다 — script.js의 playSplashTransition()과 짝 */
 .enter-flash {
   position: fixed;
   inset: 0;
   z-index: 10;
-  background: radial-gradient(circle, #fff 0%, #ff3d94 60%, #ff3d94 100%);
+  background: radial-gradient(circle, #fff 0%, #cdfa4d 60%, #cdfa4d 100%);
   opacity: 1;
   pointer-events: none;
   transition: opacity 0.45s ease;

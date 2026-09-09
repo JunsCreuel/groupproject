@@ -32,7 +32,8 @@ export default function App() {
   // 총 뷰모델(gun-fps.png)은 3D가 아니라 HTML 이미지라, Three.js 프레임 루프 대신
   // 클래스 토글 + CSS 애니메이션으로 반동/총구 플래시를 재생한다 (메인 사이트
   // script.js의 pulse() 헬퍼와 같은 방식).
-  const gunRef = useRef(null);
+  const gunSwayRef = useRef(null); // 마우스를 살짝 따라가는 흔들림
+  const gunRef = useRef(null); // 발사 반동 애니메이션
   const muzzleFlashRef = useRef(null);
   const triggerFire = () => {
     const gunEl = gunRef.current;
@@ -48,6 +49,21 @@ export default function App() {
       flashEl.classList.add('is-flashing');
     }
   };
+
+  // 마우스는 시점(카메라)을 돌리지 않고 총만 살짝 따라가게 한다 — 배경이
+  // 회전하지 않는 고정된 사진이라, 예전처럼 카메라를 돌리면 표적만 사진
+  // 위에서 따로 도는 것처럼 보였다 (그래서 Experience.jsx의 카메라 회전은 제거함).
+  useEffect(() => {
+    const handleMove = (e) => {
+      const el = gunSwayRef.current;
+      if (!el) return;
+      const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
+      const ny = (e.clientY / window.innerHeight) * 2 - 1;
+      el.style.transform = `translate(${nx * 16}px, ${ny * 12}px) rotate(${nx * 2.5}deg)`;
+    };
+    window.addEventListener('pointermove', handleMove);
+    return () => window.removeEventListener('pointermove', handleMove);
+  }, []);
 
   // 음량 슬라이더를 움직이면 재생 중인 배경음악에 바로 반영한다
   useEffect(() => {
@@ -128,17 +144,28 @@ export default function App() {
         />
       </Canvas>
 
-      {/* 총 뷰모델 — 실사 합성 이미지(gun-fps.png)를 화면 우하단에 고정 */}
-      <div className="gun-viewmodel" ref={gunRef}>
-        <img src="images/gun-fps.png" alt="" className="gun-sprite" />
-        <div className="muzzle-flash" ref={muzzleFlashRef} />
+      {/* 총 뷰모델 — 실사 합성 이미지(gun-fps.png)를 화면 우하단에 고정.
+          바깥(gun-viewmodel)은 마우스를 따라가는 흔들림(sway)을, 안쪽
+          (gun-recoil)은 발사 반동을 맡는다 — 같은 엘리먼트에서 둘 다
+          transform을 쓰면 서로 덮어써서 따로 나눴다. 조준/시점 회전은 이제
+          카메라가 아니라 이 총만 하고, 배경은 고정된 사진이라 안 움직인다. */}
+      <div className="gun-viewmodel" ref={gunSwayRef}>
+        <div className="gun-recoil" ref={gunRef}>
+          <img src="images/gun-fps.png" alt="" className="gun-sprite" />
+          <div className="muzzle-flash" ref={muzzleFlashRef} />
+        </div>
       </div>
 
       <div className="crosshair" />
       <div className="crt-overlay" />
 
-      {/* 상단 좌측 — 타이틀 + 점수/목표 패널 (참고 이미지 스타일) */}
+      {/* 상단 좌측 — 브랜드 로고 + 타이틀 + 점수/목표 패널 (참고 이미지 스타일).
+          로고는 메인 사이트에서 어떤 오브제로 넘어와도 항상 좌측 상단에 있어야
+          해서, 다른 서브 화면이 생겨도 이 자리에 그대로 두면 된다 */}
       <div className="lab-header">
+        <a className="brand-logo" href="../index.html">
+          <img src="images/CSL-logo.png" alt="CSL — Cyber Stress Lab" />
+        </a>
         <h1 className="lab-title">SHOOT LAB<span className="star-accent">*</span></h1>
         <p className="lab-subtitle">SAME STRESS, DIFFERENT OUTCOME.</p>
 

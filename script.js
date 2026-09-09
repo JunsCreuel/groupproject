@@ -209,18 +209,36 @@ document.querySelector('.tag-throw').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------
-// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션 후 사격장
-// 미니앱(shoot/index.html, React+Three.js)으로 화면 전환
-// ---------------------------------------------------------------
-const gun = document.getElementById('obj-gun');
+// 오브제별 화면 전환 연출 — 클릭한 태그의 배경색 + "<태그이름>-splash.png"
+// 물감 이미지를 화면 중앙에 확 터뜨린 뒤, 다음 화면으로 이동한다.
+// (지금은 SHOOT만 실제로 이동하는 화면이 있어서 쓰이지만, 다른 오브제도
+// 각자 splash 이미지가 assets/images/에 이미 올라와 있어서 나중에 해당
+// 오브제에 서브 화면이 생기면 이 함수를 그대로 재사용하면 된다.)
 const pageTransition = document.getElementById('pageTransition');
+const pageTransitionSplash = document.getElementById('pageTransitionSplash');
 
-document.querySelector('.tag-shoot').addEventListener('click', () => {
-  pulse(gun, 'is-firing', 150);
+function playSplashTransition(tagEl, splashName, onDone) {
+  pageTransition.style.background = getComputedStyle(tagEl).backgroundColor;
+  pageTransitionSplash.src = `assets/images/${splashName}-splash.png`;
   pageTransition.classList.add('is-active');
   setTimeout(() => {
+    pageTransition.classList.remove('is-active');
+    onDone();
+  }, 420); // .page-transition-splash의 transform transition 시간과 맞춤
+}
+
+// ---------------------------------------------------------------
+// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션 후 SHOOT 태그 색(라임)
+// 물감 전환과 함께 사격장 미니앱(shoot/index.html, React+Three.js)으로 이동
+// ---------------------------------------------------------------
+const gun = document.getElementById('obj-gun');
+const shootTag = document.querySelector('.tag-shoot');
+
+shootTag.addEventListener('click', () => {
+  pulse(gun, 'is-firing', 150);
+  playSplashTransition(shootTag, 'shoot', () => {
     window.location.href = 'shoot/index.html';
-  }, 350); // .page-transition의 opacity transition 시간과 맞춤
+  });
 });
 
 // ---------------------------------------------------------------

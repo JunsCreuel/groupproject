@@ -4,7 +4,6 @@ import * as THREE from 'three';
 import { getVolume } from './volume.js';
 
 const RANGE_DEPTH = -12; // 표적이 놓인 z 위치
-const LOOK_LIMIT = 0.5; // 마우스로 둘러볼 수 있는 최대 각도(라디안)
 const TARGET_WIDTH = 1.3; // 표적 이미지(alien-doctor.png, 1086x1448) 가로 크기
 const TARGET_HEIGHT = TARGET_WIDTH * (1448 / 1086); // 원본 이미지 비율 유지
 // alien-doctor.png는 이미지 꽉 채워서 발끝이 맨 아래 픽셀에 붙어있으므로,
@@ -143,7 +142,6 @@ function Target({ targetRef, hitFlashRef }) {
 // 해서 App.jsx가 갖고 있고, 여기서는 onReload로 전달받아 R키 입력만 연결한다.
 export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, onReload, paused }) {
   const { camera, gl, clock } = useThree();
-  const mouse = useRef({ x: 0, y: 0 });
   const hitFlashRef = useRef(-1);
   const targetRef = useRef();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
@@ -171,12 +169,6 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
 
   useEffect(() => {
     const el = gl.domElement;
-
-    const handleMove = (e) => {
-      const rect = el.getBoundingClientRect();
-      mouse.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.current.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-    };
 
     // 발사는 화면 정중앙(조준점) 기준으로 판정한다 — 실제 클릭 좌표가 아님
     const handleDown = () => {
@@ -209,11 +201,9 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       if (e.code === 'KeyR' && !pausedRef.current) onReload();
     };
 
-    el.addEventListener('pointermove', handleMove);
     el.addEventListener('pointerdown', handleDown);
     window.addEventListener('keydown', handleKey);
     return () => {
-      el.removeEventListener('pointermove', handleMove);
       el.removeEventListener('pointerdown', handleDown);
       window.removeEventListener('keydown', handleKey);
     };
@@ -223,14 +213,9 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera, gl, clock, onHit, onFire, raycaster, setAmmo, onReload, shootSound, emptySound]);
 
-  useFrame(() => {
-    if (paused) return; // 일시정지 중엔 시점 회전을 멈춰서 그대로 얼어붙게
-
-    const targetY = -mouse.current.x * LOOK_LIMIT;
-    const targetX = mouse.current.y * LOOK_LIMIT;
-    camera.rotation.y += (targetY - camera.rotation.y) * 0.08;
-    camera.rotation.x += (targetX - camera.rotation.x) * 0.08;
-  });
+  // 카메라는 항상 정면 고정 — 배경(lab-bg.png)이 회전하지 않는 정지 사진이라
+  // 카메라를 마우스로 돌리면 표적만 사진 위에서 따로 도는 것처럼 보였다.
+  // 조준/시점 회전 없이, 총 뷰모델만 App.jsx에서 마우스를 살짝 따라가게 한다.
 
   return <Target targetRef={targetRef} hitFlashRef={hitFlashRef} />;
 }

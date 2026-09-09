@@ -54,20 +54,14 @@ body {
 }
 
 .logo {
-  font-size: 1.4rem;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-.logo .star {
-  color: var(--pink);
-}
-
-.logo-sub {
   display: block;
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.logo-img {
+  height: 2.6rem;
+  width: auto;
+  display: block;
 }
 
 .tagline {
@@ -526,14 +520,31 @@ body.hyped .obj-trash     { animation: trash-jitter calc(0.6s / var(--hype-speed
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: radial-gradient(circle, #fff 0%, #ff3d94 60%, #ff3d94 100%);
+  background: var(--pink); /* 기본값 — playSplashTransition()이 클릭한 태그 색으로 덮어씀 */
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.32s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .page-transition.is-active {
   opacity: 1;
+}
+
+/* 클릭한 오브제의 물감 튄 모양(<태그>-splash.png)이 화면 중앙에서
+   확 터지듯 커지는 연출 — 오브제마다 색이 다르므로 배경색도 같이 맞춘다 */
+.page-transition-splash {
+  width: 70vmin;
+  max-width: 900px;
+  transform: scale(0.15) rotate(-10deg);
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-transition.is-active .page-transition-splash {
+  transform: scale(2.6) rotate(0deg);
 }
 
 /* ====================================================================

@@ -21,10 +21,9 @@
 <div class="stage" id="stage">
 
 <header class="topbar">
-  <div class="logo">
-    CSL<span class="star">*</span>
-    <span class="logo-sub">CYBER STRESS LAB <sup>TM</sup></span>
-  </div>
+  <a class="logo" href="index.html" aria-label="CSL — Cyber Stress Lab">
+    <img src="assets/images/CSL-logo.png" alt="CSL — Cyber Stress Lab" class="logo-img">
+  </a>
   <div class="tagline">DON'T<br>HOLD IT IN.<br>LET IT OUT.</div>
   <nav class="nav">
     <a href="#" class="active">LAB</a>
@@ -229,8 +228,12 @@
   </div>
 </div>
 
-<!-- 오브제 클릭 시 다른 화면(예: SHOOT 사격장)으로 넘어갈 때 쓰는 핑크 플래시 전환 -->
-<div class="page-transition" id="pageTransition"></div>
+<!-- 오브제 클릭 시 다른 화면(예: SHOOT 사격장)으로 넘어갈 때 쓰는 전환 연출.
+     배경색과 스플래시 이미지는 클릭한 오브제의 태그 색깔/이름에 맞춰
+     script.js의 playSplashTransition()이 매번 채워 넣는다 -->
+<div class="page-transition" id="pageTransition">
+  <img class="page-transition-splash" id="pageTransitionSplash" src="" alt="">
+</div>
 
 <audio id="bgMusic" loop>
   <source src="assets/audio/maintheme.mp3" type="audio/mpeg">
