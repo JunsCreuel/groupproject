@@ -6,9 +6,6 @@
 // THROW(쓰레기통), SHOOT(총), SMASH(망치), CLICK(ESC 키),
 // STRETCH(슬라임), DANCE(춤추는 실루엣), SCRIBBLE(낙서)
 // =====================================================================
-
-// 스페이스바 전역 스크롤 방지 — 아래쪽 코드에서 에러가 나도 이 리스너는
-// 이미 등록된 상태라 항상 동작하도록, 의도적으로 파일 맨 위에 둠
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Space') e.preventDefault(); // repeat 여부와 무관하게 매번 막아야 함
 });
@@ -16,7 +13,6 @@ window.addEventListener('keydown', (e) => {
 // 화면 크기 대응 — .stage(1600x1000 고정 캔버스, style.css 참고)를
 // 실제 창 크기에 맞춰 비율 유지한 채 scale()로 축소/확대해서, 모니터
 // 크기와 무관하게 스크롤 없이 전체 화면이 항상 다 보이도록 하는 로직
-// (ZEP/게더타운 같은 가상공간이 맵을 창에 맞추는 방식과 동일)
 const STAGE_WIDTH = 1600;
 const STAGE_HEIGHT = 1000;
 const stage = document.getElementById('stage');
@@ -197,11 +193,18 @@ document.querySelector('.tag-throw').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------
-// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션
+// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션 후 사격장
+// 미니앱(shoot/index.html, React+Three.js)으로 화면 전환
 // ---------------------------------------------------------------
 const gun = document.getElementById('obj-gun');
+const pageTransition = document.getElementById('pageTransition');
+
 document.querySelector('.tag-shoot').addEventListener('click', () => {
   pulse(gun, 'is-firing', 150);
+  pageTransition.classList.add('is-active');
+  setTimeout(() => {
+    window.location.href = 'shoot/index.html';
+  }, 350); // .page-transition의 opacity transition 시간과 맞춤
 });
 
 // ---------------------------------------------------------------
@@ -248,8 +251,38 @@ document.querySelector('.tag-scribble').addEventListener('click', () => {
 
 // ---------------------------------------------------------------
 // PICK A LAB 버튼 — 다음 섹션/서브페이지로 이동시킬 스크롤 트리거
-// (지금은 섹션이 없어 임시로 한 화면만큼 아래로 이동)
 // ---------------------------------------------------------------
 document.getElementById('pickLabBtn').addEventListener('click', () => {
   window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+});
+
+// ---------------------------------------------------------------
+// ABOUT 모달 — 상단 네비게이션의 ABOUT 클릭 시 기획 배경 패널을 띄움
+// ---------------------------------------------------------------
+const aboutModal = document.getElementById('aboutModal');
+const aboutLink = document.getElementById('aboutLink');
+const aboutClose = document.getElementById('aboutClose');
+
+function openAbout() {
+  aboutModal.classList.add('is-open');
+}
+
+function closeAbout() {
+  aboutModal.classList.remove('is-open');
+}
+
+aboutLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  openAbout();
+});
+
+aboutClose.addEventListener('click', closeAbout);
+
+// 패널 바깥(어두운 배경) 클릭하면 닫힘
+aboutModal.addEventListener('click', (e) => {
+  if (e.target === aboutModal) closeAbout();
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Escape' && aboutModal.classList.contains('is-open')) closeAbout();
 });

@@ -226,6 +226,19 @@ body {
 .tag-lime   { background: var(--lime); color: var(--ink); }
 .tag-orange { background: var(--orange); color: var(--ink); }
 
+/* 오브제 10개 태그가 서로 겹치는 색 없이 전부 다른 색을 쓰도록 태그별로 덮어씀
+   (위의 tag-pink/purple/blue/lime/orange 5색은 몇몇 태그에서 중복돼서 씀) */
+.tag-scream   { background: #ff3d94; color: #fff; }
+.tag-squish   { background: #b39cff; color: var(--ink); }
+.tag-crack    { background: #ff6b6b; color: #fff; }
+.tag-throw    { background: #5ec8f0; color: var(--ink); }
+.tag-shoot    { background: #cdfa4d; color: var(--ink); }
+.tag-smash    { background: #ff8c42; color: var(--ink); }
+.tag-click    { background: #45d9c0; color: var(--ink); }
+.tag-stretch  { background: #ffd93d; color: var(--ink); }
+.tag-dance    { background: #9b5de5; color: #fff; }
+.tag-scribble { background: #52e08a; color: var(--ink); }
+
 /* ---------- handwritten annotations ---------- */
 
 .marker-note {
@@ -287,11 +300,15 @@ body {
   height: 2.4rem;
   margin-left: 0.6rem;
   border-radius: 50%;
-  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
-  font-size: 1.2rem;
-  text-decoration: none;
+  overflow: hidden; /* instagram.png가 배경 없는 누끼가 아니라서, 원형으로 잘라내 모서리 배경을 가림 */
   vertical-align: middle;
   transition: transform 0.15s ease;
+}
+
+.ig-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .ig-badge:hover { transform: scale(1.1); }
@@ -417,7 +434,7 @@ body {
 .obj-slime2.is-stretching { transform: scale(1.6, 0.7); }
 
 /* 댄서는 평소엔 정지 상태 — DANCE 태그를 클릭했을 때만(is-dancing) 잠깐 움직이고,
-   하이프 모드(body.hyped)에서는 다른 오브제들과 같이 계속 움직인다 */
+   하이프 모드(body.hyped)에서는 다른 오브제들과 같이 계속 움직임 */
 .obj-dancer.is-dancing { animation: dance-loop 0.8s ease-in-out 2; }
 @keyframes dance-loop {
   0%, 100% { transform: rotate(0deg) translateX(0); }
@@ -469,6 +486,149 @@ body.hyped .obj-trash     { animation: trash-jitter calc(0.6s / var(--hype-speed
   50%      { transform: translate(3px, -3px) rotate(-8deg); }
 }
 
-/* .stage가 고정 해상도(1600x1000)를 창 크기에 맞춰 통째로 scale()하는
-   방식이라, 화면 폭에 따라 그리드를 다시 짜는 반응형 미디어쿼리는
-   필요 없다 (script.js의 fitStageToScreen 참고) */
+/* ====================================================================
+   페이지 전환 플래시 — 오브제(예: SHOOT)를 클릭해서 다른 화면으로
+   이동하기 직전, 화면 전체를 핑크/화이트로 확 덮었다가 그 상태로
+   다음 페이지로 넘어간다. .stage 바깥의 형제 요소라서 .stage의
+   scale()과 무관하게 항상 실제 뷰포트 전체를 덮는다.
+   목적지 페이지(shoot-app)는 같은 색으로 시작해서 이걸 이어받아
+   서서히 걷어내므로, 두 페이지가 끊기지 않고 이어지는 것처럼 보인다.
+   ==================================================================== */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: radial-gradient(circle, #fff 0%, #ff3d94 60%, #ff3d94 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.page-transition.is-active {
+  opacity: 1;
+}
+
+/* ====================================================================
+   ABOUT 모달 — 상단 네비게이션의 ABOUT 클릭 시 뜨는 기획 배경 패널.
+   .stage 바깥의 형제 요소라서 화면 배율과 무관하게 항상 실제 뷰포트
+   기준 글자 크기를 유지한다 (텍스트가 많아서 이게 중요함).
+   ==================================================================== */
+.about-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  font-family: "Space Grotesk", "Pretendard", sans-serif;
+}
+
+.about-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.about-panel {
+  position: relative;
+  width: min(560px, 90vw);
+  max-height: 82vh;
+  overflow-y: auto;
+  background: #fdfdfb;
+  color: var(--ink);
+  border-radius: 16px;
+  padding: 2.5rem 2rem 2rem;
+  transform: translateY(12px);
+  transition: transform 0.25s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.about-modal.is-open .about-panel {
+  transform: translateY(0);
+}
+
+.about-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.about-close:hover { background: var(--ink); color: #fff; }
+
+.about-title {
+  font-family: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  font-size: 2.2rem;
+}
+
+.about-lead {
+  font-weight: 700;
+  color: var(--pink);
+  letter-spacing: 0.05em;
+  margin-top: 0.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-section {
+  margin-bottom: 1.5rem;
+}
+
+.about-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--ink);
+  display: inline-block;
+}
+
+.about-section ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.about-section li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.about-section li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--pink);
+  font-weight: 700;
+}
+
+.about-credit {
+  margin-top: 2rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.2);
+}
+
+.about-credit li {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.about-credit li::before {
+  color: #bbb;
+}
+
+.about-credit a {
+  color: var(--pink);
+  word-break: break-all;
+}
