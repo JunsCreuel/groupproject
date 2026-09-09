@@ -40,11 +40,18 @@ function pulse(el, className, duration) {
 const bgMusic = document.getElementById('bgMusic');
 const soundToggle = document.getElementById('soundToggle');
 const soundState = document.getElementById('soundState');
+const volumeSlider = document.getElementById('volumeSlider');
 let musicOn = false;
+
+// 전체 음량 — 슬라이더로 조절, localStorage에 저장해서 새로고침해도 유지된다.
+// SHOOT LAB(shoot-app)도 같은 origin이라 같은 키를 읽어서 음량을 공유한다.
+let masterVolume = Number(localStorage.getItem('csl-volume') ?? '50') / 100;
+volumeSlider.value = Math.round(masterVolume * 100);
 
 function setMusic(on) {
   musicOn = on;
   if (musicOn) {
+    bgMusic.volume = locked ? masterVolume : bgMusic.volume; // 충전 중이면 rampLoop가 매 프레임 갱신하므로 그대로 둠
     bgMusic.play().catch(() => {}); // 브라우저 자동재생 정책으로 실패할 수 있어 catch 처리
     soundState.textContent = '🔊 ON';
   } else {
@@ -54,6 +61,15 @@ function setMusic(on) {
 }
 
 soundToggle.addEventListener('click', () => setMusic(!musicOn));
+
+volumeSlider.addEventListener('input', () => {
+  masterVolume = Number(volumeSlider.value) / 100;
+  localStorage.setItem('csl-volume', String(volumeSlider.value));
+  // 충전 중(hyped && !locked)이면 rampLoop가 다음 프레임에 알아서 반영하므로 여기선 건드리지 않음
+  if (musicOn && (!hyped || locked)) {
+    bgMusic.volume = masterVolume;
+  }
+});
 
 // ---------------------------------------------------------------
 // 하이프(HYPED) 모드 — 메인 화면 헤드라인 아래 "SPACE 를 꾹 눌러
@@ -91,7 +107,7 @@ function rampLoop(now) {
   // 앞설 수 있어(프레임 타이밍 오차) 음수가 나오지 않도록 clamp 처리.
   const t = Math.max(0, Math.min((now - holdStartTime) / HOLD_RAMP_MS, 1));
   setHypeSpeed(1 + t * (MAX_SPEED - 1));
-  bgMusic.volume = t;
+  bgMusic.volume = t * masterVolume;
   setGauge(t);
 
   if (t >= 1) {
@@ -104,7 +120,7 @@ function rampLoop(now) {
 
 function lockHype() {
   locked = true;
-  bgMusic.volume = 1;
+  bgMusic.volume = masterVolume;
   setHypeSpeed(MAX_SPEED);
   setGauge(1);
   hypeHint.textContent = 'STRESS RELEASED';
@@ -193,11 +209,18 @@ document.querySelector('.tag-throw').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------
-// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션
+// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션 후 사격장
+// 미니앱(shoot/index.html, React+Three.js)으로 화면 전환
 // ---------------------------------------------------------------
 const gun = document.getElementById('obj-gun');
+const pageTransition = document.getElementById('pageTransition');
+
 document.querySelector('.tag-shoot').addEventListener('click', () => {
   pulse(gun, 'is-firing', 150);
+  pageTransition.classList.add('is-active');
+  setTimeout(() => {
+    window.location.href = 'shoot/index.html';
+  }, 350); // .page-transition의 opacity transition 시간과 맞춤
 });
 
 // ---------------------------------------------------------------
@@ -247,4 +270,35 @@ document.querySelector('.tag-scribble').addEventListener('click', () => {
 // ---------------------------------------------------------------
 document.getElementById('pickLabBtn').addEventListener('click', () => {
   window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+});
+
+// ---------------------------------------------------------------
+// ABOUT 모달 — 상단 네비게이션의 ABOUT 클릭 시 기획 배경 패널을 띄움
+// ---------------------------------------------------------------
+const aboutModal = document.getElementById('aboutModal');
+const aboutLink = document.getElementById('aboutLink');
+const aboutClose = document.getElementById('aboutClose');
+
+function openAbout() {
+  aboutModal.classList.add('is-open');
+}
+
+function closeAbout() {
+  aboutModal.classList.remove('is-open');
+}
+
+aboutLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  openAbout();
+});
+
+aboutClose.addEventListener('click', closeAbout);
+
+// 패널 바깥(어두운 배경) 클릭하면 닫힘
+aboutModal.addEventListener('click', (e) => {
+  if (e.target === aboutModal) closeAbout();
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Escape' && aboutModal.classList.contains('is-open')) closeAbout();
 });
