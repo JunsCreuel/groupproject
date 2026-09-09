@@ -145,6 +145,10 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
   const hitFlashRef = useRef(-1);
   const targetRef = useRef();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
+  // 조준은 화면 중앙 고정이 아니라 실제 마우스 위치를 따라간다 — App.jsx의
+  // 조준점(Recticle) 이미지도 같은 마우스 좌표를 따라 움직여서, 조준점이
+  // 가리키는 곳과 실제 명중 판정이 항상 일치한다.
+  const mouse = useRef({ x: 0, y: 0 });
 
   // 발사음/빈 탄창음 — 파일명 그대로 각 상황에 매칭 (재장전음은 App.jsx에서 재생)
   const shootSound = useMemo(() => new Audio('sounds/shootsound.mp3'), []);
@@ -170,7 +174,13 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
   useEffect(() => {
     const el = gl.domElement;
 
-    // 발사는 화면 정중앙(조준점) 기준으로 판정한다 — 실제 클릭 좌표가 아님
+    const handleMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      mouse.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.current.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    };
+
+    // 발사는 조준점(=실제 마우스 위치) 기준으로 판정한다
     const handleDown = () => {
       if (pausedRef.current || reloadingRef.current) return;
 
@@ -184,7 +194,7 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       playSound(shootSound);
       onFire(); // App.jsx의 총 뷰모델 반동 + 총구 플래시(CSS) 트리거
 
-      raycaster.setFromCamera({ x: 0, y: 0 }, camera);
+      raycaster.setFromCamera(mouse.current, camera);
       if (targetRef.current) {
         const hit = raycaster.intersectObject(targetRef.current).length > 0;
         if (hit) {
@@ -201,9 +211,11 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       if (e.code === 'KeyR' && !pausedRef.current) onReload();
     };
 
+    el.addEventListener('pointermove', handleMove);
     el.addEventListener('pointerdown', handleDown);
     window.addEventListener('keydown', handleKey);
     return () => {
+      el.removeEventListener('pointermove', handleMove);
       el.removeEventListener('pointerdown', handleDown);
       window.removeEventListener('keydown', handleKey);
     };
@@ -213,9 +225,12 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera, gl, clock, onHit, onFire, raycaster, setAmmo, onReload, shootSound, emptySound]);
 
-  // 카메라는 항상 정면 고정 — 배경(lab-bg.png)이 회전하지 않는 정지 사진이라
-  // 카메라를 마우스로 돌리면 표적만 사진 위에서 따로 도는 것처럼 보였다.
-  // 조준/시점 회전 없이, 총 뷰모델만 App.jsx에서 마우스를 살짝 따라가게 한다.
+  // 카메라 자체는 항상 정면 고정 — 배경(lab-bg.png)이 회전하지 않는 정지
+  // 사진이라, 카메라를 마우스로 돌리면 표적만 사진 위에서 따로 도는 것처럼
+  // 보였다. 대신 조준은 raycaster가 실제 마우스 좌표를 그대로 쓰고(위
+  // handleDown), App.jsx의 조준점(Recticle) 이미지도 같은 좌표로 화면 위를
+  // 움직여서 "조준점이 가리키는 곳 = 실제로 맞는 곳"이 되도록 한다.
+  // 총 뷰모델은 그 위에 얹혀서 마우스를 살짝 따라가는 흔들림만 더한다.
 
   return <Target targetRef={targetRef} hitFlashRef={hitFlashRef} />;
 }

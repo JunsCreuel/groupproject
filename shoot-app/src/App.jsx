@@ -32,6 +32,7 @@ export default function App() {
   // 총 뷰모델(gun-fps.png)은 3D가 아니라 HTML 이미지라, Three.js 프레임 루프 대신
   // 클래스 토글 + CSS 애니메이션으로 반동/총구 플래시를 재생한다 (메인 사이트
   // script.js의 pulse() 헬퍼와 같은 방식).
+  const crosshairRef = useRef(null); // 실제 마우스 좌표를 그대로 따라가는 조준점
   const gunSwayRef = useRef(null); // 마우스를 살짝 따라가는 흔들림
   const gunRef = useRef(null); // 발사 반동 애니메이션
   const muzzleFlashRef = useRef(null);
@@ -50,16 +51,24 @@ export default function App() {
     }
   };
 
-  // 마우스는 시점(카메라)을 돌리지 않고 총만 살짝 따라가게 한다 — 배경이
-  // 회전하지 않는 고정된 사진이라, 예전처럼 카메라를 돌리면 표적만 사진
-  // 위에서 따로 도는 것처럼 보였다 (그래서 Experience.jsx의 카메라 회전은 제거함).
+  // 마우스는 시점(카메라)을 돌리지 않는다 — 배경이 회전하지 않는 고정된
+  // 사진이라, 예전처럼 카메라를 돌리면 표적만 사진 위에서 따로 도는 것처럼
+  // 보였다 (그래서 Experience.jsx의 카메라 회전은 제거함). 대신 조준점이
+  // 실제 마우스 위치를 그대로 따라가고(Experience.jsx의 raycaster도 같은
+  // 좌표를 써서 명중 판정), 총은 그 아래에서 살짝만 따라가는 흔들림을 더한다.
   useEffect(() => {
     const handleMove = (e) => {
-      const el = gunSwayRef.current;
-      if (!el) return;
-      const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
-      const ny = (e.clientY / window.innerHeight) * 2 - 1;
-      el.style.transform = `translate(${nx * 16}px, ${ny * 12}px) rotate(${nx * 2.5}deg)`;
+      const crosshairEl = crosshairRef.current;
+      if (crosshairEl) {
+        crosshairEl.style.left = `${e.clientX}px`;
+        crosshairEl.style.top = `${e.clientY}px`;
+      }
+      const gunEl = gunSwayRef.current;
+      if (gunEl) {
+        const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
+        const ny = (e.clientY / window.innerHeight) * 2 - 1;
+        gunEl.style.transform = `translate(${nx * 16}px, ${ny * 12}px) rotate(${nx * 2.5}deg)`;
+      }
     };
     window.addEventListener('pointermove', handleMove);
     return () => window.removeEventListener('pointermove', handleMove);
@@ -156,7 +165,7 @@ export default function App() {
         </div>
       </div>
 
-      <img src="images/Recticle.png" alt="" className="crosshair" />
+      <img src="images/Recticle.png" alt="" className="crosshair" ref={crosshairRef} />
       <div className="crt-overlay" />
 
       {/* 상단 좌측 — 브랜드 로고 + 타이틀 + 점수/목표 패널 (참고 이미지 스타일).
@@ -205,10 +214,10 @@ export default function App() {
         />
       </div>
 
-      {/* 하단 좌측 — 팀원이 만든 AMMO 아트 + 실제 탄약 수치/재장전 버튼.
-          아트 속 총알 그림은 장식이고, 진짜 탄약 상태는 아래 카드가 보여준다. */}
+      {/* 하단 좌측 — 탄약 수치/재장전 버튼. 팀원이 만든 AMMO 아트는 숫자가
+          고정된 그림이라 실시간으로 줄어들고 늘어나는 실제 탄약과 안 맞아서
+          뺐다 — 실제 탄약 상태만 이 카드로 보여준다. */}
       <div className="ammo-panel">
-        <img src="images/ammo-ui.png" alt="" className="ammo-art" />
         <div className="ammo-controls">
           <div className="ammo-dots">
             {Array.from({ length: MAX_AMMO }, (_, i) => (
