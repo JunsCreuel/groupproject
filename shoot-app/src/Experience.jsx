@@ -7,6 +7,11 @@ const RANGE_DEPTH = -12; // 표적이 놓인 z 위치
 const LOOK_LIMIT = 0.5; // 마우스로 둘러볼 수 있는 최대 각도(라디안)
 const TARGET_WIDTH = 1.3; // 표적 이미지(alien-doctor.png, 1086x1448) 가로 크기
 const TARGET_HEIGHT = TARGET_WIDTH * (1448 / 1086); // 원본 이미지 비율 유지
+// alien-doctor.png는 이미지 꽉 채워서 발끝이 맨 아래 픽셀에 붙어있으므로,
+// 평면(mesh)은 항상 중심 기준이라 발이 바닥에 붙게 하려면 중심을
+// (텍스처 높이의 절반)만큼 아래로 내려야 한다. LAB_FLOOR_Y가 그 "바닥" 높이.
+const LAB_FLOOR_Y = -0.55;
+const TARGET_BASE_Y = LAB_FLOOR_Y + TARGET_HEIGHT / 2;
 
 // 팀원이 만들어준 실제 누끼 이미지를 Three.js 텍스처로 불러온다.
 // 배경(lab-bg.png)과 총(gun-fps.png)은 3D 씬이 아니라 App.jsx에서
@@ -112,10 +117,10 @@ function Target({ targetRef, hitFlashRef }) {
 
     if (walkT < 1) {
       // 걸어오는 중 — 발걸음처럼 위아래로 바운스
-      mesh.position.y = 0.3 + Math.abs(Math.sin(t * STEP_FREQ)) * STEP_AMP;
+      mesh.position.y = TARGET_BASE_Y + Math.abs(Math.sin(t * STEP_FREQ)) * STEP_AMP;
     } else {
       // 도착 — 제자리에서 살짝 숨쉬듯 대기
-      mesh.position.y = 0.3 + Math.sin(t * 1.4) * IDLE_BOB_AMP;
+      mesh.position.y = TARGET_BASE_Y + Math.sin(t * 1.4) * IDLE_BOB_AMP;
     }
 
     const hitT = t - hitFlashRef.current;
@@ -124,7 +129,7 @@ function Target({ targetRef, hitFlashRef }) {
   });
 
   return (
-    <mesh ref={targetRef} position={[0, 0.3, RANGE_DEPTH]}>
+    <mesh ref={targetRef} position={[0, TARGET_BASE_Y, RANGE_DEPTH]}>
       <planeGeometry args={[TARGET_WIDTH, TARGET_HEIGHT]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
