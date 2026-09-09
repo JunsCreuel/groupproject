@@ -102,26 +102,19 @@ html, body, #root {
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.3); }
 }
 
-/* 조준점 — 카메라가 화면 정중앙을 기준으로 회전하기 때문에 항상 중앙 고정 */
+/* 조준점 — 팀원이 만든 Recticle.png. 발사 판정은 항상 화면 정중앙 기준이라
+   조준점도 항상 중앙 고정이어야 한다 */
 .crosshair {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 28px;
-  height: 28px;
+  width: 46px;
+  height: 46px;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 5;
+  filter: drop-shadow(0 0 6px rgba(255, 61, 148, 0.7));
 }
-.crosshair::before,
-.crosshair::after {
-  content: "";
-  position: absolute;
-  background: #ff3d94;
-  box-shadow: 0 0 4px #ff3d94;
-}
-.crosshair::before { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
-.crosshair::after { top: 50%; left: 0; height: 2px; width: 100%; transform: translateY(-50%); }
 
 /* 레트로 CRT 느낌 — 스캔라인 + 비네트 오버레이 */
 .crt-overlay {
@@ -274,24 +267,24 @@ html, body, #root {
 
 .pause-btn:hover { border-color: #ff3d94; }
 
+/* 팀원이 만든 BACK 스티커(sticker-back.png)로 교체 — 링크 자체는 그대로 유지 */
 .back-link {
   position: fixed;
   top: 4rem;
   right: 1.5rem;
   z-index: 6;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1.5px solid #ff3d94;
-  border-radius: 999px;
-  padding: 0.5rem 1.1rem;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-decoration: none;
-  letter-spacing: 0.05em;
+  display: block;
+  transition: transform 0.15s ease;
+}
+
+.back-link img {
+  display: block;
+  width: 120px;
+  height: auto;
 }
 
 .back-link:hover {
-  background: #ff3d94;
+  transform: scale(1.06);
 }
 
 /* 음량 슬라이더 — 일시정지 버튼/뒤로가기 아래에 세로로 붙는 작은 컨트롤.
@@ -543,4 +536,51 @@ html, body, #root {
 
 .enter-flash.is-faded {
   opacity: 0;
+}
+
+/* ==================================================================
+   장식용 스티커들 — 팀원이 만든 스티커 이미지를 화면 가장자리 빈 공간에
+   로커/사물함에 붙은 스티커처럼 흩어 놓는다. 클릭도 안 되고 게임 로직과도
+   무관한 순수 배경 장식이다.
+   ================================================================== */
+.hud-sticker {
+  position: fixed;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+}
+
+.sticker-target-stress {
+  top: 5.2rem;
+  left: 50%;
+  width: 190px;
+  transform: translateX(-50%) rotate(-4deg);
+}
+
+.sticker-caution {
+  top: 42%;
+  left: 0.5rem;
+  width: 150px;
+  transform: rotate(-7deg);
+}
+
+.sticker-biohazard {
+  top: 58%;
+  left: 1.2rem;
+  width: 90px;
+  transform: rotate(9deg);
+}
+
+.sticker-warning {
+  top: 38%;
+  right: 1rem;
+  width: 85px;
+  transform: rotate(-8deg);
+}
+
+.sticker-lab-03 {
+  top: 55%;
+  right: 0.6rem;
+  width: 130px;
+  transform: rotate(5deg);
 }

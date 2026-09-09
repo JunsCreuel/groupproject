@@ -156,7 +156,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="crosshair" />
+      <img src="images/Recticle.png" alt="" className="crosshair" />
       <div className="crt-overlay" />
 
       {/* 상단 좌측 — 브랜드 로고 + 타이틀 + 점수/목표 패널 (참고 이미지 스타일).
@@ -234,8 +234,18 @@ export default function App() {
         <p className="minimap-zone">ZONE B-3<br />CYBER STRESS LAB</p>
       </div>
 
-      <a className="back-link" href="../index.html">← BACK</a>
+      <a className="back-link" href="../index.html">
+        <img src="images/sticker-back.png" alt="뒤로가기" />
+      </a>
       <p className="hint">마우스로 조준 · 클릭해서 발사 · R로 재장전 · ESC로 일시정지</p>
+
+      {/* 팀원이 만든 장식용 스티커들 — 화면 가장자리 빈 공간에 로커에 붙은
+          스티커처럼 흩어 놓는다. 게임 로직과는 무관한 순수 장식 요소. */}
+      <img src="images/sticker-target-stress.png" alt="" className="hud-sticker sticker-target-stress" />
+      <img src="images/sticker-caution.png" alt="" className="hud-sticker sticker-caution" />
+      <img src="images/sticker-biohazard.png" alt="" className="hud-sticker sticker-biohazard" />
+      <img src="images/sticker-warning.png" alt="" className="hud-sticker sticker-warning" />
+      <img src="images/sticker-lab-03.png" alt="" className="hud-sticker sticker-lab-03" />
 
       {cleared && (
         <div className="cleared-banner">LAB CLEARED — STRESS RELEASED*</div>
