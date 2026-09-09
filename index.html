@@ -29,7 +29,10 @@
   <nav class="nav">
     <a href="#" class="active">LAB</a>
     <a href="#about" id="aboutLink">ABOUT</a>
-    <button id="soundToggle" class="sound-toggle">SOUND <span id="soundState">🔇 OFF</span></button>
+    <div class="sound-control">
+      <button id="soundToggle" class="sound-toggle">SOUND <span id="soundState">🔇 OFF</span></button>
+      <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50" aria-label="음량 조절">
+    </div>
   </nav>
   <button class="random-lab">RANDOM LAB ↗</button>
 </header>

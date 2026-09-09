@@ -103,6 +103,19 @@ body {
   color: var(--ink);
 }
 
+/* 음량 슬라이더 — SOUND 토글 옆에 붙어서 전체 배경음악 크기를 조절 */
+.sound-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.volume-slider {
+  width: 5rem;
+  accent-color: var(--pink);
+  cursor: pointer;
+}
+
 .random-lab {
   border: 1px solid var(--ink);
   border-radius: 999px;

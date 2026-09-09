@@ -40,11 +40,18 @@ function pulse(el, className, duration) {
 const bgMusic = document.getElementById('bgMusic');
 const soundToggle = document.getElementById('soundToggle');
 const soundState = document.getElementById('soundState');
+const volumeSlider = document.getElementById('volumeSlider');
 let musicOn = false;
+
+// 전체 음량 — 슬라이더로 조절, localStorage에 저장해서 새로고침해도 유지된다.
+// SHOOT LAB(shoot-app)도 같은 origin이라 같은 키를 읽어서 음량을 공유한다.
+let masterVolume = Number(localStorage.getItem('csl-volume') ?? '50') / 100;
+volumeSlider.value = Math.round(masterVolume * 100);
 
 function setMusic(on) {
   musicOn = on;
   if (musicOn) {
+    bgMusic.volume = locked ? masterVolume : bgMusic.volume; // 충전 중이면 rampLoop가 매 프레임 갱신하므로 그대로 둠
     bgMusic.play().catch(() => {}); // 브라우저 자동재생 정책으로 실패할 수 있어 catch 처리
     soundState.textContent = '🔊 ON';
   } else {
@@ -54,6 +61,15 @@ function setMusic(on) {
 }
 
 soundToggle.addEventListener('click', () => setMusic(!musicOn));
+
+volumeSlider.addEventListener('input', () => {
+  masterVolume = Number(volumeSlider.value) / 100;
+  localStorage.setItem('csl-volume', String(volumeSlider.value));
+  // 충전 중(hyped && !locked)이면 rampLoop가 다음 프레임에 알아서 반영하므로 여기선 건드리지 않음
+  if (musicOn && (!hyped || locked)) {
+    bgMusic.volume = masterVolume;
+  }
+});
 
 // ---------------------------------------------------------------
 // 하이프(HYPED) 모드 — 메인 화면 헤드라인 아래 "SPACE 를 꾹 눌러
@@ -91,7 +107,7 @@ function rampLoop(now) {
   // 앞설 수 있어(프레임 타이밍 오차) 음수가 나오지 않도록 clamp 처리.
   const t = Math.max(0, Math.min((now - holdStartTime) / HOLD_RAMP_MS, 1));
   setHypeSpeed(1 + t * (MAX_SPEED - 1));
-  bgMusic.volume = t;
+  bgMusic.volume = t * masterVolume;
   setGauge(t);
 
   if (t >= 1) {
@@ -104,7 +120,7 @@ function rampLoop(now) {
 
 function lockHype() {
   locked = true;
-  bgMusic.volume = 1;
+  bgMusic.volume = masterVolume;
   setHypeSpeed(MAX_SPEED);
   setGauge(1);
   hypeHint.textContent = 'STRESS RELEASED';

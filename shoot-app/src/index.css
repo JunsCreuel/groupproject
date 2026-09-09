@@ -194,6 +194,33 @@ html, body, #root {
   background: #ff3d94;
 }
 
+/* 음량 슬라이더 — 일시정지 버튼/뒤로가기 아래에 세로로 붙는 작은 컨트롤.
+   메인 사이트와 localStorage(csl-volume)를 공유해서 음량이 그대로 이어진다. */
+.volume-control {
+  position: fixed;
+  top: 6.7rem;
+  right: 1.5rem;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  background: rgba(15, 15, 15, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+}
+
+.volume-icon {
+  font-size: 0.9rem;
+}
+
+.volume-slider {
+  width: 5rem;
+  accent-color: #ff3d94;
+  cursor: pointer;
+}
+
 /* ==================================================================
    하단 좌측 — 탄약 패널
    ================================================================== */

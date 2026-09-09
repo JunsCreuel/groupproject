@@ -1,6 +1,7 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { getVolume } from './volume.js';
 
 const RANGE_DEPTH = -12; // 표적이 놓인 z 위치
 const LOOK_LIMIT = 0.5; // 마우스로 둘러볼 수 있는 최대 각도(라디안)
@@ -143,15 +144,51 @@ function Range() {
   );
 }
 
-// 표적 — 좌우/상하로 살짝 움직이다가, 맞으면 잠깐 사라진 뒤 다른 위치에서
-// "좀비 등장음"(zombies.wav)과 함께 다시 나타난다. 페이지에 처음 들어왔을
-// 때도 한 번 등장음이 재생된다.
+// 표적 — 가만히 매달려 좌우로 흔들리는 대신, 매번 등장할 때마다 "옆에서
+// 걸어들어오기" 또는 "정면에서 걸어오기(접근)" 패턴 중 하나를 골라 실제로
+// 걸어오는 것처럼 이동한다. 도착한 뒤엔 제자리 서성임(idle bob)으로 대기하다가
+// 맞으면 잠깐 사라진 뒤 "좀비 등장음"(zombies.wav)과 함께 새 패턴으로 다시
+// 걸어들어온다. 페이지에 처음 들어왔을 때도 한 번 등장음이 재생된다.
 const RESPAWN_DELAY = 0.4; // 명중 후 다시 나타나기까지(초)
+const WALK_DURATION = 1.6; // 등장 지점 → 대기 지점까지 걸어오는 데 걸리는 시간(초)
+const STEP_FREQ = 5.5; // 걷는 동안의 상하 스텝 바운스 빈도
+const STEP_AMP = 0.09; // 걷는 동안의 상하 스텝 바운스 크기
+const IDLE_BOB_AMP = 0.06; // 도착 후 제자리에서 숨쉬듯 흔들리는 크기
+const ENGAGE_Z = RANGE_DEPTH; // 옆에서 걸어들어올 때 멈추는 기본 깊이
+const APPROACH_NEAR_Z = RANGE_DEPTH + 4.5; // 정면 접근 패턴에서 다가와 멈추는 깊이(더 가까움)
+
+function easeOutCubic(x) {
+  return 1 - Math.pow(1 - x, 3);
+}
+
+// 이번 등장에 쓸 시작 위치/도착 위치/모드를 무작위로 뽑는다
+function pickWalkPlan() {
+  const mode = ['left', 'right', 'front'][Math.floor(Math.random() * 3)];
+  const engageX = (Math.random() - 0.5) * 3.6; // 대기 지점 좌우 위치
+
+  if (mode === 'front') {
+    // 정면 저 멀리서부터 플레이어 쪽으로 곧장 걸어옴
+    return {
+      mode,
+      from: { x: engageX + (Math.random() - 0.5) * 1.2, z: RANGE_DEPTH - 6 },
+      to: { x: engageX, z: APPROACH_NEAR_Z },
+    };
+  }
+
+  // 화면 옆(왼쪽/오른쪽) 밖에서 안으로 걸어들어옴
+  const sideX = mode === 'left' ? -5.5 : 5.5;
+  return {
+    mode,
+    from: { x: sideX, z: ENGAGE_Z },
+    to: { x: engageX, z: ENGAGE_Z },
+  };
+}
 
 function Target({ targetRef, hitFlashRef }) {
   const texture = useMemo(() => makeTargetTexture(), []);
   const zombieSound = useMemo(() => new Audio('sounds/zombies.wav'), []);
-  const spawnSeed = useRef(Math.random() * 100);
+  const plan = useRef(pickWalkPlan());
+  const walkStartRef = useRef(0);
   const respawnAtRef = useRef(0);
   const hiddenRef = useRef(false);
   const lastHitSeenRef = useRef(-1);
@@ -159,6 +196,7 @@ function Target({ targetRef, hitFlashRef }) {
 
   const playSpawnSound = () => {
     zombieSound.currentTime = 0;
+    zombieSound.volume = getVolume();
     zombieSound.play().catch(() => {}); // 자동재생 정책으로 첫 재생은 실패할 수 있음
   };
 
@@ -169,6 +207,7 @@ function Target({ targetRef, hitFlashRef }) {
 
     if (!spawnedOnceRef.current) {
       spawnedOnceRef.current = true;
+      walkStartRef.current = t;
       playSpawnSound();
     }
 
@@ -177,7 +216,7 @@ function Target({ targetRef, hitFlashRef }) {
       lastHitSeenRef.current = hitFlashRef.current;
       hiddenRef.current = true;
       respawnAtRef.current = t + RESPAWN_DELAY;
-      spawnSeed.current = Math.random() * 100; // 다음 등장 위치를 바꾸기 위한 시드
+      plan.current = pickWalkPlan(); // 다음엔 다른 방향/패턴으로 걸어들어오도록 새로 뽑음
     }
 
     if (hiddenRef.current) {
@@ -186,13 +225,25 @@ function Target({ targetRef, hitFlashRef }) {
         return;
       }
       hiddenRef.current = false;
+      walkStartRef.current = t;
       playSpawnSound();
     }
 
     mesh.visible = true;
-    const s = spawnSeed.current;
-    mesh.position.x = Math.sin((t + s) * 0.6) * 2.2;
-    mesh.position.y = 0.3 + Math.sin((t + s) * 0.9) * 0.4;
+
+    const { from, to } = plan.current;
+    const walkT = Math.min((t - walkStartRef.current) / WALK_DURATION, 1);
+    const eased = easeOutCubic(walkT);
+    mesh.position.x = from.x + (to.x - from.x) * eased;
+    mesh.position.z = from.z + (to.z - from.z) * eased;
+
+    if (walkT < 1) {
+      // 걸어오는 중 — 발걸음처럼 위아래로 바운스
+      mesh.position.y = 0.3 + Math.abs(Math.sin(t * STEP_FREQ)) * STEP_AMP;
+    } else {
+      // 도착 — 제자리에서 살짝 숨쉬듯 대기
+      mesh.position.y = 0.3 + Math.sin(t * 1.4) * IDLE_BOB_AMP;
+    }
 
     const hitT = t - hitFlashRef.current;
     const punch = hitT >= 0 && hitT < 0.2 ? 1.3 - (hitT / 0.2) * 0.3 : 1;
@@ -350,6 +401,7 @@ export default function Experience({ onHit, ammo, setAmmo, reloading, onReload, 
   const emptySound = useMemo(() => new Audio('sounds/emptybullet.mp3'), []);
   const playSound = (audio) => {
     audio.currentTime = 0;
+    audio.volume = getVolume();
     audio.play().catch(() => {}); // 자동재생 정책으로 실패할 수 있어 catch 처리
   };
 
