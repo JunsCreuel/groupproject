@@ -11,10 +11,19 @@ const LANES = [
   { code: 'ArrowRight', glyph: '→', cls: 'lane-right' },
 ];
 
-const NOTE_TRAVEL_MS = 1500; // 노트가 화면 위에서 판정선까지 내려오는 데 걸리는 시간
-const PERFECT_WINDOW = 0.07; // 초
-const GOOD_WINDOW = 0.16;
-const MISS_GRACE = 0.2; // 판정선을 이만큼 지나도록 못 누르면 자동 MISS
+const NOTE_TRAVEL_MS = 1900; // 노트가 화면 위에서 판정선까지 내려오는 데 걸리는 시간
+const PERFECT_WINDOW = 0.1; // 초
+const GOOD_WINDOW = 0.22;
+const MISS_GRACE = 0.26; // 판정선을 이만큼 지나도록 못 누르면 자동 MISS
+
+// 노트가 "지금 눌러야 하는 시점"(progress=1)에 실제로 도달하는 화면 위치는
+// 레인 맨 아래(100%)가 아니라 .receptor가 그려진 위치(index.css의
+// .receptor { top: 78% })다 — 예전엔 이 값이 100으로 하드코딩돼 있어서,
+// 노트가 눈으로 보이는 판정선(receptor)에 도착하는 시점과 실제 판정
+// 윈도우가 열리는 시점이 어긋나 있었다(레인 아래쪽까지 더 내려가야 실제
+// 판정이 맞았음) — 그래서 박자에 맞춰 눌러도 계속 놓치는 것처럼 느껴졌다.
+// 이 값은 반드시 index.css의 .receptor top%와 같은 값으로 맞춰야 한다.
+const RECEPTOR_TOP_PERCENT = 78;
 
 export default function Game({ track, paused, onFinish }) {
   const [score, setScore] = useState(0);
@@ -116,7 +125,7 @@ export default function Game({ track, paused, onFinish }) {
         if (note.el && !note.el.dataset.gone) {
           const msUntil = (note.time - now) * 1000;
           const progress = 1 - msUntil / NOTE_TRAVEL_MS; // 0(등장) ~ 1(판정선)
-          const topPct = progress * 100;
+          const topPct = progress * RECEPTOR_TOP_PERCENT;
           note.el.style.top = `${topPct}%`;
           if (note.judged) {
             note.el.dataset.gone = '1';
