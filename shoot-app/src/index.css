@@ -48,7 +48,9 @@ html, body, #root {
   position: fixed;
   inset: 0;
   z-index: 1;
-  cursor: crosshair;
+  /* 브라우저 기본 커서(십자 모양) 대신 항상 화면 정중앙에 고정된
+     Recticle.png 조준점만 보이게 한다 */
+  cursor: none;
 }
 
 /* 외계인 표적 — 3D 오브젝트가 아니라 실사 이미지(alien-doctor.png) 한 장을

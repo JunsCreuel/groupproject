@@ -101,7 +101,12 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       }
     };
 
-    const handleDown = () => {
+    const handleDown = (e) => {
+      // 왼쪽 버튼(0)만 발사로 인정한다. 우클릭(2)을 막지 않으면 브라우저
+      // 우클릭 메뉴가 떠서 pointerup을 못 받는 채로 firingRef가 true에
+      // 발이 묶여, 메뉴가 사라진 뒤에도 연사 루프가 계속 총알을 쏟아내는
+      // 버그가 있었다 — 아예 우클릭 자체를 무시해서 원천 차단한다.
+      if (e.button !== 0) return;
       if (pausedRef.current || disabledRef.current) return;
       emptyPlayedRef.current = false;
       firingRef.current = true;
@@ -119,11 +124,17 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       if (e.code === 'KeyR' && !pausedRef.current && !disabledRef.current) onReload();
     };
 
+    // 우클릭 메뉴 자체를 띄우지 않는다 — 떴다가 닫히면 handleDown/handleUp
+    // 쌍이 깨지면서 연사가 멈추지 않는 등 부작용이 있어서, 아예 나타나지
+    // 않게 막아 우클릭을 완전히 무반응으로 만든다.
+    const handleContextMenu = (e) => e.preventDefault();
+
     // .fire-zone은 HUD 버튼들보다 z-index가 낮은 화면 전체 크기 레이어라,
     // 조준/사격 시작 지점을 HUD 버튼(재장전, 일시정지 등)과 자연스럽게
     // 분리해준다 — 버튼 위 클릭은 버튼이 먼저 받아가고, 그 외 화면은 여기로.
     const fireZone = document.querySelector('.fire-zone');
     fireZone?.addEventListener('pointerdown', handleDown);
+    fireZone?.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('pointerup', handleUp);
     window.addEventListener('keydown', handleKey);
 
@@ -141,6 +152,7 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
 
     return () => {
       fireZone?.removeEventListener('pointerdown', handleDown);
+      fireZone?.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('keydown', handleKey);
       cancelAnimationFrame(rafId);
