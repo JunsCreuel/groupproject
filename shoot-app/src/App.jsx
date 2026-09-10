@@ -70,14 +70,11 @@ export default function App() {
     setNameSubmitted(true);
   };
 
-  // 조준점(Recticle)은 화면 중앙에 고정 — 마우스를 움직이면 대신 시점 자체가
-  // 그 방향으로 돌아가는 느낌을 배경/총/표적을 같이 팬(pan)시켜서 낸다.
-  // 표적(alien-pan, Experience.jsx)도 배경과 같은 방향으로 같이 움직여야
-  // 한다 — 조준점은 항상 화면 정중앙인데 표적이 전혀 안 움직이면 어디를
-  // 봐도 표적이 계속 조준점 위에 있어서 무조건 맞아버린다. 배경보다 훨씬
-  // 큰 폭으로 움직여야, 실제로 다른 곳을 조준하면 표적이 조준점 밑에서
-  // 빠져나가서 진짜 "빗나가는" 게 가능해진다. 총은 그 위에서 살짝 더
-  // 흔들리는 정도만 더한다.
+  // 조준점(Recticle)은 화면 중앙에 고정 — 마우스를 움직이면 대신 배경/총만
+  // 그 방향으로 팬(pan)/흔들려서 시점이 도는 듯한 연출을 낸다. 표적
+  // (alien-entrance, Experience.jsx)은 이 로직과 무관하게 항상 화면
+  // 정중앙에 고정 — 정밀 조준 게임이 아니라 그냥 마음껏 갈겨서 스트레스를
+  // 푸는 게 목적이라, 표적이 조준점을 피해 움직이면 오히려 방해만 된다.
   useEffect(() => {
     const handleMove = (e) => {
       const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
@@ -92,11 +89,6 @@ export default function App() {
       const gunEl = gunSwayRef.current;
       if (gunEl) {
         gunEl.style.transform = `translate(${nx * 16}px, ${ny * 12}px) rotate(${nx * 2.5}deg)`;
-      }
-      // 표적도 배경과 같은 부호(방향)로 — 배경보다 훨씬 큰 폭으로 팬
-      const alienPanEl = document.querySelector('.alien-pan');
-      if (alienPanEl) {
-        alienPanEl.style.transform = `translate(${-nx * 340}px, ${-ny * 220}px)`;
       }
     };
     window.addEventListener('pointermove', handleMove);

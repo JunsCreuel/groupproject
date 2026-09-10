@@ -3,11 +3,13 @@ import { getVolume } from './volume.js';
 import { FIRE_INTERVAL_MS } from './constants.js';
 
 // 외계인 — 3D 오브젝트가 아니라 실사 이미지(alien-doctor.png)를 화면에 그냥
-// 얹은 것이다. 총/조준점과 마찬가지로 "이미지 한 장"이라 배경의 화면 이동
-// 효과(App.jsx의 카메라 시점 흉내)에 영향을 받지 않고 항상 자기 자리에서
-// 논다. 등장할 때 멀리서 스윽 커지면서 들어오고(alien-enter), 자리 잡은
-// 뒤엔 좌우로만 살짝 흔들린다(alien-sway) — 두 애니메이션을 바깥/안쪽
-// 엘리먼트로 나눠서 서로의 transform이 덮어쓰지 않게 했다.
+// 얹은 것이다. 항상 화면 정중앙에 고정이고 마우스가 어디로 움직이든(배경/총만
+// 팬 되는 시점 회전 연출) 절대 안 움직인다 — 이건 정밀 조준 게임이 아니라
+// 그냥 마음껏 갈겨서 스트레스를 푸는 게 목적이라, 표적이 조준점을 피해
+// 돌아다니면 오히려 방해만 된다. 등장할 때 멀리서 스윽 커지면서
+// 들어오고(alien-enter), 자리 잡은 뒤엔 좌우로만 살짝 흔들린다(alien-sway)
+// — 두 애니메이션을 바깥/안쪽 엘리먼트로 나눠서 서로의 transform이
+// 덮어쓰지 않게 했다.
 function Target({ targetRef, targetName }) {
   const zombieSound = useMemo(() => new Audio('sounds/zombi-quiet.mp3'), []);
 
@@ -17,21 +19,12 @@ function Target({ targetRef, targetName }) {
   }, [zombieSound]);
 
   return (
-    <div className="alien-anchor">
-      {/* .alien-pan은 App.jsx의 마우스 이동 핸들러가 querySelector로 찾아서
-          배경(lab-backdrop)과 같은 방향으로 매번 인라인 transform을 걸어준다
-          — 표적도 배경과 같은 "월드"에 속해 있어야 시점을 돌렸을 때 조준점
-          밑에서 실제로 빠져나간다 */}
-      <div className="alien-pan">
-        <div className="alien-entrance">
-          <div className="alien-sway">
-            {/* 사용자가 정한 이름표 — 과녁이 흔들릴 때(alien-sway) 같이
-                흔들리도록 흔들림 애니메이션을 맡은 엘리먼트 안에 형제로
-                넣었다 */}
-            {targetName && <div className="alien-name-tag">{targetName}</div>}
-            <img ref={targetRef} src="images/alien-doctor.png" alt="" className="alien-img" />
-          </div>
-        </div>
+    <div className="alien-entrance">
+      <div className="alien-sway">
+        {/* 사용자가 정한 이름표 — 과녁이 흔들릴 때(alien-sway) 같이 흔들리도록
+            흔들림 애니메이션을 맡은 엘리먼트 안에 형제로 넣었다 */}
+        {targetName && <div className="alien-name-tag">{targetName}</div>}
+        <img ref={targetRef} src="images/alien-doctor.png" alt="" className="alien-img" />
       </div>
     </div>
   );
