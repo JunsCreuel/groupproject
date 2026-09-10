@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
 import Experience from './Experience.jsx';
 import { MAX_AMMO, TOTAL_AMMO, RELOAD_MS, KILL_HITS } from './constants.js';
 import { getVolume, setVolume, onVolumeChange } from './volume.js';
@@ -18,6 +17,9 @@ export default function App() {
   const [paused, setPaused] = useState(false);
   const [entering, setEntering] = useState(true);
   const [volume, setVolumeState] = useState(getVolume()); // 메인 사이트와 공유되는 전체 음량(0~1)
+  const [nameInput, setNameInput] = useState(''); // 이름 입력창에 실시간으로 타이핑 중인 값
+  const [targetName, setTargetName] = useState(''); // 확정된 표적 이름 — 확정 전엔 빈 문자열
+  const [nameSubmitted, setNameSubmitted] = useState(false); // 이름을 정하기 전엔 사격 불가
   const reloadSound = useMemo(() => new Audio('sounds/reloadsound.mp3'), []);
   const bgm = useMemo(() => {
     const a = new Audio('sounds/bgm.mp3');
@@ -58,6 +60,14 @@ export default function App() {
       void flashEl.offsetWidth;
       flashEl.classList.add('is-flashing');
     }
+  };
+
+  // 스트레스 해소가 목적이니 오늘 스트레스 준 사람 이름을 표적에 붙여준다 —
+  // 빈 채로 시작해도 괜찮도록 기본 이름을 하나 준비해둔다.
+  const submitName = () => {
+    const trimmed = nameInput.trim();
+    setTargetName(trimmed || '스트레스 유발자');
+    setNameSubmitted(true);
   };
 
   // 조준점(Recticle)은 화면 중앙에 고정 — 마우스를 움직이면 대신 카메라
@@ -152,21 +162,26 @@ export default function App() {
 
   return (
     <>
-      {/* 팀원이 만든 실사 배경 — Canvas는 이 위에 투명하게 표적만 그린다 */}
+      {/* 팀원이 만든 실사 배경 — 표적/총/조준점 모두 이제 3D가 아니라 이 위에
+          얹는 평범한 이미지라 Canvas가 필요 없다 */}
       <div className="lab-backdrop" ref={backdropRef} style={{ backgroundImage: "url('images/lab-bg.png')" }} />
 
-      <Canvas className="range-canvas" gl={{ alpha: true }} camera={{ fov: 60, position: [0, 0, 0] }}>
-        <Experience
-          onHit={() => setHits((h) => Math.min(h + 1, KILL_HITS))}
-          onFire={triggerFire}
-          ammo={ammo}
-          setAmmo={setAmmo}
-          reloading={reloading}
-          onReload={reload}
-          paused={paused}
-          disabled={gameOver}
-        />
-      </Canvas>
+      {/* 화면 전체 크기의 발사 감지 레이어 — Experience.jsx가 여기에 직접
+          pointerdown을 걸어서 발사를 시작한다. HUD 버튼들은 z-index가 더
+          높아서 이 레이어보다 먼저 클릭을 받아가므로 겹치지 않는다. */}
+      <div className="fire-zone" />
+
+      <Experience
+        onHit={() => setHits((h) => Math.min(h + 1, KILL_HITS))}
+        onFire={triggerFire}
+        ammo={ammo}
+        setAmmo={setAmmo}
+        reloading={reloading}
+        onReload={reload}
+        paused={paused}
+        disabled={gameOver || !nameSubmitted}
+        targetName={nameSubmitted ? targetName : ''}
+      />
 
       {/* 총 뷰모델 — 실사 합성 이미지(gun-fps.png)를 화면 우하단에 고정.
           바깥(gun-viewmodel)은 마우스를 따라가는 흔들림(sway)을, 안쪽
@@ -296,6 +311,28 @@ export default function App() {
         <div className="pause-overlay">
           <p>PAUSED</p>
           <span>ESC를 다시 눌러 계속하기</span>
+        </div>
+      )}
+
+      {/* 입장 시 목표물 이름을 정하는 프롬프트 — 확정 전까지는 사격이
+          비활성화된다(disabled 프롭). 오늘 스트레스 준 사람, 별명, 친구 등
+          뭐든 적을 수 있고 비워두면 기본 이름으로 시작한다. */}
+      {!nameSubmitted && (
+        <div className="name-prompt-overlay">
+          <div className="name-prompt-card">
+            <h2>목표물의 이름을 정하세요<span className="star-accent">*</span></h2>
+            <p>오늘 스트레스 준 사람을 떠올려보세요 — 김부장, ○○대리님, 친구… 뭐든 좋아요.</p>
+            <input
+              type="text"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              onKeyDown={(e) => { if (e.code === 'Enter') submitName(); }}
+              placeholder="예: 김부장"
+              maxLength={14}
+              autoFocus
+            />
+            <button className="result-btn" onClick={submitName}>사격 시작</button>
+          </div>
         </div>
       )}
 
