@@ -736,3 +736,28 @@ body.is-locked { overflow: hidden; height: 100vh; }
   .nav-links { gap: 0.9rem; font-size: 0.72rem; }
   .map-row { grid-template-columns: 70px 1fr 40px; }
 }
+
+/* ==================================================================
+   큰 모니터에서는 720px 컬럼 하나만 화면 왼쪽에 남고 나머지가 텅 비어
+   보이던 문제 — 화면 폭에 맞춰 본문 컬럼 자체가 함께 넓어지도록
+   단계적으로 max-width/폰트/그리드를 키운다.
+   ================================================================== */
+@media (min-width: 1024px) {
+  .section { max-width: 860px; }
+  .nav-bar { padding: 1.3rem 2.6rem; }
+}
+
+@media (min-width: 1440px) {
+  .section { max-width: 1040px; padding: 7rem 2rem; }
+  .section-headline { font-size: clamp(2.6rem, 3.4vw, 3.6rem); }
+  .section-body { font-size: 1.05rem; }
+  .nav-bar { padding: 1.5rem 3.2rem; }
+  .lab-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (min-width: 1920px) {
+  .section { max-width: 1240px; }
+  .section-headline { font-size: clamp(3rem, 2.8vw, 4.2rem); }
+  .section-body { font-size: 1.15rem; }
+  .nav-bar { padding: 1.7rem 4rem; }
+}
