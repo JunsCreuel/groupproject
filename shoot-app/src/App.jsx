@@ -41,7 +41,7 @@ export default function App() {
   // 총 뷰모델(gun-fps.png)은 3D가 아니라 HTML 이미지라, Three.js 프레임 루프 대신
   // 클래스 토글 + CSS 애니메이션으로 반동/총구 플래시를 재생한다 (메인 사이트
   // script.js의 pulse() 헬퍼와 같은 방식).
-  const crosshairRef = useRef(null); // 실제 마우스 좌표를 그대로 따라가는 조준점
+  const backdropRef = useRef(null); // 카메라 회전과 방향을 맞추기 위해 같이 살짝 팬(pan)되는 배경 사진
   const gunSwayRef = useRef(null); // 마우스를 살짝 따라가는 흔들림
   const gunRef = useRef(null); // 발사 반동 애니메이션
   const muzzleFlashRef = useRef(null);
@@ -60,22 +60,25 @@ export default function App() {
     }
   };
 
-  // 마우스는 시점(카메라)을 돌리지 않는다 — 배경이 회전하지 않는 고정된
-  // 사진이라, 예전처럼 카메라를 돌리면 표적만 사진 위에서 따로 도는 것처럼
-  // 보였다 (그래서 Experience.jsx의 카메라 회전은 제거함). 대신 조준점이
-  // 실제 마우스 위치를 그대로 따라가고(Experience.jsx의 raycaster도 같은
-  // 좌표를 써서 명중 판정), 총은 그 아래에서 살짝만 따라가는 흔들림을 더한다.
+  // 조준점(Recticle)은 화면 중앙에 고정 — 마우스를 움직이면 대신 카메라
+  // 자체가 그 방향으로 살짝 돌아간다(Experience.jsx). 배경(lab-bg.png)은
+  // 3D가 아니라 CSS 사진이라 카메라를 따라 저절로 돌지 않으므로, 여기서
+  // 같은 마우스 좌표로 배경도 살짝 팬(pan)시켜서 방향을 맞춰준다 — 그래야
+  // 카메라만 돌고 배경은 가만히 있어서 표적이 따로 도는 것처럼 보이던
+  // 문제가 재발하지 않는다. 총은 그 위에서 살짝 더 흔들리는 정도만 더한다.
   useEffect(() => {
     const handleMove = (e) => {
-      const crosshairEl = crosshairRef.current;
-      if (crosshairEl) {
-        crosshairEl.style.left = `${e.clientX}px`;
-        crosshairEl.style.top = `${e.clientY}px`;
+      const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
+      const ny = (e.clientY / window.innerHeight) * 2 - 1;
+
+      const backdropEl = backdropRef.current;
+      if (backdropEl) {
+        // CSS의 scale(1.15) 여백 안에서 반대 방향으로 이동시켜, 카메라가
+        // 회전해서 보여주는 방향과 배경이 같은 쪽으로 움직이게 만든다.
+        backdropEl.style.transform = `scale(1.15) translate(${-nx * 16}px, ${-ny * 12}px)`;
       }
       const gunEl = gunSwayRef.current;
       if (gunEl) {
-        const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
-        const ny = (e.clientY / window.innerHeight) * 2 - 1;
         gunEl.style.transform = `translate(${nx * 16}px, ${ny * 12}px) rotate(${nx * 2.5}deg)`;
       }
     };
@@ -150,7 +153,7 @@ export default function App() {
   return (
     <>
       {/* 팀원이 만든 실사 배경 — Canvas는 이 위에 투명하게 표적만 그린다 */}
-      <div className="lab-backdrop" style={{ backgroundImage: "url('images/lab-bg.png')" }} />
+      <div className="lab-backdrop" ref={backdropRef} style={{ backgroundImage: "url('images/lab-bg.png')" }} />
 
       <Canvas className="range-canvas" gl={{ alpha: true }} camera={{ fov: 60, position: [0, 0, 0] }}>
         <Experience
@@ -177,7 +180,7 @@ export default function App() {
         </div>
       </div>
 
-      <img src="images/Recticle.png" alt="" className="crosshair" ref={crosshairRef} />
+      <img src="images/Recticle.png" alt="" className="crosshair" />
       <div className="crt-overlay" />
 
       {/* 상단 좌측 — 브랜드 로고 + 타이틀. 로고는 메인 사이트에서 어떤

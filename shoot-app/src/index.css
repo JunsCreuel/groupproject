@@ -16,7 +16,11 @@ html, body, #root {
    그리고, 실제 방 풍경은 이 사진이 대신한다. 이미지 경로는 App.jsx에서
    인라인 style로 넣는다 — CSS 파일의 url()은 이 스타일시트 파일(빌드 후
    shoot/assets/*.css) 기준 상대경로로 풀리는데, 이미지는 shoot/images/에
-   있어서 여기서 문자열로 적으면 잘못된 위치를 가리키게 된다. */
+   있어서 여기서 문자열로 적으면 잘못된 위치를 가리키게 된다.
+   scale(1.15)로 살짝 확대해서 여백을 만들어두고, App.jsx가 마우스 좌표에
+   맞춰 여기에 translate를 더해 카메라 회전과 같은 방향으로 살짝 팬(pan)
+   시킨다 — 카메라는 도는데 배경 사진은 가만히 있으면 표적이 사진 위에서
+   따로 도는 것처럼 보이는 문제가 있어서, 배경도 같이 움직이게 맞췄다. */
 .lab-backdrop {
   position: fixed;
   inset: 0;
@@ -25,6 +29,8 @@ html, body, #root {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
+  transform: scale(1.15);
+  transition: transform 0.05s linear;
 }
 
 /* 사진 위에 얹는 어두운 비네트 — 상단 HUD 텍스트 가독성 확보 */

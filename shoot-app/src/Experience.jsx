@@ -14,6 +14,7 @@ const LAB_FLOOR_Y = -0.55;
 const TARGET_BASE_Y = LAB_FLOOR_Y + TARGET_HEIGHT / 2;
 const SWAY_AMP = 0.45; // 화면 중앙에서 좌우로 살짝 움직이는 폭
 const SWAY_FREQ = 0.45; // 좌우로 왔다갔다하는 속도
+const LOOK_LIMIT = 0.35; // 마우스로 살짝 둘러볼 수 있는 최대 각도(라디안) — 조준점은 항상 화면 중앙 고정
 
 // 팀원이 만들어준 실제 누끼 이미지를 Three.js 텍스처로 불러온다.
 // 배경(lab-bg.png)과 총(gun-fps.png)은 3D 씬이 아니라 App.jsx에서
@@ -29,10 +30,10 @@ function loadTexture(path) {
 // 버티는 보스"처럼 다루기로 했다). 맞을 때마다 잠깐 커졌다 줄어드는
 // 펀치 효과만 주고, 사라지거나 재배치되지 않는다 — 처치 판정(100대)은
 // App.jsx가 누적 피격 횟수로 관리한다. 페이지에 들어오면 한 번만
-// "좀비 등장음"(zombies.wav)이 재생된다.
+// "좀비 등장음"(zombi-quiet.mp3)이 재생된다.
 function Target({ targetRef, hitFlashRef }) {
   const texture = useMemo(() => loadTexture('images/alien-doctor.png'), []);
-  const zombieSound = useMemo(() => new Audio('sounds/zombies.wav'), []);
+  const zombieSound = useMemo(() => new Audio('sounds/zombi-quiet.mp3'), []);
   const spawnedOnceRef = useRef(false);
 
   useFrame(({ clock }) => {
@@ -73,18 +74,33 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
   const hitFlashRef = useRef(-1);
   const targetRef = useRef();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  // 조준은 화면 중앙 고정이 아니라 실제 마우스 위치를 따라간다 — App.jsx의
-  // 조준점(Recticle) 이미지도 같은 마우스 좌표를 따라 움직여서, 조준점이
-  // 가리키는 곳과 실제 명중 판정이 항상 일치한다.
+  // 조준점(Recticle)은 항상 화면 중앙 고정 — 대신 마우스를 움직이면 카메라
+  // 자체가 그 방향으로 살짝 돌아간다(LOOK_LIMIT). 배경(lab-bg.png)은 회전하지
+  // 않는 정지 사진이라, 카메라만 돌면 표적이 사진 위에서 따로 도는 것처럼
+  // 보이는 문제가 있었다 — 그래서 App.jsx에서 배경도 같은 마우스 좌표로
+  // 살짝 팬(pan)되게 만들어 카메라 회전과 방향을 맞춘다.
   const mouse = useRef({ x: 0, y: 0 });
 
-  // 발사음/빈 탄창음 — 파일명 그대로 각 상황에 매칭 (재장전음은 App.jsx에서 재생)
-  const shootSound = useMemo(() => new Audio('sounds/shootsound.mp3'), []);
+  // 발사음 — 연사총이라 한 발마다 짧은 효과음을 반복 재생하는 대신, 방아쇠를
+  // 당기는 순간 짧은 시작음(gun-shoot-trrr.ogg)을 한 번 튕겨주고, 쥐고 있는
+  // 동안은 실제 기관총 발사 사운드(light-machine-gun.wav, 30초 루프)를
+  // 계속 반복 재생한다 — 탄이 떨어지거나 손을 떼는 순간 바로 멈춘다.
+  // 빈 탄창음/재장전음은 그대로(재장전음은 App.jsx에서 재생).
+  const fireStartSound = useMemo(() => new Audio('sounds/gun-shoot-trrr.ogg'), []);
+  const fireLoopSound = useMemo(() => {
+    const a = new Audio('sounds/light-machine-gun.wav');
+    a.loop = true;
+    return a;
+  }, []);
   const emptySound = useMemo(() => new Audio('sounds/emptybullet.mp3'), []);
   const playSound = (audio) => {
     audio.currentTime = 0;
     audio.volume = getVolume();
     audio.play().catch(() => {}); // 자동재생 정책으로 실패할 수 있어 catch 처리
+  };
+  const stopFireLoop = () => {
+    fireLoopSound.pause();
+    fireLoopSound.currentTime = 0;
   };
 
   // ammo/reloading/paused/disabled를 ref로도 미러링해서, 아래 네이티브 DOM
@@ -125,6 +141,7 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       if (pausedRef.current || reloadingRef.current || disabledRef.current) return;
 
       if (ammoRef.current <= 0) {
+        stopFireLoop(); // 탄 없이 계속 누르고 있어도 연사음은 나지 않게
         if (!emptyPlayedRef.current) {
           emptyPlayedRef.current = true;
           playSound(emptySound); // 탄창이 비었을 때 빈 방아쇠 소리 — 방아쇠 한 번 당길 때 한 번만
@@ -134,10 +151,11 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
 
       ammoRef.current -= 1; // setAmmo가 반영되기 전에도 즉시 최신값 유지 (연사 중 프레임 간 판정용)
       setAmmo(ammoRef.current);
-      playSound(shootSound);
+      if (ammoRef.current <= 0) stopFireLoop(); // 마지막 탄까지 다 나갔으면 연사음도 바로 끊는다
       onFire(); // App.jsx의 총 뷰모델 반동 + 총구 플래시(CSS) 트리거
 
-      raycaster.setFromCamera(mouse.current, camera);
+      // 조준점은 화면 중앙 고정이라, 명중 판정도 항상 중앙 기준
+      raycaster.setFromCamera({ x: 0, y: 0 }, camera);
       if (targetRef.current) {
         const hit = raycaster.intersectObject(targetRef.current).length > 0;
         if (hit) {
@@ -151,12 +169,19 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
       if (pausedRef.current || disabledRef.current) return;
       emptyPlayedRef.current = false; // 새로 방아쇠를 당겼으니 빈 탄창 소리 다시 허용
       firingRef.current = true;
+      if (ammoRef.current > 0 && !reloadingRef.current) {
+        playSound(fireStartSound); // 방아쇠를 당기는 순간의 짧은 시작음
+        fireLoopSound.currentTime = 0;
+        fireLoopSound.volume = getVolume();
+        fireLoopSound.play().catch(() => {}); // 쥐고 있는 동안 계속 반복될 연사음 시작
+      }
       fireShot(); // 누르는 즉시 첫 발은 바로 나가야 연사 텀만큼 딜레이가 안 느껴짐
       lastFireAtRef.current = clock.elapsedTime;
     };
 
     const handleUp = () => {
       firingRef.current = false;
+      stopFireLoop();
     };
 
     // R키로 재장전. e.key가 아니라 e.code를 쓰는 이유: 한글 입력 상태에서
@@ -184,16 +209,31 @@ export default function Experience({ onHit, onFire, ammo, setAmmo, reloading, on
     // 배열에서 뺐다 — 넣으면 값이 바뀔 때마다 리스너를 떼었다 다시 붙이면서
     // 위에서 설명한 레이스 컨디션이 재발한다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [camera, gl, clock, onHit, onFire, raycaster, setAmmo, onReload, shootSound, emptySound]);
+  }, [camera, gl, clock, onHit, onFire, raycaster, setAmmo, onReload, fireStartSound, fireLoopSound, emptySound]);
 
-  // 연사 루프 — 마우스를 누르고 있는 동안 FIRE_INTERVAL_MS마다 한 발씩
+  // 연사 루프 — 마우스를 누르고 있는 동안 FIRE_INTERVAL_MS마다 한 발씩.
+  // 쥐고 있는 도중 일시정지되거나 재장전이 시작되면 연사음도 바로 끊는다.
   useFrame(({ clock: c }) => {
-    if (!firingRef.current || pausedRef.current || disabledRef.current) return;
+    if (!firingRef.current) return;
+    if (pausedRef.current || disabledRef.current || reloadingRef.current) {
+      stopFireLoop();
+      return;
+    }
     const now = c.elapsedTime;
     if (now - lastFireAtRef.current >= FIRE_INTERVAL_MS / 1000) {
       lastFireAtRef.current = now;
       fireShotRef.current();
     }
+  });
+
+  // 카메라가 마우스를 따라 살짝 회전 — 조준점은 화면 중앙에 고정된 채로,
+  // 사용자가 마우스를 움직이면 그 방향으로 화면(시점) 자체가 돌아간다.
+  useFrame(() => {
+    if (pausedRef.current) return;
+    const targetY = -mouse.current.x * LOOK_LIMIT;
+    const targetX = mouse.current.y * LOOK_LIMIT;
+    camera.rotation.y += (targetY - camera.rotation.y) * 0.12;
+    camera.rotation.x += (targetX - camera.rotation.x) * 0.12;
   });
 
   return <Target targetRef={targetRef} hitFlashRef={hitFlashRef} />;
