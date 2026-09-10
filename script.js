@@ -1,320 +1,356 @@
 // =====================================================================
-// script.js
-// 메인 화면(CSL - Cyber Stress Lab) 오브제 인터랙션 스크립트.
-//
-// 담당 오브제: SCREAM(입), SQUISH(핑크 블롭), CRACK(유리구슬),
-// THROW(쓰레기통), SHOOT(총), SMASH(망치), CLICK(ESC 키),
-// STRETCH(슬라임), DANCE(춤추는 실루엣), SCRIBBLE(낙서)
+// script.js — CSL 랜딩페이지
+// 0 진입 게이트, 03 Lab 카드, 04 LIVE TRANSMISSIONS(게시+댓글+공감 랭킹),
+// 05 GLOBAL STRESS MAP, 06 YOUR LAB RECORD, ABOUT 모달을 담당한다.
+// 04/05/06은 지금은 전부 localStorage 기반 목업이고, "저장소 접근"
+// (loadPosts/savePosts 등)과 "화면 로직"을 분리해뒀다 — 나중에 백엔드가
+// 붙으면 이 저장소 함수들만 fetch 기반으로 바꿔치기하면 나머지 로직
+// (정렬, 카테고리 매칭, 렌더링)은 그대로 재사용할 수 있다.
 // =====================================================================
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') e.preventDefault(); // repeat 여부와 무관하게 매번 막아야 함
-});
 
-// 화면 크기 대응 — .stage(1600x1000 고정 캔버스, style.css 참고)를
-// 실제 창 크기에 맞춰 비율 유지한 채 scale()로 축소/확대해서, 모니터
-// 크기와 무관하게 스크롤 없이 전체 화면이 항상 다 보이도록 하는 로직
-const STAGE_WIDTH = 1600;
-const STAGE_HEIGHT = 1000;
-const stage = document.getElementById('stage');
-
-function fitStageToScreen() {
-  const scale = Math.min(window.innerWidth / STAGE_WIDTH, window.innerHeight / STAGE_HEIGHT);
-  stage.style.transform = `scale(${scale})`;
-}
-
-window.addEventListener('resize', fitStageToScreen);
-fitStageToScreen();
-
-// 오브제 클릭 애니메이션 공통 트리거 — 아래 SCREAM/SQUISH/CRACK 등
-// 모든 태그 클릭 핸들러가 재사용하는 헬퍼
-function pulse(el, className, duration) {
-  el.classList.remove(className);
-  void el.offsetWidth; // 리플로우를 강제로 발생시켜서 같은 애니메이션을 다시 재생할 수 있게 함
-  el.classList.add(className);
-  setTimeout(() => el.classList.remove(className), duration);
-}
+const LABS = [
+  { id: 'crack', name: 'CRACK LAB', tagline: '무언가를 깨뜨리고 싶을 때', color: 'var(--coral)', href: 'crack/index.html' },
+  { id: 'shoot', name: 'SHOOT RANGE', tagline: '타깃에 집중하며 긴장을 풀고 싶을 때', color: 'var(--lime)', href: 'shoot/index.html' },
+  { id: 'dance', name: 'DANCE ROOM', tagline: '몸을 움직이며 박자에 풀고 싶을 때', color: 'var(--purple)', href: 'dance/index.html' },
+  { id: 'click', name: 'CLICK ROOM', tagline: '반복적인 작은 행동이 필요할 때', color: 'var(--mint)', href: 'click/index.html' },
+];
 
 // ---------------------------------------------------------------
-// 배경음악 재생/정지 (상단 네비게이션의 "SOUND" 버튼)
+// 0. 진입 게이트 — ENTER THE LAB을 눌러야 사이트가 열린다
+// 랩에서 뒤로가기하면 항상 이 랜딩페이지(루트)로 돌아오게 되므로,
+// 이미 Subject가 있는 재방문자에게는 매번 게이트 연출을 반복하지 않고
+// 바로 통과시킨다. 처음 접속하는 사람에게만 연출을 보여준다.
 // ---------------------------------------------------------------
-const bgMusic = document.getElementById('bgMusic');
-const soundToggle = document.getElementById('soundToggle');
-const soundState = document.getElementById('soundState');
-const volumeSlider = document.getElementById('volumeSlider');
-let musicOn = false;
+const isReturningSubject = !!localStorage.getItem('csl-subject');
 
-// 전체 음량 — 슬라이더로 조절, localStorage에 저장해서 새로고침해도 유지된다.
-// SHOOT LAB(shoot-app)도 같은 origin이라 같은 키를 읽어서 음량을 공유한다.
-let masterVolume = Number(localStorage.getItem('csl-volume') ?? '50') / 100;
-volumeSlider.value = Math.round(masterVolume * 100);
+if (!isReturningSubject) {
+  document.body.classList.add('is-locked');
+}
 
-function setMusic(on) {
-  musicOn = on;
-  if (musicOn) {
-    bgMusic.volume = locked ? masterVolume : bgMusic.volume; // 충전 중이면 rampLoop가 매 프레임 갱신하므로 그대로 둠
-    bgMusic.play().catch(() => {}); // 브라우저 자동재생 정책으로 실패할 수 있어 catch 처리
-    soundState.textContent = '🔊 ON';
-  } else {
-    bgMusic.pause();
-    soundState.textContent = '🔇 OFF';
+function getSubject() {
+  const raw = localStorage.getItem('csl-subject');
+  if (raw) {
+    try { return JSON.parse(raw); } catch { /* fall through */ }
   }
+  const subject = {
+    id: String(Math.floor(1000 + Math.random() * 9000)),
+    level: Math.floor(40 + Math.random() * 55),
+    createdAt: Date.now(),
+  };
+  localStorage.setItem('csl-subject', JSON.stringify(subject));
+  return subject;
 }
 
-soundToggle.addEventListener('click', () => setMusic(!musicOn));
+const gate = document.getElementById('gate');
+const gateSubjectEl = document.getElementById('gateSubject');
 
-volumeSlider.addEventListener('input', () => {
-  masterVolume = Number(volumeSlider.value) / 100;
-  localStorage.setItem('csl-volume', String(volumeSlider.value));
-  // 충전 중(hyped && !locked)이면 rampLoop가 다음 프레임에 알아서 반영하므로 여기선 건드리지 않음
-  if (musicOn && (!hyped || locked)) {
-    bgMusic.volume = masterVolume;
+if (isReturningSubject) {
+  gate.classList.add('is-hidden', 'is-instant');
+} else {
+  document.getElementById('enterBtn').addEventListener('click', () => {
+    const subject = getSubject();
+    gateSubjectEl.textContent = `SUBJECT #${subject.id} — CURRENT STRESS LEVEL: ${subject.level}%`;
+    gateSubjectEl.classList.add('is-visible');
+    setTimeout(() => {
+      gate.classList.add('is-hidden');
+      document.body.classList.remove('is-locked');
+    }, 900);
+  });
+}
+
+// ---------------------------------------------------------------
+// 03. EXPLORE THE LAB — Lab 카드 렌더 + 방문 기록
+// ---------------------------------------------------------------
+function getVisitedLabs() {
+  try { return JSON.parse(localStorage.getItem('csl-labs-visited') || '[]'); } catch { return []; }
+}
+
+function markLabVisited(labId) {
+  const visited = new Set(getVisitedLabs());
+  visited.add(labId);
+  localStorage.setItem('csl-labs-visited', JSON.stringify([...visited]));
+}
+
+const labGrid = document.getElementById('labGrid');
+LABS.forEach((lab) => {
+  const a = document.createElement('a');
+  a.className = 'lab-card';
+  a.href = lab.href;
+  a.style.setProperty('--accent', lab.color);
+  a.innerHTML = `
+    <span class="lab-card-name">${lab.name}</span>
+    <span class="lab-card-tagline">${lab.tagline}</span>
+    <span class="lab-card-go">ENTER →</span>
+  `;
+  a.addEventListener('click', () => markLabVisited(lab.id));
+  labGrid.appendChild(a);
+});
+
+// ---------------------------------------------------------------
+// 04. LIVE TRANSMISSIONS — 게시 / 댓글 / 공감 랭킹 / 비슷한 고민 매칭
+// ---------------------------------------------------------------
+const POSTS_KEY = 'csl-landing-posts';
+
+function loadPosts() {
+  const raw = localStorage.getItem(POSTS_KEY);
+  if (raw) {
+    try { return JSON.parse(raw); } catch { /* fall through */ }
+  }
+  // 최초 방문 — 시드 데이터를 복제하고, 작성 순서가 유지되도록
+  // 과거 시점의 타임스탬프를 부여한다(최신순 정렬의 기준값)
+  const now = Date.now();
+  const seeded = SEED_POSTS.map((p, i) => ({
+    ...p,
+    ts: now - (SEED_POSTS.length - i) * 9 * 60 * 1000,
+    comments: p.comments.map((c) => ({ ...c })),
+  }));
+  savePosts(seeded);
+  return seeded;
+}
+
+function savePosts(posts) {
+  localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+}
+
+let posts = loadPosts();
+let activeCategory = null; // 선택한 카테고리 = 다음 글의 태그 + 피드 필터
+
+const categoryPicker = document.getElementById('categoryPicker');
+CATEGORIES.forEach((cat) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'category-chip';
+  btn.style.setProperty('--c', cat.color);
+  btn.textContent = cat.label;
+  btn.dataset.cat = cat.id;
+  btn.addEventListener('click', () => {
+    activeCategory = activeCategory === cat.id ? null : cat.id;
+    renderCategoryChips();
+    renderFeed();
+  });
+  categoryPicker.appendChild(btn);
+});
+
+function renderCategoryChips() {
+  categoryPicker.querySelectorAll('.category-chip').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.cat === activeCategory);
+  });
+}
+
+function categoryInfo(id) {
+  return CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORIES.length - 1];
+}
+
+function timeAgo(ts) {
+  const min = Math.max(1, Math.round((Date.now() - ts) / 60000));
+  if (min < 60) return `${min}분 전`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `${hr}시간 전`;
+  return `${Math.round(hr / 24)}일 전`;
+}
+
+const feedEl = document.getElementById('feed');
+
+function renderFeed() {
+  const visible = activeCategory ? posts.filter((p) => p.category === activeCategory) : posts;
+  const sorted = [...visible].sort((a, b) => b.ts - a.ts);
+
+  feedEl.innerHTML = '';
+  sorted.forEach((post) => {
+    const cat = categoryInfo(post.category);
+    const card = document.createElement('article');
+    card.className = 'feed-post';
+
+    const sortedComments = [...post.comments].sort((a, b) => b.likes - a.likes);
+
+    card.innerHTML = `
+      <div class="post-top">
+        <span class="post-subject">${post.subject}</span>
+        <span class="post-category" style="background:${cat.color}">${cat.label}</span>
+        <span class="post-subject">· ${timeAgo(post.ts)}</span>
+      </div>
+      <p class="post-text">${escapeHtml(post.text)}</p>
+      ${post.lab ? `<p class="post-lab">→ ENTERED <strong>${post.lab}</strong></p>` : ''}
+      <div class="comments">
+        ${sortedComments.map((c) => `
+          <div class="comment" data-comment-id="${c.id}">
+            <span class="comment-text">${escapeHtml(c.text)}</span>
+            <button class="comment-like" data-post="${post.id}" data-comment="${c.id}">❤ <span>${c.likes}</span></button>
+          </div>
+        `).join('')}
+      </div>
+      <div class="comment-add">
+        <input type="text" maxlength="60" placeholder="댓글로 공감을 남겨보세요..." data-post-input="${post.id}">
+        <button data-post-comment="${post.id}">달기</button>
+      </div>
+    `;
+    feedEl.appendChild(card);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+feedEl.addEventListener('click', (e) => {
+  const likeBtn = e.target.closest('.comment-like');
+  if (likeBtn) {
+    const postId = likeBtn.dataset.post;
+    const commentId = likeBtn.dataset.comment;
+    const post = posts.find((p) => p.id === postId);
+    const comment = post && post.comments.find((c) => c.id === commentId);
+    if (comment) {
+      comment.likes += 1;
+      savePosts(posts);
+      renderFeed();
+    }
+    return;
+  }
+
+  const commentBtn = e.target.closest('[data-post-comment]');
+  if (commentBtn) {
+    const postId = commentBtn.dataset.postComment;
+    const input = feedEl.querySelector(`[data-post-input="${postId}"]`);
+    const text = input.value.trim();
+    if (!text) return;
+    const post = posts.find((p) => p.id === postId);
+    post.comments.push({ id: `c-${Date.now()}`, text, likes: 0 });
+    savePosts(posts);
+    renderFeed();
   }
 });
 
-// ---------------------------------------------------------------
-// 하이프(HYPED) 모드 — 메인 화면 헤드라인 아래 "SPACE 를 꾹 눌러
-// 시작하기" 게이지(#hypeGauge)를 구동하는 상태 머신.
-// 음악 볼륨 / --hype-speed(오브제 속도 배수) / 게이지 너비를 같은
-// 진행률(t)로 동기화해서, 충전 중엔 셋이 같이 커지다가 완충되면
-// 그 상태로 고정(locked)되도록 만든 것.
-//
-// HOLD_RAMP_MS: 완충까지 걸리는 시간, MAX_SPEED: 완충 시 오브제 속도 배수
-// ---------------------------------------------------------------
-const HOLD_RAMP_MS = 2500;
-const MAX_SPEED = 2;
+const similarNoteEl = document.createElement('div');
+similarNoteEl.className = 'similar-note';
+similarNoteEl.hidden = true;
+feedEl.before(similarNoteEl);
 
-const hypeGauge = document.getElementById('hypeGauge');
-const hypeHint = document.getElementById('hypeHint');
-const gaugeFill = document.getElementById('gaugeFill');
-
-let hyped = false; // 지금 게이지가 차오르는 중이거나(또는 이미 고정된) 상태
-let locked = false; // 게이지를 다 채워서 하이프 상태가 영구 고정됐는지
-let holdStartTime = null;
-let rampFrameId = null;
-
-function setHypeSpeed(multiplier) {
-  document.body.style.setProperty('--hype-speed', multiplier);
+function showSimilar(category, excludeId) {
+  const matches = posts.filter((p) => p.category === category && p.id !== excludeId).slice(0, 3);
+  if (matches.length === 0) { similarNoteEl.hidden = true; return; }
+  const cat = categoryInfo(category);
+  similarNoteEl.hidden = false;
+  similarNoteEl.innerHTML = `<strong>당신과 같은 걸(${cat.label}) 느끼는 사람들</strong><br>` +
+    matches.map((m) => `· ${escapeHtml(m.text)}`).join('<br>');
 }
 
-function setGauge(t) {
-  gaugeFill.style.width = `${t * 100}%`;
-}
-
-function rampLoop(now) {
-  if (!hyped) return;
-
-  // 진행률 0~1, 선형. rAF 타임스탬프가 아주 드물게 holdStartTime보다
-  // 앞설 수 있어(프레임 타이밍 오차) 음수가 나오지 않도록 clamp 처리.
-  const t = Math.max(0, Math.min((now - holdStartTime) / HOLD_RAMP_MS, 1));
-  setHypeSpeed(1 + t * (MAX_SPEED - 1));
-  bgMusic.volume = t * masterVolume;
-  setGauge(t);
-
-  if (t >= 1) {
-    lockHype();
-    return; // 다 찼으면 더 이상 매 프레임 갱신할 필요 없음
-  }
-
-  rampFrameId = requestAnimationFrame(rampLoop);
-}
-
-function lockHype() {
-  locked = true;
-  bgMusic.volume = masterVolume;
-  setHypeSpeed(MAX_SPEED);
-  setGauge(1);
-  hypeHint.textContent = 'STRESS RELEASED';
-  hypeGauge.classList.add('is-charged'); // 게이지 UI는 서서히 사라짐
-}
-
-function startCharging() {
-  if (locked || hyped) return; // 이미 고정됐거나 이미 채우는 중이면 무시
-  hyped = true;
-  document.body.classList.add('hyped');
-  holdStartTime = performance.now();
-  bgMusic.volume = 0; // 처음엔 조용하게 시작해서 점점 커지도록
-  setHypeSpeed(1);
-  setGauge(0);
-  setMusic(true);
-  rampFrameId = requestAnimationFrame(rampLoop);
-}
-
-function releaseCharging() {
-  if (locked || !hyped) return; // 이미 고정됐으면 손을 떼도 유지
-  hyped = false;
-  cancelAnimationFrame(rampFrameId);
-  document.body.classList.remove('hyped');
-  setHypeSpeed(1);
-  setGauge(0);
-  setMusic(false);
-}
-
-window.addEventListener('keydown', (e) => {
-  if (e.code !== 'Space' || e.repeat) return; // e.repeat: 꾹 누르고 있을 때 반복 발생하는 keydown은 무시 (스크롤 방지 자체는 파일 위쪽 리스너가 이미 처리함)
-  startCharging();
+document.getElementById('postSubmit').addEventListener('click', submitPost);
+document.getElementById('postInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') submitPost();
 });
 
-window.addEventListener('keyup', (e) => {
-  if (e.code !== 'Space') return;
-  releaseCharging();
-});
+function submitPost() {
+  const input = document.getElementById('postInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const subject = getSubject();
+  const category = activeCategory || 'other';
+  const newPost = {
+    id: `local-${Date.now()}`,
+    subject: `SUBJECT ${subject.id}`,
+    category,
+    text,
+    lab: '',
+    comments: [],
+    ts: Date.now(),
+  };
+  posts.unshift(newPost);
+  savePosts(posts);
+  input.value = '';
+  renderFeed();
+  showSimilar(category, newPost.id);
+  renderStressMap();
+}
 
 // ---------------------------------------------------------------
-// SCREAM — 입 오브제, 클릭하면 짧게 비명 지르듯 벌어짐
+// 05. GLOBAL STRESS MAP — 기본 목업 비율 + 실제 게시물 비율을 섞는다
 // ---------------------------------------------------------------
-const mouth = document.getElementById('obj-scream');
-document.querySelector('.tag-scream').addEventListener('click', () => {
-  pulse(mouth, 'is-screaming', 700);
-});
+const stressMapEl = document.getElementById('stressMap');
 
-// ---------------------------------------------------------------
-// SQUISH — 핑크 블롭, 클릭하면 눌렸다 튀어나오는 스쿼시 모션
-// ---------------------------------------------------------------
-const blob = document.getElementById('obj-squish');
-document.querySelector('.tag-squish').addEventListener('click', () => {
-  pulse(blob, 'is-squished', 350);
-});
+function computeStressShare() {
+  const counts = {};
+  CATEGORIES.forEach((c) => { counts[c.id] = 0; });
+  posts.forEach((p) => { if (counts[p.category] !== undefined) counts[p.category] += 1; });
+  const total = posts.length || 1;
 
-// ---------------------------------------------------------------
-// CRACK — 유리구슬, 클릭하면 살짝 금가는 미리보기 펄스 후 코랄레드 물감
-// 전환과 함께 왁뿌볼 미니앱(crack/index.html, React)으로 이동
-// ---------------------------------------------------------------
-const glassball = document.getElementById('obj-crack');
-const crackTag = document.querySelector('.tag-crack');
-
-crackTag.addEventListener('click', () => {
-  pulse(glassball, 'crack-1', 250);
-  playSplashTransition(crackTag, 'crack', () => {
-    window.location.href = 'crack/index.html';
+  const blended = {};
+  CATEGORIES.forEach((c) => {
+    const base = BASE_STRESS_SHARE[c.id] || 0;
+    const live = (counts[c.id] / total) * 100;
+    blended[c.id] = base * 0.7 + live * 0.3; // 실사용 신호를 30%만 반영 — 초반엔 목업이 주도하되 점점 실데이터로 기움
   });
-});
+  const sum = Object.values(blended).reduce((a, b) => a + b, 0) || 1;
+  const normalized = CATEGORIES.map((c) => ({ ...c, pct: Math.round((blended[c.id] / sum) * 100) }));
+  return normalized.sort((a, b) => b.pct - a.pct);
+}
 
-// ---------------------------------------------------------------
-// THROW — 쓰레기통 오브제, 클릭하면 뭔가 던져 넣은 듯 통이 흔들림
-// ---------------------------------------------------------------
-const trash = document.getElementById('obj-trash');
-document.querySelector('.tag-throw').addEventListener('click', () => {
-  pulse(trash, 'is-thrown', 400);
-});
-
-// ---------------------------------------------------------------
-// 오브제별 화면 전환 연출 — 클릭한 태그의 배경색 + "<태그이름>-splash.png"
-// 물감 이미지를 화면 중앙에 확 터뜨린 뒤, 다음 화면으로 이동한다.
-// (지금은 SHOOT만 실제로 이동하는 화면이 있어서 쓰이지만, 다른 오브제도
-// 각자 splash 이미지가 assets/images/에 이미 올라와 있어서 나중에 해당
-// 오브제에 서브 화면이 생기면 이 함수를 그대로 재사용하면 된다.)
-const pageTransition = document.getElementById('pageTransition');
-const pageTransitionSplash = document.getElementById('pageTransitionSplash');
-
-function playSplashTransition(tagEl, splashName, onDone) {
-  pageTransition.style.background = getComputedStyle(tagEl).backgroundColor;
-  pageTransitionSplash.src = `assets/images/${splashName}-splash.png`;
-  pageTransition.classList.add('is-active');
-  setTimeout(() => {
-    pageTransition.classList.remove('is-active');
-    onDone();
-  }, 420); // .page-transition-splash의 transform transition 시간과 맞춤
+function renderStressMap() {
+  const shares = computeStressShare();
+  stressMapEl.innerHTML = shares.map((c) => `
+    <div class="map-row">
+      <span class="map-label">${c.label}</span>
+      <div class="map-track"><div class="map-fill" style="width:${c.pct}%; background:${c.color}"></div></div>
+      <span class="map-pct">${c.pct}%</span>
+    </div>
+  `).join('');
 }
 
 // ---------------------------------------------------------------
-// SHOOT — 총 오브제, 클릭하면 반동(recoil) 애니메이션 후 SHOOT 태그 색(라임)
-// 물감 전환과 함께 사격장 미니앱(shoot/index.html, React+Three.js)으로 이동
+// 06. YOUR LAB RECORD
 // ---------------------------------------------------------------
-const gun = document.getElementById('obj-gun');
-const shootTag = document.querySelector('.tag-shoot');
+function getLabUsageSignal(labId) {
+  if (labId === 'crack') return Number(localStorage.getItem('csl-crack-total-broken') || '0');
+  if (labId === 'click') return Number(localStorage.getItem('csl-click-total') || '0');
+  return getVisitedLabs().includes(labId) ? 1 : 0;
+}
 
-shootTag.addEventListener('click', () => {
-  pulse(gun, 'is-firing', 150);
-  playSplashTransition(shootTag, 'shoot', () => {
-    window.location.href = 'shoot/index.html';
+function renderRecord() {
+  const subject = getSubject();
+  const visited = getVisitedLabs();
+  const crackTotal = Number(localStorage.getItem('csl-crack-total-broken') || '0');
+  const clickTotal = Number(localStorage.getItem('csl-click-total') || '0');
+
+  document.getElementById('recordSubject').textContent = `SUBJECT #${subject.id}`;
+
+  document.getElementById('recordVisited').textContent = String(visited.length);
+  const released = Math.min(100, visited.length * 15 + crackTotal * 3 + clickTotal);
+  document.getElementById('recordReleased').textContent = `${released}%`;
+
+  let mostLab = null;
+  let mostScore = 0;
+  LABS.forEach((lab) => {
+    const score = getLabUsageSignal(lab.id);
+    if (score > mostScore) { mostScore = score; mostLab = lab; }
   });
-});
+  document.getElementById('recordMost').textContent = mostLab ? mostLab.name : '—';
+
+  const stampsEl = document.getElementById('recordStamps');
+  stampsEl.innerHTML = LABS.map((lab) => `
+    <span class="stamp ${visited.includes(lab.id) ? 'is-earned' : ''}">${lab.name} ${visited.includes(lab.id) ? '✓' : ''}</span>
+  `).join('');
+}
 
 // ---------------------------------------------------------------
-// SMASH — 망치 오브제, 클릭하면 내려치는 연출
-// ---------------------------------------------------------------
-const hammer = document.getElementById('obj-hammer');
-document.querySelector('.tag-smash').addEventListener('click', () => {
-  pulse(hammer, 'is-smashing', 300);
-});
-
-// ---------------------------------------------------------------
-// CLICK — ESC 키 오브제, 클릭하면 살짝 눌리는 미리보기 펄스 후 민트색
-// 물감 전환과 함께 키캡 미니앱(click/index.html, React)으로 이동
-// ---------------------------------------------------------------
-const escKey = document.getElementById('obj-esc');
-const clickTag = document.querySelector('.tag-click');
-clickTag.addEventListener('click', () => {
-  pulse(escKey, 'is-pressed', 150);
-  playSplashTransition(clickTag, 'click', () => {
-    window.location.href = 'click/index.html';
-  });
-});
-
-// ---------------------------------------------------------------
-// STRETCH — 슬라임 오브제, 클릭하면 옆으로 늘어났다 돌아옴
-// ---------------------------------------------------------------
-const slime = document.getElementById('obj-slime');
-document.querySelector('.tag-stretch').addEventListener('click', () => {
-  pulse(slime, 'is-stretching', 400);
-});
-
-// ---------------------------------------------------------------
-// DANCE — 춤추는 실루엣. 평소엔 가만히 있다가(정적인 이미지),
-// 태그를 클릭하면 잠깐 춤추는 모션을 재생한다. 하이프 모드에서는
-// style.css의 body.hyped 규칙이 자동으로 계속 움직이게 만든다.
-// ---------------------------------------------------------------
-const dancer = document.getElementById('obj-dancer');
-const danceTag = document.querySelector('.tag-dance');
-danceTag.addEventListener('click', () => {
-  pulse(dancer, 'is-dancing', 400);
-  playSplashTransition(danceTag, 'dance', () => {
-    window.location.href = 'dance/index.html';
-  });
-});
-
-// ---------------------------------------------------------------
-// SCRIBBLE — 연필 오브제, 클릭하면 낙서하듯 흔들림
-// ---------------------------------------------------------------
-const scribble = document.getElementById('obj-scribble');
-document.querySelector('.tag-scribble').addEventListener('click', () => {
-  pulse(scribble, 'is-drawing', 400);
-});
-
-// ---------------------------------------------------------------
-// PICK A LAB 버튼 — 다음 섹션/서브페이지로 이동시킬 스크롤 트리거
-// ---------------------------------------------------------------
-document.getElementById('pickLabBtn').addEventListener('click', () => {
-  window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-});
-
-// ---------------------------------------------------------------
-// ABOUT 모달 — 상단 네비게이션의 ABOUT 클릭 시 기획 배경 패널을 띄움
+// ABOUT 모달
 // ---------------------------------------------------------------
 const aboutModal = document.getElementById('aboutModal');
-const aboutLink = document.getElementById('aboutLink');
-const aboutClose = document.getElementById('aboutClose');
-
-function openAbout() {
-  aboutModal.classList.add('is-open');
-}
-
-function closeAbout() {
-  aboutModal.classList.remove('is-open');
-}
-
-aboutLink.addEventListener('click', (e) => {
+document.getElementById('aboutLink').addEventListener('click', (e) => {
   e.preventDefault();
-  openAbout();
+  aboutModal.classList.add('is-open');
 });
-
-aboutClose.addEventListener('click', closeAbout);
-
-// 패널 바깥(어두운 배경) 클릭하면 닫힘
+document.getElementById('aboutClose').addEventListener('click', () => aboutModal.classList.remove('is-open'));
 aboutModal.addEventListener('click', (e) => {
-  if (e.target === aboutModal) closeAbout();
+  if (e.target === aboutModal) aboutModal.classList.remove('is-open');
+});
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Escape' && aboutModal.classList.contains('is-open')) aboutModal.classList.remove('is-open');
 });
 
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Escape' && aboutModal.classList.contains('is-open')) closeAbout();
-});
+// ---------------------------------------------------------------
+// 초기 렌더
+// ---------------------------------------------------------------
+renderFeed();
+renderStressMap();
+renderRecord();
