@@ -176,28 +176,17 @@ document.querySelector('.tag-squish').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------
-// CRACK — 유리구슬, 클릭할 때마다 금이 가고(crack-1 → crack-2 →
-// crack-3) 임계값(crackMax)에 도달하면 산산조각나는 연출 후 리셋
+// CRACK — 유리구슬, 클릭하면 살짝 금가는 미리보기 펄스 후 코랄레드 물감
+// 전환과 함께 왁뿌볼 미니앱(crack/index.html, React)으로 이동
 // ---------------------------------------------------------------
 const glassball = document.getElementById('obj-crack');
-const crackMax = 3;
+const crackTag = document.querySelector('.tag-crack');
 
-document.querySelector('.tag-crack').addEventListener('click', () => {
-  const hits = Number(glassball.dataset.hits) + 1;
-  glassball.dataset.hits = hits;
-
-  glassball.classList.remove('crack-1', 'crack-2', 'crack-3');
-
-  if (hits >= crackMax) {
-    glassball.classList.add('crack-shatter');
-    setTimeout(() => {
-      glassball.classList.remove('crack-shatter');
-      glassball.dataset.hits = 0;
-      glassball.style.opacity = 1;
-    }, 500);
-  } else {
-    glassball.classList.add(`crack-${hits}`);
-  }
+crackTag.addEventListener('click', () => {
+  pulse(glassball, 'crack-1', 250);
+  playSplashTransition(crackTag, 'crack', () => {
+    window.location.href = 'crack/index.html';
+  });
 });
 
 // ---------------------------------------------------------------

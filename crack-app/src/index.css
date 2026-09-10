@@ -1,0 +1,316 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "Space Grotesk", "Pretendard", sans-serif;
+}
+
+/* 배경 — 전용 사진 에셋이 없어서, 사이트 톤(어두운 배경 + 이 랩의 태그 색인
+   코랄레드 #ff6b6b)에 맞춘 비네트 그라디언트로 대신한다 */
+.crack-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(255, 107, 107, 0.16) 0%, rgba(10, 6, 8, 0.95) 65%, #050304 100%);
+}
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.16) 0px,
+      rgba(0, 0, 0, 0.16) 1px,
+      transparent 2px,
+      transparent 3px
+    ),
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.5) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* ==================================================================
+   상단 좌측 — 브랜드 헤더
+   ================================================================== */
+.lab-header {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 6;
+  color: #fff;
+}
+
+.brand-logo {
+  display: inline-block;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.brand-logo img {
+  display: block;
+  height: 1.1rem;
+  width: auto;
+}
+
+.lab-title {
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.55);
+}
+
+.star-accent { color: #ff6b6b; }
+
+.lab-subtitle {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 0.15rem;
+}
+
+.marker-note {
+  position: fixed;
+  top: 0.9rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  z-index: 6;
+  color: #ff6b6b;
+  font-family: "Permanent Marker", "Comic Sans MS", "Segoe Print", cursive;
+  font-size: 0.85rem;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(255, 107, 107, 0.5);
+}
+
+/* ==================================================================
+   음량 슬라이더 — 메인 사이트와 공유되는 localStorage 값 사용
+   ================================================================== */
+.volume-control {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  background: rgba(15, 15, 15, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+}
+
+.volume-icon { font-size: 0.9rem; }
+
+.volume-slider {
+  width: 5rem;
+  accent-color: #ff6b6b;
+  cursor: pointer;
+}
+
+.back-link {
+  position: fixed;
+  top: 4.7rem;
+  right: 1.5rem;
+  z-index: 6;
+  display: block;
+  transition: transform 0.15s ease;
+}
+
+.back-link img {
+  display: block;
+  width: 120px;
+  height: auto;
+}
+
+.back-link:hover { transform: scale(1.06); }
+
+/* ==================================================================
+   중앙 — 왁뿌볼 무대
+   ================================================================== */
+.crack-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+}
+
+.progress-label {
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+}
+
+.ball-wrap {
+  position: relative;
+  width: min(46vw, 360px);
+  aspect-ratio: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.ball-wrap.is-shaking { animation: ball-shake 0.16s ease-out; }
+
+@keyframes ball-shake {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(-4px, 2px) rotate(-2deg) scale(0.99); }
+  50% { transform: translate(4px, -2px) rotate(2deg) scale(1.01); }
+  75% { transform: translate(-2px, 1px) rotate(-1deg) scale(0.995); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+.ball-intact {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+.ball-intact.is-broken-away {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+/* 유리구슬 안에 말랑한 반죽이 든 느낌을 주는 광택 있는 핑크 구체 — 실제
+   "깨진 뒤" 이미지(wax_ball.png)가 이미 이 핑크/유리 톤이라 색을 맞췄다 */
+.ball-core {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 209, 234, 0.5) 10%, transparent 24%),
+    radial-gradient(circle at 38% 32%, #ffb3d9 0%, #ff5fa8 30%, #ff3d94 58%, #b8125f 100%);
+  box-shadow:
+    0 24px 60px rgba(255, 61, 148, 0.4),
+    inset 0 -22px 40px rgba(0, 0, 0, 0.3),
+    inset 0 18px 30px rgba(255, 255, 255, 0.3);
+}
+
+.crack-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.crack-line {
+  fill: none;
+  stroke: #3a0018;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+  opacity: 0.9;
+}
+
+.crack-branch {
+  stroke-width: 1.6;
+  opacity: 0.75;
+}
+
+.crack-ring {
+  stroke-width: 1.4;
+  opacity: 0.55;
+}
+
+/* 깨진 뒤 — 실제 파편 이미지가 튀어오르듯 나타나고, 그 밑에서 하얀 반죽
+   덩어리(ooze-blob)들이 삐져나와 퍼진다 */
+.ball-broken {
+  position: absolute;
+  inset: -30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ball-broken.is-visible {
+  opacity: 1;
+  animation: shatter-pop 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes shatter-pop {
+  0% { transform: scale(0.6) rotate(-8deg); opacity: 0; }
+  60% { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.shatter-img {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: block;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+}
+
+.ooze-blob {
+  position: absolute;
+  z-index: 1;
+  width: 34%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle at 35% 30%, #fffdf6 0%, #f3ecd9 45%, #ddd2b8 100%);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), inset 0 -6px 10px rgba(160, 145, 110, 0.35);
+  opacity: 0;
+  transform: scale(0);
+}
+
+.ball-broken.is-visible .ooze-blob {
+  animation: ooze-out 0.6s cubic-bezier(0.25, 1, 0.4, 1) forwards;
+}
+
+@keyframes ooze-out {
+  0% { opacity: 0; transform: scale(0) translate(0, 0); }
+  55% { opacity: 1; }
+  100% { opacity: 0.95; transform: var(--ooze-end); }
+}
+
+.blob-1 { top: 44%; left: 46%; border-radius: 42% 58% 61% 39% / 45% 41% 59% 55%; --ooze-end: scale(1) translate(-70px, -55px); animation-delay: 0.05s; }
+.blob-2 { top: 44%; left: 46%; border-radius: 55% 45% 40% 60% / 52% 60% 40% 48%; --ooze-end: scale(0.85) translate(65px, -40px); animation-delay: 0.11s; }
+.blob-3 { top: 44%; left: 46%; border-radius: 48% 52% 55% 45% / 40% 55% 45% 60%; --ooze-end: scale(0.9) translate(10px, 70px); animation-delay: 0.08s; }
+.blob-4 { top: 44%; left: 46%; border-radius: 60% 40% 45% 55% / 55% 45% 55% 45%; --ooze-end: scale(0.7) translate(-55px, 45px); animation-delay: 0.16s; }
+.blob-5 { top: 44%; left: 46%; border-radius: 45% 55% 50% 50% / 60% 40% 60% 40%; --ooze-end: scale(0.6) translate(80px, 25px); animation-delay: 0.2s; }
+
+.hint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* 메인 화면에서 CRACK 클릭 시 덮이는 플래시와 같은 색(코랄레드)으로 시작해서
+   서서히 걷어내, 두 화면 사이 전환이 끊기지 않게 이어붙인다 */
+.enter-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: radial-gradient(circle, #fff 0%, #ff6b6b 60%, #ff6b6b 100%);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.enter-flash.is-faded { opacity: 0; }
