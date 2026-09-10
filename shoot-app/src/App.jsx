@@ -70,12 +70,14 @@ export default function App() {
     setNameSubmitted(true);
   };
 
-  // 조준점(Recticle)은 화면 중앙에 고정 — 마우스를 움직이면 대신 카메라
-  // 자체가 그 방향으로 살짝 돌아간다(Experience.jsx). 배경(lab-bg.png)은
-  // 3D가 아니라 CSS 사진이라 카메라를 따라 저절로 돌지 않으므로, 여기서
-  // 같은 마우스 좌표로 배경도 살짝 팬(pan)시켜서 방향을 맞춰준다 — 그래야
-  // 카메라만 돌고 배경은 가만히 있어서 표적이 따로 도는 것처럼 보이던
-  // 문제가 재발하지 않는다. 총은 그 위에서 살짝 더 흔들리는 정도만 더한다.
+  // 조준점(Recticle)은 화면 중앙에 고정 — 마우스를 움직이면 대신 시점 자체가
+  // 그 방향으로 돌아가는 느낌을 배경/총/표적을 같이 팬(pan)시켜서 낸다.
+  // 표적(alien-pan, Experience.jsx)도 배경과 같은 방향으로 같이 움직여야
+  // 한다 — 조준점은 항상 화면 정중앙인데 표적이 전혀 안 움직이면 어디를
+  // 봐도 표적이 계속 조준점 위에 있어서 무조건 맞아버린다. 배경보다 훨씬
+  // 큰 폭으로 움직여야, 실제로 다른 곳을 조준하면 표적이 조준점 밑에서
+  // 빠져나가서 진짜 "빗나가는" 게 가능해진다. 총은 그 위에서 살짝 더
+  // 흔들리는 정도만 더한다.
   useEffect(() => {
     const handleMove = (e) => {
       const nx = (e.clientX / window.innerWidth) * 2 - 1; // -1 ~ 1
@@ -83,13 +85,18 @@ export default function App() {
 
       const backdropEl = backdropRef.current;
       if (backdropEl) {
-        // CSS의 scale(1.15) 여백 안에서 반대 방향으로 이동시켜, 카메라가
-        // 회전해서 보여주는 방향과 배경이 같은 쪽으로 움직이게 만든다.
+        // CSS의 scale(1.15) 여백 안에서 반대 방향으로 이동시켜, 시점이
+        // 돌아가서 보여주는 방향과 배경이 같은 쪽으로 움직이게 만든다.
         backdropEl.style.transform = `scale(1.15) translate(${-nx * 16}px, ${-ny * 12}px)`;
       }
       const gunEl = gunSwayRef.current;
       if (gunEl) {
         gunEl.style.transform = `translate(${nx * 16}px, ${ny * 12}px) rotate(${nx * 2.5}deg)`;
+      }
+      // 표적도 배경과 같은 부호(방향)로 — 배경보다 훨씬 큰 폭으로 팬
+      const alienPanEl = document.querySelector('.alien-pan');
+      if (alienPanEl) {
+        alienPanEl.style.transform = `translate(${-nx * 340}px, ${-ny * 220}px)`;
       }
     };
     window.addEventListener('pointermove', handleMove);

@@ -17,12 +17,21 @@ function Target({ targetRef, targetName }) {
   }, [zombieSound]);
 
   return (
-    <div className="alien-entrance">
-      <div className="alien-sway">
-        {/* 사용자가 정한 이름표 — 과녁이 흔들릴 때(alien-sway) 같이 흔들리도록
-            흔들림 애니메이션을 맡은 엘리먼트 안에 형제로 넣었다 */}
-        {targetName && <div className="alien-name-tag">{targetName}</div>}
-        <img ref={targetRef} src="images/alien-doctor.png" alt="" className="alien-img" />
+    <div className="alien-anchor">
+      {/* .alien-pan은 App.jsx의 마우스 이동 핸들러가 querySelector로 찾아서
+          배경(lab-backdrop)과 같은 방향으로 매번 인라인 transform을 걸어준다
+          — 표적도 배경과 같은 "월드"에 속해 있어야 시점을 돌렸을 때 조준점
+          밑에서 실제로 빠져나간다 */}
+      <div className="alien-pan">
+        <div className="alien-entrance">
+          <div className="alien-sway">
+            {/* 사용자가 정한 이름표 — 과녁이 흔들릴 때(alien-sway) 같이
+                흔들리도록 흔들림 애니메이션을 맡은 엘리먼트 안에 형제로
+                넣었다 */}
+            {targetName && <div className="alien-name-tag">{targetName}</div>}
+            <img ref={targetRef} src="images/alien-doctor.png" alt="" className="alien-img" />
+          </div>
+        </div>
       </div>
     </div>
   );
