@@ -260,8 +260,12 @@ document.querySelector('.tag-stretch').addEventListener('click', () => {
 // style.css의 body.hyped 규칙이 자동으로 계속 움직이게 만든다.
 // ---------------------------------------------------------------
 const dancer = document.getElementById('obj-dancer');
-document.querySelector('.tag-dance').addEventListener('click', () => {
-  pulse(dancer, 'is-dancing', 1600);
+const danceTag = document.querySelector('.tag-dance');
+danceTag.addEventListener('click', () => {
+  pulse(dancer, 'is-dancing', 400);
+  playSplashTransition(danceTag, 'dance', () => {
+    window.location.href = 'dance/index.html';
+  });
 });
 
 // ---------------------------------------------------------------
