@@ -4,7 +4,7 @@
 // 공유 대상으로 뜬다 — 인스타그램 전용 API/앱 시크릿이 따로 필요 없다.
 // 지원하지 않는 환경(대부분의 데스크톱 브라우저)에서는 이미지를 대신
 // 다운로드해줘서 수동으로 스토리에 올릴 수 있게 한다.
-function drawShareCard(roundsCleared) {
+function drawShareCard(totalBroken) {
   const canvas = document.createElement('canvas');
   canvas.width = 1080;
   canvas.height = 1920;
@@ -51,7 +51,7 @@ function drawShareCard(roundsCleared) {
 
   ctx.fillStyle = '#ffffff';
   ctx.font = '700 76px "Space Grotesk", sans-serif';
-  ctx.fillText(`오늘 ${roundsCleared}번째`, 540, 1220);
+  ctx.fillText(`지금까지 총 ${totalBroken}개`, 540, 1220);
   ctx.fillText('왁뿌볼 박살!', 540, 1310);
 
   ctx.fillStyle = 'rgba(255,255,255,0.75)';
@@ -84,8 +84,8 @@ function downloadBlob(blob, filename) {
 }
 
 // 반환값: 'shared' | 'downloaded' | 'cancelled'
-export async function shareToInstagramStory(roundsCleared) {
-  const canvas = drawShareCard(roundsCleared);
+export async function shareToInstagramStory(totalBroken) {
+  const canvas = drawShareCard(totalBroken);
   const blob = await canvasToBlob(canvas);
   if (!blob) return 'downloaded';
 

@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { HITS_TO_BREAK, HOLD_INTERVAL_MS, BALL_RADIUS, AD_SECONDS } from './constants.js';
+import { HITS_TO_BREAK, HOLD_INTERVAL_MS, SQUISH_INTERVAL_MS, BALL_RADIUS, AD_SECONDS } from './constants.js';
 import { makeCrackPoints, makeBranchPoints, makeRingPoints } from './crackLines.js';
-import { playCrunch, playShatter, playSquish } from './crunch.js';
+import { playCrunch, playShatter, playSquish, playSquishTouch } from './crunch.js';
 import { getVolume, setVolume, onVolumeChange } from './volume.js';
 import { shareToInstagramStory } from './share.js';
+import { pickRandomBallType } from './ballTypes.js';
+import { getTotalBroken, incrementTotalBroken } from './stats.js';
 import './index.css';
 
 // CRACK LAB — 왁뿌볼(유리구슬 안에 말랑한 찰흙이 든 스트레스 토이)을 계속
@@ -16,17 +18,22 @@ export default function App() {
   const [shaking, setShaking] = useState(false);
   const [entering, setEntering] = useState(true);
   const [volume, setVolumeState] = useState(getVolume());
-  // 'playing' | 'ad' | 'reward' — 다 깨면 바로 리셋하지 않고 광고 플레이스홀더
-  // → 보상 화면 순서로 넘어간 뒤, "다시 시작" 버튼을 눌러야 새 공이 나온다.
+  // 'playing' | 'ad' | 'reward' — 다 깨져도 바로 광고로 안 넘어가고, 깨진
+  // 상태에서 계속 만지며 뽀드득 소리를 듣다가(그게 포인트) "보상 받기"를
+  // 직접 눌러야 광고 → 보상 화면으로 넘어간다.
   const [phase, setPhase] = useState('playing');
+  const [canClaim, setCanClaim] = useState(false);
+  const [squishCount, setSquishCount] = useState(0);
   const [adSeconds, setAdSeconds] = useState(AD_SECONDS);
   const [roundsCleared, setRoundsCleared] = useState(0);
+  const [totalBroken, setTotalBroken] = useState(() => getTotalBroken());
+  const [currentBall, setCurrentBall] = useState(() => pickRandomBallType());
   const [shareStatus, setShareStatus] = useState(null); // 'sharing' | 'shared' | 'downloaded' | null
 
   const hitsRef = useRef(0);
   const brokenRef = useRef(false);
   const holdIntervalRef = useRef(null);
-  const adTimeoutRef = useRef(null);
+  const claimTimeoutRef = useRef(null);
   const shakeTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -63,16 +70,39 @@ export default function App() {
         holdIntervalRef.current = null;
       }
       setRoundsCleared((n) => n + 1);
-      // 깨지는 연출이 먼저 눈에 들어오게 살짝 텀을 두고 광고 화면으로 전환
-      adTimeoutRef.current = setTimeout(() => setPhase('ad'), 900);
+      setTotalBroken(incrementTotalBroken());
+      // 깨지는 연출이 먼저 눈에 들어오게 살짝 텀을 둔 뒤, "보상 받기" 버튼을
+      // 보여준다 — 자동으로 광고로 안 넘어가고, 그 전까지는 깨진 공을 계속
+      // 만지면서 뽀드득 소리를 듣는 게 이 랩의 진짜 재미 포인트다.
+      claimTimeoutRef.current = setTimeout(() => setCanClaim(true), 900);
     }
   };
 
+  // 다 깨진 뒤에도 계속 만지작거리는 동작 — 타격 수는 더 안 늘고, 그냥
+  // 뽀드득 소리와 살짝 흔들리는 손맛만 반복해서 준다
+  const squishOnce = () => {
+    setSquishCount((c) => c + 1);
+    playSquishTouch();
+    setShaking(false);
+    clearTimeout(shakeTimeoutRef.current);
+    requestAnimationFrame(() => setShaking(true));
+    shakeTimeoutRef.current = setTimeout(() => setShaking(false), 140);
+  };
+
   const handlePointerDown = (e) => {
-    if (e.button !== 0 || brokenRef.current) return;
-    crunchOnce();
+    if (e.button !== 0) return;
     clearInterval(holdIntervalRef.current);
+    if (brokenRef.current) {
+      squishOnce();
+      holdIntervalRef.current = setInterval(squishOnce, SQUISH_INTERVAL_MS);
+      return;
+    }
+    crunchOnce();
     holdIntervalRef.current = setInterval(crunchOnce, HOLD_INTERVAL_MS);
+  };
+
+  const claimReward = () => {
+    setPhase('ad');
   };
 
   useEffect(() => {
@@ -85,7 +115,7 @@ export default function App() {
     return () => {
       window.removeEventListener('pointerup', stopHolding);
       clearInterval(holdIntervalRef.current);
-      clearTimeout(adTimeoutRef.current);
+      clearTimeout(claimTimeoutRef.current);
       clearTimeout(shakeTimeoutRef.current);
     };
   }, []);
@@ -115,13 +145,16 @@ export default function App() {
     setHits(0);
     setBroken(false);
     setPhase('playing');
+    setCanClaim(false);
+    setSquishCount(0);
+    setCurrentBall(pickRandomBallType());
     setShareStatus(null);
   };
 
   const handleShare = async () => {
     setShareStatus('sharing');
     try {
-      const result = await shareToInstagramStory(roundsCleared);
+      const result = await shareToInstagramStory(totalBroken);
       setShareStatus(result);
     } catch {
       setShareStatus(null);
@@ -137,7 +170,9 @@ export default function App() {
     [hits],
   );
 
-  const progressLabel = broken ? '와장창!' : `금간 정도 ${hits} / ${HITS_TO_BREAK}`;
+  const progressLabel = broken
+    ? `와장창! · 뽀드득 ${squishCount}번`
+    : `금간 정도 ${hits} / ${HITS_TO_BREAK}`;
 
   return (
     <>
@@ -150,6 +185,7 @@ export default function App() {
         </a>
         <h1 className="lab-title">CRACK LAB<span className="star-accent">*</span></h1>
         <p className="lab-subtitle">SQUEEZE IT. HEAR IT BREAK.</p>
+        <p className="total-broken">지금까지 총 <strong>{totalBroken}</strong>개 박살</p>
       </div>
 
       <p className="marker-note note-break">BREAK IT.<br />LET IT OUT.</p>
@@ -200,11 +236,19 @@ export default function App() {
             <div className="ooze-blob blob-3" />
             <div className="ooze-blob blob-4" />
             <div className="ooze-blob blob-5" />
-            <img src="images/wax_ball.png" alt="" className="shatter-img" />
+            <img src={currentBall.image} alt="" className="shatter-img" />
           </div>
         </div>
 
-        <p className="hint">클릭하거나 꾹 눌러서 계속 부숴보세요</p>
+        {!broken && <p className="hint">클릭하거나 꾹 눌러서 계속 부숴보세요</p>}
+        {broken && (
+          <>
+            <p className="hint">다 깨진 뒤에도 계속 만지면 뽀드득 소리가 나요 — 마음껏 만져보세요</p>
+            {canClaim && (
+              <button className="claim-btn" onClick={claimReward}>보상 받기 →</button>
+            )}
+          </>
+        )}
       </div>
 
       <a className="back-link" href="../index.html">
@@ -228,6 +272,22 @@ export default function App() {
         <div className="reward-overlay">
           <div className="reward-card">
             <h2>STRESS RELEASED<span className="star-accent">*</span></h2>
+
+            {/* 이번에 깬 왁뿌볼 종류를 사진으로 보여준다 — 종류가 늘어나도
+                currentBall만 바뀌면 되니 그대로 재사용된다 */}
+            <img src={currentBall.image} alt={currentBall.name} className="reward-ball-thumb" />
+            <p className="reward-ball-name">{currentBall.name}</p>
+
+            <div className="reward-stats">
+              <div className="reward-stat">
+                <span className="reward-stat-num">{totalBroken}</span>
+                <span className="reward-stat-label">지금까지 총</span>
+              </div>
+              <div className="reward-stat">
+                <span className="reward-stat-num">{squishCount}</span>
+                <span className="reward-stat-label">뽀드득 횟수</span>
+              </div>
+            </div>
             <p className="reward-count">오늘 <strong>{roundsCleared}</strong>번째 왁뿌볼 박살!</p>
             <div className="reward-actions">
               <button className="result-btn" onClick={restart}>다시 시작</button>

@@ -83,6 +83,18 @@ html, body, #root {
   margin-top: 0.15rem;
 }
 
+.total-broken {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.total-broken strong {
+  color: #ff6b6b;
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 0.9rem;
+}
+
 .marker-note {
   position: fixed;
   top: 0.9rem;
@@ -301,6 +313,29 @@ html, body, #root {
   letter-spacing: 0.05em;
 }
 
+.claim-btn {
+  margin-top: 0.3rem;
+  background: #ff6b6b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  animation: claim-in 0.3s ease both;
+  transition: transform 0.15s ease;
+}
+
+.claim-btn:hover { transform: scale(1.05); }
+
+@keyframes claim-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 /* ==================================================================
    광고 플레이스홀더 — 실제 광고 SDK 연동 전까지 자리만 잡아두는 화면
    ================================================================== */
@@ -393,6 +428,43 @@ html, body, #root {
   letter-spacing: 0.03em;
   color: #fff;
   text-shadow: 0 0 24px rgba(255, 107, 107, 0.8);
+}
+
+/* 이번에 깬 왁뿌볼 종류 사진 — 종류가 늘어나도 currentBall만 바뀌면 됨 */
+.reward-ball-thumb {
+  width: min(34vw, 150px);
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.5));
+}
+
+.reward-ball-name {
+  margin-top: -0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.04em;
+}
+
+.reward-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.reward-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reward-stat-num {
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 1.6rem;
+  color: #ff6b6b;
+}
+
+.reward-stat-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.15rem;
 }
 
 .reward-count {
