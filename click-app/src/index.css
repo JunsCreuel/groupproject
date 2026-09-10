@@ -1,0 +1,208 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "Space Grotesk", "Pretendard", sans-serif;
+}
+
+.click-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(69, 217, 192, 0.16) 0%, rgba(6, 12, 11, 0.96) 62%, #030504 100%);
+}
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.14) 0px,
+      rgba(0, 0, 0, 0.14) 1px,
+      transparent 2px,
+      transparent 3px
+    ),
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.5) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* ==================================================================
+   헤더
+   ================================================================== */
+.lab-header {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 6;
+  color: #fff;
+}
+
+.brand-logo {
+  display: inline-block;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.brand-logo img { display: block; height: 1.1rem; width: auto; }
+
+.lab-title {
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(69, 217, 192, 0.6);
+}
+
+.star-accent { color: #45d9c0; }
+
+.lab-subtitle {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 0.15rem;
+}
+
+.total-count {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.total-count strong {
+  color: #45d9c0;
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 0.9rem;
+}
+
+.marker-note {
+  position: fixed;
+  top: 0.9rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  z-index: 6;
+  color: #45d9c0;
+  font-family: "Permanent Marker", "Comic Sans MS", "Segoe Print", cursive;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(69, 217, 192, 0.5);
+}
+
+/* ==================================================================
+   음량 / 뒤로가기
+   ================================================================== */
+.volume-control {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  background: rgba(15, 15, 15, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+}
+
+.volume-icon { font-size: 0.9rem; }
+.volume-slider { width: 5rem; accent-color: #45d9c0; cursor: pointer; }
+
+.back-link {
+  position: fixed;
+  top: 4.7rem;
+  right: 1.5rem;
+  z-index: 6;
+  display: block;
+  transition: transform 0.15s ease;
+}
+
+.back-link img { display: block; width: 120px; height: auto; }
+.back-link:hover { transform: scale(1.06); }
+
+/* ==================================================================
+   중앙 — 키캡 무대
+   ================================================================== */
+.click-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+}
+
+.daily-label {
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(69, 217, 192, 0.6);
+}
+
+.daily-label strong {
+  color: #45d9c0;
+  font-size: 1.5rem;
+}
+
+.keycap-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: min(38vw, 300px);
+  filter: drop-shadow(0 22px 40px rgba(0, 0, 0, 0.55));
+  transition: transform 0.06s ease-out, filter 0.06s ease-out;
+}
+
+.keycap-btn:hover { filter: drop-shadow(0 22px 40px rgba(69, 217, 192, 0.35)); }
+
+.keycap-btn.is-pressed {
+  transform: translateY(10px) scale(0.96);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+}
+
+.keycap-img {
+  display: block;
+  width: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hint {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* 메인 화면에서 CLICK 클릭 시 덮이는 플래시와 같은 색(민트)으로 시작해서
+   서서히 걷어내, 두 화면 사이 전환이 끊기지 않게 이어붙인다 */
+.enter-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: radial-gradient(circle, #fff 0%, #45d9c0 60%, #45d9c0 100%);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.enter-flash.is-faded { opacity: 0; }

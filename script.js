@@ -239,11 +239,16 @@ document.querySelector('.tag-smash').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------
-// CLICK — ESC 키 오브제, 클릭하면 실제 키보드처럼 눌리는 모션
+// CLICK — ESC 키 오브제, 클릭하면 살짝 눌리는 미리보기 펄스 후 민트색
+// 물감 전환과 함께 키캡 미니앱(click/index.html, React)으로 이동
 // ---------------------------------------------------------------
 const escKey = document.getElementById('obj-esc');
-document.querySelector('.tag-click').addEventListener('click', () => {
+const clickTag = document.querySelector('.tag-click');
+clickTag.addEventListener('click', () => {
   pulse(escKey, 'is-pressed', 150);
+  playSplashTransition(clickTag, 'click', () => {
+    window.location.href = 'click/index.html';
+  });
 });
 
 // ---------------------------------------------------------------
