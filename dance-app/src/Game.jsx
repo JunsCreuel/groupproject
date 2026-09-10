@@ -30,6 +30,13 @@ export default function Game({ track, paused, onFinish }) {
   const [combo, setCombo] = useState(0);
   const [popup, setPopup] = useState(null); // { tier, key } — 판정 텍스트 잠깐 표시
   const [laneFlash, setLaneFlash] = useState([false, false, false, false]);
+  // 채보(chartRef.current)는 ref라서 값을 채워 넣기만 해선 리렌더가 안
+  // 일어나고, 그러면 노트 <div>들이 실제로 DOM에 그려지지 않는다 — 그
+  // 상태에서 첫 노트가 판정되면 note.el이 아직 null이라 판정 클래스(사라짐
+  // 애니메이션)가 조용히 무시되고, 그 노트만 화면에 계속 남아있는 버그가
+  // 있었다. 채보를 다 만든 직후 이 값을 한 번 바꿔서 강제로 리렌더시켜
+  // 노트 엘리먼트들을 미리 마운트해둔다.
+  const [chartReady, setChartReady] = useState(false);
 
   const chartRef = useRef([]);
   const startTimeRef = useRef(0);
@@ -57,6 +64,7 @@ export default function Game({ track, paused, onFinish }) {
     startTimeRef.current = startTime;
     schedulerRef.current = scheduler;
     chartRef.current = generateChart(track, startTime);
+    setChartReady(true); // 노트 엘리먼트를 지금 바로 마운트시킨다
     const duration = getSongDuration(track);
 
     const popNote = (note, tier) => {

@@ -8,7 +8,7 @@ import './index.css';
 // 떨어지고, 박자에 맞춰 화살표 키를 누르는 미니게임. 정밀 타격감보다는
 // "몸으로 박자를 타는" 스트레스 해소가 목적이라 판정을 너그럽게 뒀다.
 export default function App() {
-  const [phase, setPhase] = useState('select'); // 'select' | 'playing' | 'results'
+  const [phase, setPhase] = useState('select'); // 'select' | 'ready' | 'playing' | 'results'
   const [track, setTrack] = useState(null);
   const [results, setResults] = useState(null);
   const [paused, setPaused] = useState(false);
@@ -31,9 +31,16 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, [phase]);
 
-  const startTrack = (t) => {
+  // 카드를 고르자마자 바로 시작하면 마음의 준비도 안 됐는데 첫 박자가
+  // 바로 코앞에서 떨어져서 당황스러웠다 — 곡만 고르고, 실제로 노트가
+  // 떨어지기 시작하는 건 "시작" 버튼을 눌러야 벌어지게 분리했다.
+  const selectTrack = (t) => {
     setTrack(t);
     setResults(null);
+    setPhase('ready');
+  };
+
+  const beginPlay = () => {
     setPaused(false);
     setPhase('playing');
   };
@@ -90,7 +97,7 @@ export default function App() {
           <p className="marker-note note-pick">PICK A TRACK<br />AND MOVE!</p>
           <div className="track-cards">
             {TRACKS.map((t) => (
-              <button key={t.id} className="track-card" style={{ '--accent': t.color }} onClick={() => startTrack(t)}>
+              <button key={t.id} className="track-card" style={{ '--accent': t.color }} onClick={() => selectTrack(t)}>
                 <span className="track-name">{t.name}</span>
                 <span className="track-subtitle">{t.subtitle}</span>
                 <span className="track-play">PLAY ▶</span>
@@ -98,6 +105,18 @@ export default function App() {
             ))}
           </div>
           <p className="hint">화살표 키(←↓↑→)로 박자를 맞춰보세요 · ESC로 일시정지</p>
+        </div>
+      )}
+
+      {phase === 'ready' && track && (
+        <div className="select-stage">
+          <img src="images/dancing_woman.png" alt="" className="dancer-select-img" />
+          <p className="marker-note note-pick">{track.name}</p>
+          <p className="hint">화살표 키(←↓↑→)로 박자를 맞춰보세요 · ESC로 일시정지</p>
+          <button className="start-btn" style={{ '--accent': track.color }} onClick={beginPlay}>
+            시작 →
+          </button>
+          <button className="hint-link" onClick={() => setPhase('select')}>다른 곡 고르기</button>
         </div>
       )}
 
