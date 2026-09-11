@@ -48,6 +48,14 @@ if (isReturningSubject) {
   gate.classList.add('is-hidden', 'is-instant');
 } else {
   document.getElementById('enterBtn').addEventListener('click', () => {
+    // 다른 Lab들과 같은 csl-volume 설정을 공유해서, 여기서도 사용자가
+    // 맞춰둔 음량 그대로 재생한다. 자동재생 정책 때문에 페이지 로드 시가
+    // 아니라 반드시 이 클릭(사용자 제스처) 안에서 재생을 걸어야 한다.
+    const enterVolume = Number(localStorage.getItem('csl-volume') ?? '50') / 100;
+    const enterSound = new Audio('assets/audio/enter.mp3');
+    enterSound.volume = enterVolume;
+    enterSound.play().catch(() => {});
+
     const subject = getSubject();
     gateSubjectEl.textContent = `SUBJECT #${subject.id} — CURRENT STRESS LEVEL: ${subject.level}%`;
     gateSubjectEl.classList.add('is-visible');

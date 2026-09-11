@@ -1,30 +1,62 @@
-import { STEPS_PER_BAR } from './tracks.js';
+import { SONG } from './song.js';
 
-// 곡의 드럼/베이스/리드를 스케줄링하는 것과 완전히 같은 스텝 격자 위에서
-// 화살표 노트 시각을 계산한다 — startTime은 TrackScheduler.start()가
-// 반환한 실제 재생 시작 시각(AudioContext.currentTime 기준)을 그대로
-// 넘겨받아야 소리와 노트가 정확히 맞는다.
-export function generateChart(track, startTime) {
-  const stepDuration = 60 / track.bpm / 4;
-  const totalSteps = track.bars * STEPS_PER_BAR;
+const LANE_COUNT = 4;
+const OUTRO_BUFFER_SEC = 1.5; // 곡 끝 페이드아웃 구간엔 노트를 두지 않는다
+
+// 예전엔 트랙마다 4칸짜리 chartLanes 배열을 마디마다 그대로 반복 재생해서,
+// 몇 마디만 지나면 항상 같은 화살표 순서가 되풀이됐다("계속 같은 반복성의
+// 화살표만 내려온다") — 이제는 매 스텝마다 레인을 무작위로 뽑되, 같은
+// 레인이 두 번 연속 나올 확률을 낮춰서 매번 다른 패턴이 나오면서도 너무
+// 들쭉날쭉하진 않게 만든다. 난이도가 올라갈수록(stepInterval이 작을수록)
+// 노트 간격이 촘촘해지고, doubleChance만큼 두 레인이 동시에 나오는 구간도
+// 섞인다.
+export function generateChart(startTime, difficulty) {
+  const stepDuration = 60 / SONG.bpm / 4; // 16분음표 길이(초)
+  const totalSteps = Math.floor((SONG.duration - SONG.beatOffset) / stepDuration);
   const notes = [];
-  for (let step = 0; step < totalSteps; step++) {
-    const i = step % STEPS_PER_BAR;
-    const idx = track.chartSteps.indexOf(i);
-    if (idx === -1) continue;
-    const lane = track.chartLanes[idx];
+  let lastLane = -1;
+  let repeatStreak = 0;
+
+  const pickLane = (exclude = -1) => {
+    let lane;
+    do {
+      lane = Math.floor(Math.random() * LANE_COUNT);
+    } while (lane === exclude);
+    return lane;
+  };
+
+  for (let step = 0; step < totalSteps; step += difficulty.stepInterval) {
+    const noteTime = SONG.beatOffset + step * stepDuration;
+    if (SONG.duration - noteTime < OUTRO_BUFFER_SEC) break;
+
+    let lane = pickLane(repeatStreak >= 1 ? lastLane : -1);
+    repeatStreak = lane === lastLane ? repeatStreak + 1 : 0;
+    lastLane = lane;
+
     notes.push({
       id: `n${step}`,
-      time: startTime + step * stepDuration,
+      time: startTime + noteTime,
       lane,
       judged: false,
-      tier: null, // 'perfect' | 'good' | 'miss'
+      tier: null,
       el: null,
     });
+
+    if (difficulty.doubleChance && Math.random() < difficulty.doubleChance) {
+      const lane2 = pickLane(lane);
+      notes.push({
+        id: `n${step}-b`,
+        time: startTime + noteTime,
+        lane: lane2,
+        judged: false,
+        tier: null,
+        el: null,
+      });
+    }
   }
   return notes;
 }
 
-export function getSongDuration(track) {
-  return track.bars * STEPS_PER_BAR * (60 / track.bpm / 4);
+export function getSongDuration() {
+  return SONG.duration;
 }
