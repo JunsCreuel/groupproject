@@ -1,94 +1,479 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <script src="shell.js" defer></script>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSL — Network</title>
+
+  <title>CSL // NETWORK</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="portal.css">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./network.css">
+
+  <script src="./shell.js" defer></script>
 </head>
+
+
 <body class="app-body">
-  <div class="network-app">
-    <aside class="network-rail">
-      <a href="index.html" class="rail-logo">CSL</a>
-      <a class="rail-node is-active" href="network.html">N</a>
-      <a class="rail-node" href="map.html">M</a>
-      <a class="rail-node" href="labs/index.html">L</a>
-      <a class="rail-node" href="archive.html">A</a>
-    </aside>
 
-    <aside class="channel-sidebar">
-      <div class="sidebar-head">
-        <span>CSL NETWORK</span>
-        <small>NODE 01</small>
+  <main class="network-os">
+
+    <!-- TOP BAR -->
+
+    <header class="network-topbar">
+
+      <div class="network-brand">
+        <strong>CSL_NETWORK</strong>
+        <span>// COMPROMISED CIVIC NODE</span>
       </div>
 
-      <p class="channel-label">GENERAL</p>
-      <a class="channel is-active" data-channel="live-stress"># live-stress <span>428</span></a>
-      <a class="channel" data-channel="late-night"># late-night <span>129</span></a>
-      <a class="channel" data-channel="overthinking"># overthinking <span>146</span></a>
-
-      <p class="channel-label">PRESSURE</p>
-      <a class="channel" data-channel="work"># work-rage <span>183</span></a>
-      <a class="channel" data-channel="school"># school-burnout <span>98</span></a>
-      <a class="channel" data-channel="love"># love-damage <span>112</span></a>
-      <a class="channel" data-channel="people"># people <span>91</span></a>
-
-      <p class="channel-label">LIVE LABS</p>
-      <a class="channel lab-channel" href="labs/index.html">SMASH ROOM <span>42</span></a>
-      <a class="channel lab-channel" href="labs/index.html">SCREAM ROOM <span>28</span></a>
-      <a class="channel lab-channel" href="labs/index.html">THROW BAY <span>31</span></a>
-
-      <a class="subject-mini" href="profile.html" aria-label="내 프로필 열기">
-        <span class="subject-dot"></span>
-        <div>
-          <strong>SUBJECT_0284</strong>
-          <small>CONNECTED</small>
-        </div>
-      </a>
-    </aside>
-
-    <main class="network-main">
-      <header class="channel-topbar">
-        <div>
-          <h1 id="networkChannelTitle"># live-stress</h1>
-          <p id="networkChannelSub">실시간으로 들어오는 익명 스트레스 신호.</p>
-        </div>
-        <div class="active-count"><i></i> <span id="networkOnline">428</span> ACTIVE</div>
-      </header>
-
-      <div class="pinned-signal">
-        <div>
-          <small>COMMUNITY TARGET</small>
-          <strong>TODAY // MONDAY</strong>
-        </div>
-        <p>같은 스트레스가 쌓이면 공동 Lab이 열린다.</p>
-        <a href="labs/index.html">JOIN RELEASE →</a>
+      <div class="network-live">
+        <span class="live-dot"></span>
+        LIVE
       </div>
 
-      <section class="message-stream" id="networkMessages"></section>
-
-      <form class="network-composer" id="networkComposer">
-        <input id="networkInput" maxlength="120" placeholder="Transmit a stress signal...">
-        <button type="submit">SEND</button>
-      </form>
-    </main>
-
-    <aside class="members-panel">
-      <div class="members-head">ACTIVE SUBJECTS <span>12</span></div>
-      <div id="memberList"></div>
-
-      <div class="members-card">
-        <small>GLOBAL SIGNAL</small>
-        <strong>WORK ↑</strong>
-        <p>가장 많이 감지되는 스트레스 카테고리</p>
-        <a href="map.html">OPEN MAP →</a>
+      <div class="network-clock">
+        <span id="networkClock">00:00:00</span>
       </div>
-    </aside>
-  </div>
-  <script src="network.js"></script>
+
+    </header>
+
+
+    <div class="network-layout">
+
+      <!-- LEFT CHANNELS -->
+
+      <aside class="channel-panel">
+
+        <div class="authority-tag">
+          CIVIC STABILITY NETWORK
+          <span>ACCESS: BREACHED</span>
+        </div>
+
+
+        <div class="channel-head">
+          NETWORK
+        </div>
+
+        <nav class="channel-list">
+
+          <a
+            href="?room=public"
+            data-room="public"
+            class="channel-link"
+          >
+            <span>#</span>
+            PUBLIC
+          </a>
+
+          <a
+            href="?room=work"
+            data-room="work"
+            class="channel-link"
+          >
+            <span>#</span>
+            WORK
+          </a>
+
+          <a
+            href="?room=school"
+            data-room="school"
+            class="channel-link"
+          >
+            <span>#</span>
+            SCHOOL
+          </a>
+
+          <a
+            href="?room=people"
+            data-room="people"
+            class="channel-link"
+          >
+            <span>#</span>
+            PEOPLE
+          </a>
+
+          <a
+            href="?room=relationship"
+            data-room="relationship"
+            class="channel-link"
+          >
+            <span>#</span>
+            RELATIONSHIP
+          </a>
+
+        </nav>
+
+
+        <div class="channel-divider"></div>
+
+
+        <div class="channel-head">
+          LIVE LAB
+        </div>
+
+        <nav class="channel-list">
+
+          <a href="labs/index.html?lab=smash">
+            + SMASH ROOM
+          </a>
+
+          <a href="labs/index.html?lab=scream">
+            + SCREAM ROOM
+          </a>
+
+          <a href="labs/index.html?lab=throw">
+            + THROW ROOM
+          </a>
+
+        </nav>
+
+
+        <div class="channel-user">
+
+          <div>
+            <span class="you-label">YOU</span>
+            SUBJECT_<b id="networkSubject">----</b>
+          </div>
+
+          <span class="online-dot"></span>
+
+        </div>
+
+      </aside>
+
+
+      <!-- CENTER -->
+
+      <section class="chat-panel">
+
+        <!-- CHANNEL HEADER -->
+
+        <header class="chat-header">
+
+          <div class="chat-title-wrap">
+
+            <span class="chat-hash">
+              #
+            </span>
+
+            <div>
+              <h1 id="channelTitle">
+                PUBLIC
+              </h1>
+
+              <p id="channelDescription">
+                아무 얘기나 던지는 공개 채널
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="channel-status">
+            NODE:
+            <span id="roomActiveCount">
+              842
+            </span>
+            ACTIVE
+          </div>
+
+        </header>
+
+
+        <!-- CONTROL SCREEN -->
+
+        <section class="control-screen">
+
+          <div class="control-screen-top">
+
+            <div>
+              <span class="control-red-dot"></span>
+              STATE EMOTION CONTROL SYSTEM
+            </div>
+
+            <span>
+              NODE // 04-SEOUL
+            </span>
+
+            <span id="controlClock">
+              00:00:00
+            </span>
+
+          </div>
+
+
+          <div class="control-screen-grid">
+
+            <!-- CCTV -->
+
+            <div class="control-camera">
+
+              <div class="camera-top">
+
+                <span>
+                  CCTV_04 // PUBLIC SECTOR
+                </span>
+
+                <span class="recording">
+                  ● REC
+                </span>
+
+              </div>
+
+
+              <div class="camera-feed">
+
+                <div class="camera-crosshair"></div>
+
+                <div class="camera-person">
+                  SUBJECT_4421
+                </div>
+
+                <div class="camera-scan"></div>
+
+                <div class="camera-data camera-data-left">
+                  EXPRESSION: NEUTRAL<br>
+                  HEART RATE: 92<br>
+                  STRESS INDEX: 71%
+                </div>
+
+                <div class="camera-data camera-data-right">
+                  16:21:04<br>
+                  SECTOR 04<br>
+                  TRACKING
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="control-status">
+
+              <div class="control-block">
+
+                <span>
+                  PUBLIC COMPLIANCE
+                </span>
+
+                <strong>
+                  97.3%
+                </strong>
+
+                <div class="meter">
+                  <i style="width:97.3%"></i>
+                </div>
+
+              </div>
+
+
+              <div class="control-block">
+
+                <span>
+                  EMOTIONAL DEVIATION
+                </span>
+
+                <strong class="danger-value">
+                  +14.8%
+                </strong>
+
+                <div class="meter danger-meter">
+                  <i style="width:58%"></i>
+                </div>
+
+              </div>
+
+
+              <div class="control-block">
+
+                <span>
+                  SUBJECTS FLAGGED
+                </span>
+
+                <strong>
+                  042
+                </strong>
+
+              </div>
+
+
+              <div class="control-block">
+
+                <span>
+                  CURRENT STATE
+                </span>
+
+                <strong class="stable">
+                  STABLE
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <!-- SYSTEM LOG -->
+
+            <div class="control-log">
+
+              <div class="control-log-title">
+                LIVE STATE LOG
+              </div>
+
+              <div
+                class="control-log-lines"
+                id="controlLog"
+              >
+
+                <p>
+                  <span>16:20:51</span>
+                  SUBJECT_0284 // NORMAL
+                </p>
+
+                <p>
+                  <span>16:20:54</span>
+                  FACIAL DEVIATION +3
+                </p>
+
+                <p class="warning-line">
+                  <span>16:20:57</span>
+                  EMOTIONAL ACTIVITY DETECTED
+                </p>
+
+                <p>
+                  <span>16:21:01</span>
+                  TRACE INITIATED
+                </p>
+
+                <p class="hack-line">
+                  <span>16:21:03</span>
+                  TRACE BLOCKED // CSL
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="control-hack-strip">
+
+            <span>
+              PROPERTY OF CIVIC STABILITY AUTHORITY
+            </span>
+
+            <strong>
+              CSL OVERRIDE ACTIVE
+            </strong>
+
+            <span>
+              감정은 오류가 아닙니다.
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <!-- ONLY THIS AREA SCROLLS -->
+
+        <div
+          class="message-stream"
+          id="messageStream"
+        ></div>
+
+
+        <!-- FIXED COMPOSER -->
+
+        <div class="network-composer">
+
+          <div class="composer-warning">
+
+            <span>
+              SECURE SIGNAL TERMINAL
+            </span>
+
+            <span>
+              TRACE BLOCKER: ACTIVE
+            </span>
+
+          </div>
+
+
+          <div class="network-input-row">
+
+            <span>
+              &gt;
+            </span>
+
+            <textarea
+              id="networkInput"
+              maxlength="180"
+              rows="1"
+              placeholder="익명 신호 보내기..."
+            ></textarea>
+
+            <button
+              id="networkSend"
+              type="button"
+            >
+              SEND
+            </button>
+
+          </div>
+
+
+          <div class="network-composer-meta">
+
+            <span>
+              IDENTITY: ANONYMOUS
+            </span>
+
+            <span>
+              TRACE: BLOCKED
+            </span>
+
+            <span id="networkCharCount">
+              0 / 180
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- RIGHT SUBJECTS -->
+
+      <aside class="subjects-panel">
+
+        <div class="subjects-head">
+          TRACKING // ACTIVE SUBJECTS
+        </div>
+
+        <div id="subjectList"></div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+
+  <script src="./network.js"></script>
+
 </body>
+
 </html>

@@ -1,211 +1,511 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <script src="shell.js" defer></script>
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER STRESS LAB — Welcome</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CYBER STRESS LAB</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./landing.css">
+
+  <script src="./shell.js" defer></script>
 </head>
-<body>
 
-<!-- 0. 진입 시퀀스 — 일반 사이트가 아니라 금지된 네트워크에 접속하는 느낌으로
-     시작한다. ENTER THE LAB을 누르기 전까진 스크롤이 잠겨 있다(body.is-locked) -->
-<div class="gate" id="gate">
-  <div class="gate-inner">
-    <p class="gate-line" style="--d:0.1s">UNAUTHORIZED ACCESS</p>
-    <p class="gate-line" style="--d:0.9s">EMOTIONAL ACTIVITY DETECTED.</p>
-    <p class="gate-line gate-line-final" style="--d:1.7s">YOU HAVE BEEN CONNECTED TO <strong>CYBER STRESS LAB</strong>.</p>
-    <button class="enter-btn" id="enterBtn" style="--d:2.6s">ENTER THE LAB</button>
-  </div>
-  <div class="gate-subject" id="gateSubject"></div>
-</div>
 
-<header class="nav-bar">
-  <a class="nav-logo" href="index.html">
-    <img src="assets/images/CSL-logo.png" alt="CSL — Cyber Stress Lab">
-  </a>
-  <nav class="nav-links">
-    <a href="#world">WORLD</a>
-    <a href="#explore">LABS</a>
-    <a href="#transmissions">FEED</a>
-    <a href="#map">MAP</a>
-    <a href="#confess">CONFESS</a>
-    <a href="#" id="aboutLink">ABOUT</a>
-    <a href="labs/index.html" class="nav-cta">LAB SELECTOR ↗</a>
-  </nav>
-</header>
+<body class="landing-body">
 
-<main>
+  <main class="landing-screen">
 
-  <!-- 01. THE WORLD WE LIVE IN -->
-  <section class="section section-world" id="world">
-    <p class="section-kicker">01 — THE WORLD WE LIVE IN</p>
-    <h2 class="section-headline">GOOD PEOPLE DON'T<br>SHOW TOO MUCH FEELING<span class="star-accent">*</span></h2>
-    <p class="section-body">
-      효율과 질서를 위해, 사회는 감정 표현을 점점 제한하기 시작했다.<br>
-      화내지 말 것. 울지 말 것. 무너지지 말 것.<br>
-      항상 침착하고 생산적인 상태를 유지할 것.
-    </p>
-    <p class="section-body">
-      감정은 개인적인 문제가 아니라 관리되어야 할 데이터가 되었고,<br>
-      사람들은 스트레스를 느끼면서도 그것을 드러내지 않는 데 익숙해졌다.
-    </p>
-    <p class="section-marker">EMOTIONS ARE MONITORED.</p>
-    <p class="section-quote">A SOCIETY WITHOUT EMOTION<br>IS A SOCIETY WITHOUT PEOPLE.</p>
-  </section>
+    <div class="scanlines"></div>
 
-  <!-- 02. BUT WE FOUND A WAY -->
-  <section class="section section-origin" id="origin">
-    <p class="section-kicker">02 — BUT WE FOUND A WAY</p>
-    <h2 class="section-headline">CYBER STRESS LAB WAS BUILT<br>BY WHITE HACKERS FOR<br>PEOPLE WHO STILL FEEL<span class="star-accent">*</span></h2>
-    <p class="section-body">
-      그 상황에서 익명의 화이트해커 집단이 기존 시스템의 감시를 피해<br>
-      하나의 비밀 네트워크를 만들었다.
-    </p>
-    <p class="section-body">
-      CSL은 감정을 치료하거나 교정하려는 곳이 아니다.<br>
-      억눌린 감정을 안전하게 표출할 수 있도록 만든 비밀 디지털 스트레스 해방 공간이다.
-    </p>
-    <p class="section-body">CSL에서는 감정을 분석하거나 평가하지 않는다. 그냥 직접 행동한다.</p>
-    <p class="section-actions">CLICK. BREAK. SQUISH. THROW. SCREAM. MOVE.</p>
-    <p class="section-tagline">DON'T HOLD IT IN.<span class="star-accent">*</span> LET IT OUT.</p>
-  </section>
 
-  <!-- 03. EXPLORE THE LAB -->
-  <section class="section section-explore" id="explore">
-    <p class="section-kicker">03 — EXPLORE THE LAB</p>
-    <h2 class="section-headline">PICK A LAB.<br>LET IT OUT<span class="star-accent">*</span></h2>
-    <p class="section-body">각 Lab은 서로 다른 스트레스 충동을 위한 공간이다. 지금 이 순간 필요한 곳으로.</p>
-    <div class="lab-grid" id="labGrid"></div>
-    <a class="explore-more" href="labs/index.html">더 많은 LAB이 궁금하다면 → LAB SELECTOR로 이동</a>
-  </section>
+    <!-- TOP STATUS -->
 
-  <!-- 04. LIVE TRANSMISSIONS -->
-  <section class="section section-transmissions" id="transmissions">
-    <p class="section-kicker">04 — LIVE TRANSMISSIONS</p>
-    <h2 class="section-headline">YOU'RE NOT<br>THE ONLY ONE<span class="star-accent">*</span></h2>
-    <p class="section-body">다른 Subject들의 익명 스트레스 로그. 같은 걸 느끼는 사람이 있다면 댓글을 남겨보세요.</p>
+    <div class="top-left-status">
+      NODE_00 // UNREGISTERED TERMINAL
+    </div>
 
-    <div class="post-composer">
-      <p class="composer-label">WHAT'S STRESSING YOU OUT?</p>
-      <div class="category-picker" id="categoryPicker"></div>
-      <div class="composer-row">
-        <input type="text" id="postInput" class="composer-input" maxlength="80" placeholder="익명으로 짧게 적어보세요...">
-        <button class="composer-submit" id="postSubmit">SEND →</button>
+    <div class="top-right-status">
+      CIVIC NETWORK:
+      <span>COMPROMISED</span>
+    </div>
+
+
+    <!-- RANDOM WARNING -->
+
+    <div
+      class="system-flash"
+      id="systemFlash"
+    >
+      WARNING: EMOTIONAL DEVIATION DETECTED
+    </div>
+
+
+    <!-- =====================================================
+         CENTER
+    ====================================================== -->
+
+    <section
+      class="landing-center"
+      id="landingMain"
+    >
+
+      <div class="tiny-label">
+        UNAUTHORIZED NODE DETECTED
       </div>
-    </div>
 
-    <div class="feed" id="feed"></div>
-  </section>
 
-  <!-- 05. GLOBAL STRESS MAP -->
-  <section class="section section-map" id="map">
-    <p class="section-kicker">05 — GLOBAL STRESS MAP</p>
-    <h2 class="section-headline">SEE WHAT<br>THE WORLD FEELS<span class="star-accent">*</span></h2>
-    <p class="section-body">지금 이 순간, CSL에 접속한 Subject들이 어떤 이유로 스트레스를 받고 있는지.</p>
-    <div class="stress-map" id="stressMap"></div>
-  </section>
+      <h1 class="landing-logo">
+        CSL
+      </h1>
 
-  <!-- 06. YOUR LAB RECORD -->
-  <section class="section section-record" id="record">
-    <p class="section-kicker">06 — YOUR LAB RECORD</p>
-    <h2 class="section-headline">YOUR EXPERIMENT<br>RECORD<span class="star-accent">*</span></h2>
-    <div class="record-card" id="recordCard">
-      <p class="record-title">CYBER STRESS LAB</p>
-      <p class="record-subject" id="recordSubject">SUBJECT #----</p>
-      <div class="record-status">STATUS: <span>IN PROGRESS</span></div>
-      <div class="record-stats">
-        <div class="record-stat"><span class="record-num" id="recordVisited">0</span><span class="record-label">LABS VISITED</span></div>
-        <div class="record-stat"><span class="record-num" id="recordReleased">0%</span><span class="record-label">STRESS RELEASED</span></div>
+
+      <p class="landing-name">
+        CYBER STRESS LAB
+      </p>
+
+
+      <div class="access-status">
+
+        <span class="access-dot"></span>
+
+        ACCESS GRANTED
+
       </div>
-      <p class="record-most">MOST USED LAB: <strong id="recordMost">—</strong></p>
-      <div class="record-stamps" id="recordStamps"></div>
+
+
+      <div class="boot-log">
+
+        <div>
+          <span>TRACE REQUEST</span>
+          <strong>BLOCKED</strong>
+        </div>
+
+        <div>
+          <span>CIVIC AUTH</span>
+          <strong>DENIED</strong>
+        </div>
+
+        <div>
+          <span>SUBJECT ID</span>
+          <strong>UNKNOWN</strong>
+        </div>
+
+        <div>
+          <span>EMOTION INDEX</span>
+          <strong>UNAVAILABLE</strong>
+        </div>
+
+        <div>
+          <span>CSL RELAY</span>
+          <strong class="live-value">
+            ACTIVE
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="access-prompt">
+        NEW FILE DETECTED // USER ACTION REQUIRED
+      </div>
+
+
+      <button
+        type="button"
+        class="discover-button"
+        id="discoverButton"
+      >
+        OPEN CLASSIFIED FILE
+      </button>
+
+    </section>
+
+
+    <!-- BOTTOM STATUS -->
+
+    <div class="bottom-status">
+
+      <span>
+        TRACE STATUS: BLOCKED
+      </span>
+
+      <span>
+        IDENTITY: UNKNOWN
+      </span>
+
+      <span>
+        HISTORY: DISABLED
+      </span>
+
+      <span class="bottom-csl">
+        CSL RELAY ACTIVE
+      </span>
+
     </div>
-  </section>
 
-  <!-- 07. TELL NO ONE BUT US — 심리상담이 아니라, 남한테 말하기 애매한 얘기
-       던지면 AI가 위트있게 반응해주는 가벼운 기능. Gemini API를 백엔드 없이
-       브라우저에서 직접 호출한다(script.js 참고) — 대화 내용은 어디에도
-       저장하지 않는다. -->
-  <section class="section section-confess" id="confess">
-    <p class="section-kicker">07 — TELL NO ONE BUT US</p>
-    <h2 class="section-headline">SAY THE THING<br>YOU CAN'T SAY<span class="star-accent">*</span></h2>
-    <p class="section-body">진지한 상담은 아니고, 그냥 아무한테도 말 못할 그 얘기 던지면 AI가 드립으로 받아준다. 어디에도 저장 안 되고, 아무도 안 봄.</p>
 
-    <div class="confess-box">
-      <textarea id="confessInput" class="confess-input" maxlength="300" placeholder="예: 썸녀랑 데이트했는데 차였다 근데 잠은 잤다 이거 뭐임"></textarea>
-      <button class="confess-submit" id="confessSubmit">반응 듣기 →</button>
-    </div>
-    <div class="confess-response" id="confessResponse" hidden></div>
-  </section>
+    <!-- =====================================================
+         WORLD FILE
+    ====================================================== -->
 
-  <footer class="landing-footer">
-    <p>CYBER STRESS LAB — DON'T HOLD IT IN. LET IT OUT.</p>
-    <a href="labs/index.html" class="footer-cta">ENTER THE FULL LAB SELECTOR ↗</a>
-  </footer>
+    <section
+      class="world-file"
+      id="worldFile"
+      hidden
+    >
 
-</main>
+      <div class="file-header">
 
-<!-- ABOUT — 기존 메인 사이트 about 모달 내용 그대로 -->
-<div class="about-modal" id="aboutModal">
-  <div class="about-panel">
-    <button class="about-close" id="aboutClose" aria-label="닫기">✕</button>
+        <span>
+          FILE_01 // CLASSIFIED
+        </span>
 
-    <h2 class="about-title">ABOUT<span class="star-accent">*</span></h2>
-    <p class="about-lead">기획 배경</p>
+        <span>
+          CIVIC STABILITY AUTHORITY
+        </span>
 
-    <section class="about-section">
-      <h3>왜 CSL인가</h3>
-      <ul>
-        <li>현대인의 스트레스 해소 방식: 왁뿌볼을 비롯한 오감 활용 스트레스 해소</li>
-        <li>술, 담배, 무한 스크롤 같은 회피성 해소의 문제</li>
-        <li>촉각 놀이, 반복 행동, 즉각적 자극이 주목받는 이유</li>
-      </ul>
+        <button
+          type="button"
+          id="closeWorldFile"
+          aria-label="닫기"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="file-body">
+
+        <div class="file-warning">
+          RESTRICTED MATERIAL // LEVEL 04
+        </div>
+
+
+        <span class="file-index">
+          01 // THE WORLD WE LIVE IN
+        </span>
+
+
+        <h2>
+          감정을 보이는 건<br>
+          위험한 일이 되었다.
+        </h2>
+
+
+        <p>
+          효율과 질서를 위해,
+          사회는 사람들의 감정 표현을 점점 제한하기 시작했다.
+        </p>
+
+
+        <div class="rule-list">
+
+          <span>
+            01 / 화내지 말 것.
+          </span>
+
+          <span>
+            02 / 울지 말 것.
+          </span>
+
+          <span>
+            03 / 무너지지 말 것.
+          </span>
+
+          <span>
+            04 / 과도한 감정을 드러내지 말 것.
+          </span>
+
+          <span>
+            05 / 항상 침착하고 생산적인 상태를 유지할 것.
+          </span>
+
+        </div>
+
+
+        <p>
+          감정은 개인적인 문제가 아니라
+          감시되고 분류되어야 할 데이터가 되었다.
+        </p>
+
+
+        <!-- GOVERNMENT RECORD -->
+
+        <section class="government-record">
+
+          <div>
+            <span>
+              PUBLIC COMPLIANCE
+            </span>
+
+            <strong>
+              97.3%
+            </strong>
+          </div>
+
+
+          <div>
+            <span>
+              EMOTIONAL DEVIATION
+            </span>
+
+            <strong class="red">
+              14.8%
+            </strong>
+          </div>
+
+
+          <div>
+            <span>
+              FLAGGED SUBJECTS
+            </span>
+
+            <strong>
+              042
+            </strong>
+          </div>
+
+
+          <div>
+            <span>
+              SYSTEM STATE
+            </span>
+
+            <strong class="lime">
+              STABLE
+            </strong>
+          </div>
+
+        </section>
+
+
+        <!-- INTERCEPTED MESSAGE -->
+
+        <div class="classified-note">
+
+          <span>
+            INTERCEPTED MESSAGE
+          </span>
+
+          <strong>
+            “근데 사람이 어떻게 아무 감정 없이 살아?”
+          </strong>
+
+        </div>
+
+
+        <!-- ORIGIN -->
+
+        <span class="file-index">
+          02 // ORIGIN
+        </span>
+
+
+        <h3>
+          SOMEONE FOUND A WAY OUT.
+        </h3>
+
+
+        <p>
+          익명의 화이트해커 집단은
+          감정 감시 시스템의 사각지대를 이용해
+          하나의 비밀 네트워크를 만들었다.
+        </p>
+
+
+        <div class="origin-name">
+          CYBER STRESS LAB
+        </div>
+
+
+        <p>
+          이곳은 감정을 치료하거나 교정하는 곳이 아니다.
+        </p>
+
+        <p>
+          스트레스를 분석하지도,
+          사용자를 평가하지도 않는다.
+        </p>
+
+        <p>
+          그냥 직접 행동한다.
+        </p>
+
+
+        <div class="action-log">
+
+          <span>CLICK</span>
+          <span>BREAK</span>
+          <span>SQUISH</span>
+          <span>THROW</span>
+          <span>SCREAM</span>
+          <span>MOVE</span>
+
+        </div>
+
+
+        <!-- CSL OVERRIDE -->
+
+        <div class="csl-intercept">
+
+          <span>
+            CSL_OVERRIDE
+          </span>
+
+          <strong>
+            감정은 오류가 아닙니다.
+          </strong>
+
+          <p>
+            DON'T HOLD IT IN. LET IT OUT.
+          </p>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="landing-actions">
+
+          <a
+            href="network.html?room=public"
+            class="primary-action"
+          >
+            ENTER NETWORK →
+          </a>
+
+          <a href="labs/index.html">
+            ENTER LABS →
+          </a>
+
+          <a href="map.html">
+            GLOBAL MAP →
+          </a>
+
+        </div>
+
+      </div>
+
     </section>
 
-    <section class="about-section">
-      <h3>1. 문제 정의</h3>
-      <ul>
-        <li>기존 스트레스 서비스는 명상, 기록, 정보 제공에 치우쳐져 있음</li>
-        <li>실제로 무언가 하고 싶은 충동을 풀어주는 사이버 공간의 부재</li>
-      </ul>
-    </section>
+  </main>
 
-    <section class="about-section">
-      <h3>2. 핵심 컨셉</h3>
-      <ul>
-        <li>스트레스를 참는 대신 안전하게 발산하자!</li>
-        <li>직접 클릭, 드래그, 키보드 입력 등으로 해소</li>
-      </ul>
-    </section>
 
-    <section class="about-section">
-      <h3>3. Potential Target</h3>
-      <ul>
-        <li>스트레스 상황에서 즉각적으로 행동을 실천할 수 없는 사람들</li>
-        <li>짧고 즉각적인 스트레스 해소를 원하는 사용자</li>
-        <li>감정 기록이나 명상과 같은 정적인 방법보다 놀이형 인터랙션을 선호하는 사용자</li>
-      </ul>
-    </section>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
 
-    <section class="about-section about-credit">
-      <h3>Credit</h3>
-      <ul>
-        <li>Song: Overdrive</li>
-        <li>Composer: MAITTRE</li>
-        <li>Website: <a href="https://www.youtube.com/c/maittreofficial" target="_blank" rel="noopener">youtube.com/c/maittreofficial</a></li>
-        <li>License: Creative Commons (BY 3.0) — <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">creativecommons.org/licenses/by/3.0</a></li>
-        <li>Music powered by BreakingCopyright: <a href="https://breakingcopyright.com" target="_blank" rel="noopener">breakingcopyright.com</a></li>
-      </ul>
-    </section>
-  </div>
-</div>
+      const discoverButton =
+        document.getElementById("discoverButton");
 
-<script src="data.js"></script>
-<script src="script.js"></script>
+      const worldFile =
+        document.getElementById("worldFile");
+
+      const closeWorldFile =
+        document.getElementById("closeWorldFile");
+
+      const landingMain =
+        document.getElementById("landingMain");
+
+      const systemFlash =
+        document.getElementById("systemFlash");
+
+
+      function openFile() {
+
+        landingMain?.classList.add(
+          "is-dimmed"
+        );
+
+        worldFile.hidden = false;
+
+        requestAnimationFrame(() => {
+
+          worldFile.classList.add(
+            "is-open"
+          );
+
+        });
+
+      }
+
+
+      function closeFile() {
+
+        worldFile.classList.remove(
+          "is-open"
+        );
+
+        landingMain?.classList.remove(
+          "is-dimmed"
+        );
+
+        setTimeout(() => {
+
+          worldFile.hidden = true;
+
+        }, 180);
+
+      }
+
+
+      discoverButton?.addEventListener(
+        "click",
+        openFile
+      );
+
+
+      closeWorldFile?.addEventListener(
+        "click",
+        closeFile
+      );
+
+
+      document.addEventListener(
+        "keydown",
+        (event) => {
+
+          if (
+            event.key === "Escape" &&
+            !worldFile.hidden
+          ) {
+            closeFile();
+          }
+
+        }
+      );
+
+
+      setInterval(() => {
+
+        if (!worldFile.hidden) {
+          return;
+        }
+
+        systemFlash?.classList.add(
+          "is-visible"
+        );
+
+        setTimeout(() => {
+
+          systemFlash?.classList.remove(
+            "is-visible"
+          );
+
+        }, 450);
+
+      }, 6500);
+
+    });
+  </script>
+
 </body>
+
 </html>

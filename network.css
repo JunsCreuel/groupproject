@@ -1,0 +1,2142 @@
+:root {
+  --void: #07090a;
+  --panel: #0b0e10;
+  --panel2: #101416;
+  --line: #272d2f;
+
+  --text: #e7eae5;
+  --muted: #69716d;
+
+  --pink: #ff3d94;
+  --lime: #caff3d;
+  --red: #ff493d;
+
+  --sans: "Space Grotesk", Arial, sans-serif;
+  --mono: "Courier New", monospace;
+}
+
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: var(--void);
+}
+
+body.app-body {
+  color: var(--text);
+
+  font-family: var(--sans);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+textarea,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+/* shell rail */
+
+body.has-global-rail .network-os {
+  margin-left: 72px;
+
+  width: calc(100vw - 72px);
+}
+
+
+/* =========================================================
+   WHOLE APP
+========================================================= */
+
+.network-os {
+  position: relative;
+
+  width: 100vw;
+  height: 100dvh;
+
+  display: grid;
+
+  grid-template-rows:
+    42px
+    minmax(0, 1fr);
+
+  overflow: hidden;
+
+  background: var(--void);
+}
+
+
+/* scanlines */
+
+.network-os::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 1000;
+
+  opacity: .035;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 2px,
+      rgba(255,255,255,.4) 3px
+    );
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.network-topbar {
+  min-height: 42px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr;
+
+  align-items: center;
+
+  border-bottom: 1px solid #353b3d;
+
+  background: #080a0b;
+
+  font-family: var(--mono);
+
+  font-size: 8px;
+
+  letter-spacing: .06em;
+
+  z-index: 5;
+}
+
+
+.network-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding-left: 15px;
+}
+
+.network-brand strong {
+  color: #fff;
+
+  font-size: 10px;
+}
+
+.network-brand span {
+  color: #505754;
+}
+
+
+.network-live {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 5px 10px;
+
+  border: 1px solid var(--lime);
+
+  color: var(--lime);
+
+  background:
+    rgba(202,255,61,.035);
+
+  font-weight: 700;
+}
+
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+
+  display: inline-block;
+
+  border-radius: 50%;
+
+  background: var(--lime);
+
+  box-shadow:
+    0 0 7px rgba(202,255,61,.7);
+
+  animation:
+    blink 1s infinite;
+}
+
+
+@keyframes blink {
+  50% {
+    opacity: .25;
+  }
+}
+
+
+.network-clock {
+  padding-right: 15px;
+
+  text-align: right;
+
+  color: #656d69;
+}
+
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.network-layout {
+  min-height: 0;
+  height: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    190px
+    minmax(520px, 1fr)
+    230px;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   LEFT PANEL
+========================================================= */
+
+.channel-panel {
+  min-height: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border-right:
+    1px solid var(--line);
+
+  background:
+    #0a0d0f;
+}
+
+
+.authority-tag {
+  padding:
+    9px 11px;
+
+  border-bottom:
+    1px solid #202527;
+
+  color:
+    #444b48;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    6px;
+
+  line-height:
+    1.5;
+
+  letter-spacing:
+    .09em;
+}
+
+
+.authority-tag span {
+  display: block;
+
+  color:
+    var(--red);
+}
+
+
+.channel-head {
+  padding:
+    17px 14px
+    8px;
+
+  color:
+    #4b5350;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    7px;
+
+  letter-spacing:
+    .15em;
+}
+
+
+.channel-head::before {
+  content: "// ";
+
+  color:
+    var(--pink);
+}
+
+
+.channel-list {
+  display: flex;
+
+  flex-direction: column;
+
+  padding:
+    0 8px;
+}
+
+
+.channel-list a {
+  min-height: 33px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding:
+    0 8px;
+
+  border-left:
+    2px solid transparent;
+
+  color:
+    #7c8480;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    8px;
+}
+
+
+.channel-list a:hover {
+  background:
+    #131719;
+
+  color:
+    #ddd;
+}
+
+
+.channel-link.is-active {
+  position: relative;
+
+  background:
+    #161a1c;
+
+  color:
+    #fff;
+
+  border-left-color:
+    var(--pink);
+}
+
+
+.channel-link.is-active span {
+  color:
+    var(--pink);
+}
+
+
+.channel-link.is-active::after {
+  content: "INTERCEPTING";
+
+  margin-left: auto;
+
+  color:
+    var(--pink);
+
+  font-size:
+    5px;
+
+  letter-spacing:
+    .08em;
+}
+
+
+.channel-divider {
+  height: 1px;
+
+  margin:
+    14px 11px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #32393a,
+      transparent
+    );
+}
+
+
+.channel-user {
+  min-height: 44px;
+
+  margin-top: auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  padding:
+    0 12px;
+
+  border-top:
+    1px solid var(--line);
+
+  background:
+    #080a0b;
+
+  color:
+    #6b736f;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    7px;
+}
+
+
+.you-label {
+  margin-right: 5px;
+
+  color:
+    var(--pink);
+
+  font-size:
+    6px;
+}
+
+
+.online-dot {
+  width: 6px;
+  height: 6px;
+
+  display: inline-block;
+
+  border-radius: 50%;
+
+  background:
+    var(--lime);
+
+  box-shadow:
+    0 0 5px
+    rgba(202,255,61,.55);
+}
+
+
+/* =========================================================
+   CENTER CHAT
+========================================================= */
+
+.chat-panel {
+  position: relative;
+
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+
+  display: grid;
+
+  grid-template-rows:
+    70px
+    218px
+    minmax(0, 1fr)
+    auto;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      rgba(202,255,61,.014) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(202,255,61,.014) 1px,
+      transparent 1px
+    ),
+    #080b0c;
+
+  background-size:
+    28px 28px;
+}
+
+
+/* =========================================================
+   CHAT HEADER
+========================================================= */
+
+.chat-header {
+  min-height: 70px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  padding:
+    0 17px;
+
+  border-bottom:
+    1px solid #303637;
+
+  background:
+    #090b0c;
+}
+
+
+.chat-title-wrap {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.chat-hash {
+  color:
+    var(--pink);
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    27px;
+}
+
+
+.chat-header h1 {
+  margin: 0;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    13px;
+
+  letter-spacing:
+    .07em;
+}
+
+
+.chat-header h1::before {
+  content:
+    "CHANNEL_";
+
+  color:
+    #454c49;
+
+  font-size:
+    7px;
+}
+
+
+.chat-header p {
+  margin:
+    5px 0 0;
+
+  color:
+    #646b68;
+
+  font-size:
+    10px;
+}
+
+
+.channel-status {
+  padding:
+    6px 8px;
+
+  border:
+    1px solid #3d4542;
+
+  color:
+    var(--lime);
+
+  background:
+    #0d1110;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    7px;
+
+  font-weight:
+    700;
+}
+
+
+/* =========================================================
+   CONTROL SCREEN
+========================================================= */
+
+.control-screen {
+  position: relative;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+
+  border-bottom:
+    1px solid #333a3b;
+
+  background:
+    #050708;
+
+  font-family:
+    var(--mono);
+}
+
+
+.control-screen-top {
+  height: 28px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    auto;
+
+  align-items:
+    center;
+
+  gap: 20px;
+
+  padding:
+    0 10px;
+
+  border-bottom:
+    1px solid #252b2c;
+
+  color:
+    #68716d;
+
+  font-size:
+    6px;
+
+  letter-spacing:
+    .08em;
+}
+
+
+.control-screen-top > div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    #a2aaa5;
+}
+
+
+.control-red-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--red);
+
+  box-shadow:
+    0 0 8px
+    rgba(255,73,61,.65);
+
+  animation:
+    redPulse
+    1.3s infinite;
+}
+
+
+@keyframes redPulse {
+  50% {
+    opacity: .2;
+  }
+}
+
+
+.control-screen-grid {
+  height:
+    calc(100% - 52px);
+
+  display: grid;
+
+  grid-template-columns:
+    1.25fr
+    .8fr
+    1fr;
+
+  min-height: 0;
+}
+
+
+/* CCTV */
+
+.control-camera {
+  min-width: 0;
+
+  border-right:
+    1px solid #222829;
+}
+
+
+.camera-top {
+  height: 23px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  padding:
+    0 8px;
+
+  border-bottom:
+    1px solid #202627;
+
+  color:
+    #4c5551;
+
+  font-size:
+    6px;
+}
+
+
+.recording {
+  color:
+    var(--red);
+
+  animation:
+    blink .9s infinite;
+}
+
+
+.camera-feed {
+  position: relative;
+
+  height:
+    calc(100% - 23px);
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255,255,255,.03),
+      transparent 30%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      #0b0f10 0,
+      #0b0f10 1px,
+      #07090a 1px,
+      #07090a 3px
+    );
+}
+
+
+.camera-person {
+  position: absolute;
+
+  left: 50%;
+  top: 51%;
+
+  transform:
+    translate(-50%,-50%);
+
+  width: 70px;
+  height: 88px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: center;
+
+  padding-bottom: 5px;
+
+  border:
+    1px solid
+    rgba(202,255,61,.22);
+
+  color:
+    rgba(202,255,61,.45);
+
+  font-size:
+    5px;
+}
+
+
+.camera-person::before {
+  content: "";
+
+  position: absolute;
+
+  top: -21px;
+
+  width: 34px;
+  height: 34px;
+
+  border:
+    1px solid
+    rgba(202,255,61,.22);
+
+  border-radius:
+    50%;
+}
+
+
+.camera-crosshair {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 145px;
+  height: 112px;
+
+  transform:
+    translate(-50%,-50%);
+
+  border:
+    1px solid
+    rgba(255,73,61,.1);
+}
+
+
+.camera-crosshair::before,
+.camera-crosshair::after {
+  content: "";
+
+  position: absolute;
+
+  background:
+    rgba(255,73,61,.14);
+}
+
+
+.camera-crosshair::before {
+  width: 100%;
+  height: 1px;
+
+  left: 0;
+  top: 50%;
+}
+
+
+.camera-crosshair::after {
+  width: 1px;
+  height: 100%;
+
+  top: 0;
+  left: 50%;
+}
+
+
+.camera-scan {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  height: 1px;
+
+  background:
+    rgba(202,255,61,.33);
+
+  box-shadow:
+    0 0 7px
+    rgba(202,255,61,.3);
+
+  animation:
+    scan
+    4s linear infinite;
+}
+
+
+@keyframes scan {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: 100%;
+  }
+}
+
+
+.camera-data {
+  position: absolute;
+
+  color:
+    #48514d;
+
+  font-size:
+    5px;
+
+  line-height:
+    1.6;
+}
+
+
+.camera-data-left {
+  left: 7px;
+  bottom: 7px;
+}
+
+
+.camera-data-right {
+  right: 7px;
+  top: 7px;
+
+  text-align: right;
+}
+
+
+/* STATUS */
+
+.control-status {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  border-right:
+    1px solid #222829;
+}
+
+
+.control-block {
+  padding:
+    9px;
+
+  border-right:
+    1px solid #1f2425;
+
+  border-bottom:
+    1px solid #1f2425;
+}
+
+
+.control-block:nth-child(2n) {
+  border-right: 0;
+}
+
+
+.control-block span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    #454d49;
+
+  font-size:
+    5px;
+}
+
+
+.control-block strong {
+  color:
+    #d3d7d2;
+
+  font-size:
+    14px;
+}
+
+
+.control-block .danger-value {
+  color:
+    var(--red);
+}
+
+
+.control-block .stable {
+  color:
+    var(--lime);
+}
+
+
+.meter {
+  height: 3px;
+
+  margin-top: 7px;
+
+  background:
+    #171c1d;
+}
+
+
+.meter i {
+  display: block;
+
+  height: 100%;
+
+  background:
+    var(--lime);
+}
+
+
+.danger-meter i {
+  background:
+    var(--red);
+}
+
+
+/* LOG */
+
+.control-log {
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+
+.control-log-title {
+  height: 23px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding:
+    0 8px;
+
+  border-bottom:
+    1px solid #202627;
+
+  color:
+    #4c5551;
+
+  font-size:
+    6px;
+}
+
+
+.control-log-lines {
+  height:
+    calc(100% - 23px);
+
+  overflow: hidden;
+
+  padding:
+    6px 8px;
+}
+
+
+.control-log-lines p {
+  margin:
+    0 0 4px;
+
+  white-space:
+    nowrap;
+
+  color:
+    #58615d;
+
+  font-size:
+    5px;
+}
+
+
+.control-log-lines span {
+  margin-right:
+    7px;
+
+  color:
+    #363d3a;
+}
+
+
+.control-log-lines .warning-line {
+  color:
+    var(--red);
+}
+
+
+.control-log-lines .hack-line {
+  color:
+    var(--pink);
+}
+
+
+/* bottom hack strip */
+
+.control-hack-strip {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 24px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr;
+
+  align-items:
+    center;
+
+  gap: 15px;
+
+  padding:
+    0 8px;
+
+  border-top:
+    1px solid
+    rgba(255,61,148,.32);
+
+  background:
+    rgba(255,61,148,.045);
+
+  color:
+    #555c59;
+
+  font-size:
+    5px;
+}
+
+
+.control-hack-strip strong {
+  color:
+    var(--pink);
+
+  letter-spacing:
+    .1em;
+}
+
+
+.control-hack-strip span:last-child {
+  text-align: right;
+
+  color:
+    #8a918d;
+}
+
+
+/* =========================================================
+   MESSAGE STREAM — ONLY SCROLL AREA
+========================================================= */
+
+.message-stream {
+  position: relative;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding:
+    6px 0 22px;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #343b38
+    #080b0c;
+}
+
+
+.message-stream::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.message-stream::-webkit-scrollbar-track {
+  background:
+    #080b0c;
+}
+
+
+.message-stream::-webkit-scrollbar-thumb {
+  background:
+    #343b38;
+}
+
+
+.message-stream::-webkit-scrollbar-thumb:hover {
+  background:
+    var(--pink);
+}
+
+
+/* message */
+
+.network-message {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    35px
+    minmax(0,1fr);
+
+  gap: 10px;
+
+  padding:
+    10px 17px;
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.045);
+}
+
+
+.network-message:hover {
+  background:
+    rgba(255,255,255,.022);
+}
+
+
+.network-message.is-mine {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,61,148,.09),
+      transparent 70%
+    );
+}
+
+
+.network-message.system-warning {
+  background:
+    rgba(255,73,61,.035);
+}
+
+
+.message-avatar {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border:
+    1px solid #38403d;
+
+  background:
+    #101416;
+
+  color:
+    #69716d;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    7px;
+}
+
+
+.message-meta {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    6px;
+}
+
+
+.message-meta strong {
+  color:
+    #d0d3cf;
+}
+
+
+.network-message.is-mine
+.message-meta strong {
+  color:
+    var(--pink);
+}
+
+
+.message-meta span {
+  color:
+    #4d5551;
+}
+
+
+.message-meta time {
+  color:
+    #363c39;
+}
+
+
+.message-content p {
+  margin:
+    6px 0 8px;
+
+  color:
+    #d9dcd7;
+
+  font-size:
+    12px;
+
+  line-height:
+    1.5;
+}
+
+
+.message-actions {
+  display: flex;
+
+  gap: 5px;
+
+  flex-wrap: wrap;
+}
+
+
+.message-actions button,
+.message-actions a {
+  padding:
+    3px 6px;
+
+  border:
+    1px solid #303638;
+
+  background:
+    #090b0c;
+
+  color:
+    #626a66;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    6px;
+}
+
+
+.message-actions button:hover,
+.message-actions a:hover {
+  border-color:
+    var(--pink);
+
+  color:
+    var(--pink);
+}
+
+
+/* =========================================================
+   COMPOSER — FIXED BOTTOM ROW
+========================================================= */
+
+.network-composer {
+  position: relative;
+
+  z-index: 20;
+
+  flex-shrink: 0;
+
+  padding:
+    7px 11px;
+
+  border-top:
+    1px solid #39413e;
+
+  background:
+    #060809;
+
+  box-shadow:
+    0 -10px 25px
+    rgba(0,0,0,.45);
+}
+
+
+.composer-warning {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  margin-bottom:
+    5px;
+
+  color:
+    #484f4c;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    5px;
+
+  letter-spacing:
+    .08em;
+}
+
+
+.composer-warning span:last-child {
+  color:
+    var(--lime);
+}
+
+
+.network-input-row {
+  display: grid;
+
+  grid-template-columns:
+    25px
+    minmax(0,1fr)
+    75px;
+
+  align-items: center;
+
+  border:
+    1px solid #424947;
+
+  background:
+    #0d1012;
+}
+
+
+.network-input-row:focus-within {
+  border-color:
+    var(--pink);
+}
+
+
+.network-input-row > span {
+  padding-left:
+    9px;
+
+  color:
+    var(--pink);
+
+  font-family:
+    var(--mono);
+}
+
+
+.network-input-row textarea {
+  width: 100%;
+
+  min-height: 42px;
+  max-height: 80px;
+
+  resize: none;
+
+  padding:
+    11px 7px;
+
+  border: 0;
+
+  outline: none;
+
+  background:
+    transparent;
+
+  color:
+    #eee;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    10px;
+}
+
+
+.network-input-row textarea::placeholder {
+  color:
+    #434a47;
+}
+
+
+.network-input-row button {
+  align-self: stretch;
+
+  border: 0;
+
+  border-left:
+    1px solid #424947;
+
+  background:
+    var(--pink);
+
+  color:
+    #090a0b;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    8px;
+
+  font-weight:
+    700;
+}
+
+
+.network-input-row button:hover {
+  background:
+    var(--lime);
+}
+
+
+.network-composer-meta {
+  display: flex;
+
+  gap: 13px;
+
+  padding:
+    6px 2px 0;
+
+  color:
+    #48504c;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    5px;
+}
+
+
+#networkCharCount {
+  margin-left: auto;
+}
+
+
+/* =========================================================
+   RIGHT SUBJECTS
+========================================================= */
+
+.subjects-panel {
+  min-width: 0;
+  min-height: 0;
+
+  overflow-y: auto;
+
+  border-left:
+    1px solid var(--line);
+
+  background:
+    #0a0d0f;
+}
+
+
+.subjects-head {
+  padding:
+    15px 11px
+    10px;
+
+  border-bottom:
+    1px solid #272d2f;
+
+  color:
+    #4e5652;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    6px;
+
+  letter-spacing:
+    .1em;
+}
+
+
+.subject-row {
+  min-height: 33px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding:
+    0 11px;
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.03);
+
+  color:
+    #6c7470;
+
+  font-family:
+    var(--mono);
+
+  font-size:
+    7px;
+}
+
+
+.subject-row:hover {
+  background:
+    #121618;
+
+  color:
+    #ddd;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+  .network-layout {
+    grid-template-columns:
+      165px
+      minmax(420px,1fr)
+      190px;
+  }
+
+}
+
+
+@media (max-width: 850px) {
+
+  .subjects-panel {
+    display: none;
+  }
+
+  .network-layout {
+    grid-template-columns:
+      150px
+      minmax(0,1fr);
+  }
+
+}
+
+
+@media (max-width: 620px) {
+
+  body.has-global-rail .network-os {
+    margin-left: 58px;
+
+    width:
+      calc(100vw - 58px);
+  }
+
+  .channel-panel {
+    display: none;
+  }
+
+  .network-layout {
+    display: block;
+  }
+
+  .chat-panel {
+    height:
+      calc(100dvh - 42px);
+
+    grid-template-rows:
+      62px
+      190px
+      minmax(0,1fr)
+      auto;
+  }
+
+  .control-screen-grid {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .control-log {
+    display: none;
+  }
+
+}
+
+/* =========================================================
+   NETWORK VISIBILITY + TARGET FIX
+========================================================= */
+
+
+/* =========================================================
+   1. CCTV TARGET CENTER FIX
+========================================================= */
+
+/*
+  기존 .camera-person::before 원을 없애고
+  사람 박스 자체 중앙에 타겟 원을 새로 그림
+*/
+
+.camera-person::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 28%;
+
+  width: 38px;
+  height: 38px;
+
+  transform: translate(-50%, -50%);
+
+  border: 1px solid rgba(202, 255, 61, .5);
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 10px rgba(202, 255, 61, .12);
+
+  pointer-events: none;
+}
+
+
+/* 사람 박스 위치도 카메라 정중앙으로 */
+
+.camera-person {
+  left: 50% !important;
+  top: 50% !important;
+
+  width: 76px !important;
+  height: 102px !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  border-color: rgba(202, 255, 61, .42) !important;
+
+  color: rgba(202, 255, 61, .78) !important;
+}
+
+
+/* 바깥 조준 박스도 같은 중심으로 */
+
+.camera-crosshair {
+  left: 50% !important;
+  top: 50% !important;
+
+  width: 170px !important;
+  height: 130px !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  border-color: rgba(255, 73, 61, .2) !important;
+}
+
+
+/* 십자선 조금 더 잘 보이게 */
+
+.camera-crosshair::before,
+.camera-crosshair::after {
+  background: rgba(255, 73, 61, .25) !important;
+}
+
+
+/* 스캔 라인도 약간 밝게 */
+
+.camera-scan {
+  background: rgba(202, 255, 61, .6) !important;
+
+  box-shadow:
+    0 0 9px rgba(202, 255, 61, .42) !important;
+}
+
+
+
+/* =========================================================
+   2. LEFT CHANNEL TEXT
+========================================================= */
+
+.channel-head {
+  color: #7f8983 !important;
+}
+
+.channel-list a {
+  color: #aeb6b1 !important;
+
+  font-size: 9px !important;
+
+  font-weight: 500;
+}
+
+.channel-list a > span {
+  color: #7e8983;
+}
+
+
+/* hover */
+
+.channel-list a:hover {
+  color: #ffffff !important;
+
+  background: rgba(255, 255, 255, .045) !important;
+}
+
+
+/* active channel */
+
+.channel-link.is-active {
+  color: #ffffff !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 61, 148, .13),
+      rgba(255, 61, 148, .025)
+    ) !important;
+
+  border-left-color: var(--pink) !important;
+}
+
+
+.channel-link.is-active > span {
+  color: var(--pink) !important;
+}
+
+
+/* INTERCEPTING */
+
+.channel-link.is-active::after {
+  color: #ff69aa !important;
+
+  opacity: 1 !important;
+
+  font-size: 6px !important;
+}
+
+
+
+/* =========================================================
+   3. LIVE LAB TEXT
+========================================================= */
+
+.channel-list a[href*="labs"] {
+  color: #9fa9a3 !important;
+}
+
+
+.channel-list a[href*="labs"]:hover {
+  color: var(--lime) !important;
+
+  border-left-color: var(--lime) !important;
+}
+
+
+
+/* =========================================================
+   4. MESSAGE TEXT
+========================================================= */
+
+.message-content p {
+  color: #f0f2ef !important;
+
+  font-size: 13px !important;
+
+  font-weight: 500;
+
+  line-height: 1.55 !important;
+}
+
+
+.message-meta strong {
+  color: #dce1dd !important;
+}
+
+
+.message-meta span {
+  color: #758079 !important;
+}
+
+
+.message-meta time {
+  color: #626b66 !important;
+}
+
+
+
+/* =========================================================
+   5. "나도 / 같이 욕하기 / LAB으로 풀기"
+========================================================= */
+
+.message-actions {
+  margin-top: 8px;
+}
+
+
+.message-actions button,
+.message-actions a {
+  min-height: 25px;
+
+  padding: 5px 9px !important;
+
+  border: 1px solid #4a5450 !important;
+
+  background: rgba(255, 255, 255, .025) !important;
+
+  color: #aeb7b1 !important;
+
+  font-size: 7px !important;
+
+  font-weight: 500;
+
+  opacity: 1 !important;
+
+  transition:
+    color .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+
+/* 나도 */
+
+.message-actions .same-action {
+  color: #d2d8d3 !important;
+
+  border-color: #56615b !important;
+}
+
+
+.message-actions .same-action::before {
+  content: "◉ ";
+
+  color: var(--lime);
+}
+
+
+/* 같이 욕하기 */
+
+.message-actions .reply-action::before {
+  content: "+ ";
+
+  color: var(--pink);
+}
+
+
+/* LAB */
+
+.message-actions a {
+  color: #a4aea8 !important;
+}
+
+
+/* hover */
+
+.message-actions button:hover,
+.message-actions a:hover {
+  border-color: var(--pink) !important;
+
+  background: rgba(255, 61, 148, .08) !important;
+
+  color: #ffffff !important;
+}
+
+
+
+/* =========================================================
+   6. RIGHT ACTIVE SUBJECTS
+========================================================= */
+
+.subjects-head {
+  color: #7e8983 !important;
+}
+
+
+.subject-row {
+  color: #9da7a1 !important;
+
+  font-size: 7px !important;
+}
+
+
+.subject-row:hover {
+  color: #ffffff !important;
+
+  background: rgba(255, 255, 255, .035) !important;
+}
+
+
+
+/* =========================================================
+   7. CCTV LABELS
+========================================================= */
+
+.camera-top {
+  color: #77827c !important;
+}
+
+
+.camera-data {
+  color: #65716a !important;
+}
+
+
+.camera-data-left {
+  color: #737e78 !important;
+}
+
+
+.camera-data-right {
+  color: #6a756f !important;
+}
+
+
+.recording {
+  color: #ff6259 !important;
+}
+
+
+
+/* =========================================================
+   8. GOVERNMENT CONTROL VALUES
+========================================================= */
+
+.control-block span {
+  color: #6f7973 !important;
+}
+
+
+.control-block strong {
+  color: #eef1ed !important;
+}
+
+
+.control-block .danger-value {
+  color: #ff5b52 !important;
+}
+
+
+.control-block .stable {
+  color: var(--lime) !important;
+}
+
+
+
+/* =========================================================
+   9. LOG VISIBILITY
+========================================================= */
+
+.control-log-title {
+  color: #77827b !important;
+}
+
+
+.control-log-lines p {
+  color: #6d7771 !important;
+}
+
+
+.control-log-lines span {
+  color: #515a55 !important;
+}
+
+
+.control-log-lines .warning-line {
+  color: #ff6158 !important;
+}
+
+
+.control-log-lines .hack-line {
+  color: #ff5ca4 !important;
+}
+
+
+
+/* =========================================================
+   10. COMPOSER VISIBILITY
+========================================================= */
+
+.composer-warning {
+  color: #707b74 !important;
+}
+
+
+.composer-warning span:last-child {
+  color: var(--lime) !important;
+}
+
+
+.network-input-row textarea {
+  color: #f0f3ef !important;
+
+  font-size: 11px !important;
+}
+
+
+.network-input-row textarea::placeholder {
+  color: #6d7771 !important;
+}
+
+
+.network-composer-meta {
+  color: #68736c !important;
+}
