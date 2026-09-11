@@ -42,8 +42,12 @@ export const DIFFICULTIES = [
     subtitle: '제대로 발산하기',
     color: '#ff3d94',
     noteTravelMs: 1300,
-    stepInterval: 2, // 8분음표 간격
-    doubleChance: 0.2,
+    // 8분음표 간격(stepInterval: 2)으로 뒀더니 화살표가 너무 촘촘하게
+    // 쏟아져서 사실상 못 따라칠 정도였다 — EASY/NORMAL과 같은 4분음표
+    // 간격으로 개수를 줄이고, 대신 빠른 낙하 속도(noteTravelMs)와 좁은
+    // 판정 윈도우, 더 잦은 동시 2레인 노트(doubleChance)로 난이도를 준다.
+    stepInterval: 4,
+    doubleChance: 0.15,
     perfectWindow: 0.08,
     goodWindow: 0.18,
   },

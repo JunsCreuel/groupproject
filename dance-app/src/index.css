@@ -356,16 +356,23 @@ html, body, #root {
   will-change: top;
 }
 
+.note.note-perfect { background: linear-gradient(160deg, #fff1a8, #cdfa4d); box-shadow: 0 10px 22px rgba(180, 220, 60, 0.4); }
+.note.note-good { background: linear-gradient(160deg, #b3e9ff, #5ec8f0); box-shadow: 0 10px 22px rgba(94, 200, 240, 0.4); }
+.note.note-miss { background: linear-gradient(160deg, #d8d8d4, #b7b7b2); box-shadow: none; opacity: 0.5; }
+
+/* .note-gone은 판정 색상 클래스(note-perfect/good/miss)와 항상 같이
+   붙는데, 선택자 우선순위가 같으면 스타일시트에 나중에 적힌 쪽이
+   이긴다 — 이 규칙이 위에 있으면 .note-miss의 opacity:0.5가 이겨버려서,
+   놓친 화살표가 사라지지 않고 회색 박스로 화면 아래 멈춰있는 버그가
+   있었다. 판정 색상 규칙들보다 반드시 아래에 둬서 항상 opacity:0으로
+   덮어써야 한다.
+   ================================================================== */
 .note.note-gone {
   transition: opacity 0.15s ease, transform 0.15s ease;
   opacity: 0;
   transform: translateY(-50%) scale(1.3);
   pointer-events: none;
 }
-
-.note.note-perfect { background: linear-gradient(160deg, #fff1a8, #cdfa4d); box-shadow: 0 10px 22px rgba(180, 220, 60, 0.4); }
-.note.note-good { background: linear-gradient(160deg, #b3e9ff, #5ec8f0); box-shadow: 0 10px 22px rgba(94, 200, 240, 0.4); }
-.note.note-miss { background: linear-gradient(160deg, #d8d8d4, #b7b7b2); box-shadow: none; opacity: 0.5; }
 
 .judge-popup {
   position: absolute;

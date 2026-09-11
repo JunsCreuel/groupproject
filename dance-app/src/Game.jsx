@@ -102,11 +102,16 @@ export default function Game({ difficulty, paused, onFinish }) {
           best = note;
         }
       }
-      if (best && bestDelta <= difficulty.goodWindow) {
+      if (!best) return; // 그 레인에 판정할 노트가 아예 없으면 그냥 무시
+      if (bestDelta <= difficulty.goodWindow) {
         popNote(best, bestDelta <= difficulty.perfectWindow ? 'perfect' : 'good');
+      } else {
+        // 노트가 아직 판정선(박스)까지 내려오지 않았는데 미리 누르면(혹은
+        // 이미 지나갔는데 뒤늦게 누르면) 그 노트를 바로 MISS 처리한다 —
+        // 예전엔 그냥 무시하고 넘어가서, 미리 마구 눌러도 나중에 다시
+        // 정확히 맞히면 판정을 받을 수 있는 허점이 있었다.
+        popNote(best, 'miss');
       }
-      // 근처에 노트가 없는 "헛침"은 콤보를 끊지 않고 그냥 무시한다 — 캐주얼한
-      // 스트레스 해소용이라 지나치게 가혹한 판정을 피했다.
     };
 
     window.addEventListener('keydown', handleKeyDown);
