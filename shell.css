@@ -685,3 +685,66 @@ body.has-global-rail .signal-ranking {
   border-color: #ff3d94;
 }
 
+
+/* =====================================================
+   PAGE SCROLL FIX
+   일반 소개 페이지 = 세로 스크롤
+   NETWORK / MAP = viewport app 유지
+===================================================== */
+
+/* 기본 페이지는 다시 스크롤 허용 */
+body.has-global-rail {
+  height: auto !important;
+  min-height: 100dvh !important;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* 왼쪽 rail은 계속 고정 */
+.global-rail {
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+
+/* HOME / WORLD / ARCHIVE 같은 콘텐츠 페이지 */
+body.has-global-rail.portal-body,
+body.has-global-rail.archive-body {
+  height: auto !important;
+  min-height: 100dvh !important;
+
+  overflow-y: auto !important;
+}
+
+body.has-global-rail .home-stage,
+body.has-global-rail .archive-page {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+
+/* NETWORK만 Discord처럼 한 화면 고정 */
+body.has-global-rap-body .network-app {
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+
+/* MAP도 한 화면 고정 */
+body.has-global-rail.map-body {
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+
+/* 혹시 예전 landing index가 별도 body class가 없어도 스크롤 */
+body.has-global-rail:not(.app-body):not(.map-body) {
+  height: auto !important;
+  min-height: 100dvh !important;
+  overflow-y: auto !important;
+}
+
