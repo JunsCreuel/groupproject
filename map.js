@@ -544,80 +544,286 @@ const logList = document.getElementById("signalLogList");
 const intercept = document.getElementById("interceptLine");
 const mapClock = document.getElementById("mapClock");
 const ranking = document.getElementById("nodeRanking");
+const worldMap = document.getElementById("worldMap");
+const logList = document.getElementById("signalLogList");
+const intercept = document.getElementById("interceptLine");
+const mapClock = document.getElementById("mapClock");
+const ranking = document.getElementById("nodeRanking");
+
 let cursor = 0;
 let history = [];
 
+/* 현재 선택된 국가 기억 */
+let activeCountry = null;
+
+
+/* =========================================
+   CLOCK
+========================================= */
+
 function clock() {
-  return new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+  return new Intl.DateTimeFormat(
+    "en-GB",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }
+  ).format(new Date());
 }
+
 
 function drawClock() {
   mapClock.textContent = clock();
 }
+
 drawClock();
-setInterval(drawClock,1000);
+
+setInterval(drawClock, 1000);
+
+
+/* =========================================
+   국가별 로그 가져오기
+========================================= */
+
+function getCountryLogs(country) {
+
+  /* 실제로 지금까지 들어온 실시간 로그 */
+  const liveCountryLogs = history.filter(
+    (signal) => signal.country === country
+  );
+
+
+  /* 원본 데이터에 있는 해당 국가 신호 */
+  const baseCountryLogs = SIGNALS
+    .filter(
+      (signal) => signal.country === country
+    )
+    .map((signal, index) => ({
+      ...signal,
+
+      /* 기존 시간 없으면 가상의 최근 시간 부여 */
+      time:
+        signal.time ||
+        new Date(
+          Date.now() - ((index + 1) * 47000)
+        ).toLocaleTimeString(
+          "en-GB",
+          {
+            hour12: false
+          }
+        )
+    }));
+
+
+  /*
+    history + 원본 SIGNALS 합치기
+
+    같은 city + text는 중복 제거
+  */
+  const mergedLogs = [
+    ...liveCountryLogs,
+    ...baseCountryLogs
+  ].filter(
+    (signal, index, array) =>
+      array.findIndex(
+        (item) =>
+          item.city === signal.city &&
+          item.text === signal.text
+      ) === index
+  );
+
+
+  return mergedLogs;
+}
+
+
+/* =========================================
+   MAP NODE 생성
+========================================= */
 
 SIGNALS.forEach((s) => {
-  const node = document.createElement("button");
+
+  const node =
+    document.createElement("button");
+
   node.className = "map-node";
+
   node.dataset.city = s.city;
+
   node.style.left = `${s.x}%`;
+
   node.style.top = `${s.y}%`;
-  node.style.setProperty("--node", s.color);
-  node.innerHTML = `<span class="map-node-ring"></span><span class="map-node-core"></span><span class="map-node-label">${s.city}</span>`;
-  node.addEventListener("click", () => {
-    const country = s.country || COUNTRY_BY_CITY[s.city]?.country;
-    const countryLogs = history.filter((x) => x.country === country);
 
-    renderLogs(countryLogs);
+  node.style.setProperty(
+    "--node",
+    s.color
+  );
 
-    document
-      .querySelectorAll(".map-node")
-      .forEach((n) => n.classList.remove("is-selected-country"));
 
-    document
-      .querySelectorAll(".map-node")
-      .forEach((n) => {
-        const city = n.dataset.city;
-        const nodeCountry = COUNTRY_BY_CITY[city]?.country;
+  node.innerHTML = `
+    <span class="map-node-ring"></span>
 
-        if (nodeCountry === country) {
-          n.classList.add("is-selected-country");
-        }
-      });
+    <span class="map-node-core"></span>
 
-    intercept.innerHTML = `
-      FILTERED // ${country}
-      // ${s.lang}
-      // ${countryLogs.length} SIGNALS
-      <button id="clearCountryFilter">SHOW ALL ×</button>
-    `;
+    <span class="map-node-label">
+      ${s.city}
+    </span>
+  `;
 
-    document
-      .getElementById("clearCountryFilter")
-      ?.addEventListener("click", (event) => {
-        event.stopPropagation();
 
-        renderLogs();
+  /* =====================================
+     국가 선택
+  ====================================== */
 
-        document
-          .querySelectorAll(".map-node")
-          .forEach((n) => n.classList.remove("is-selected-country"));
+  node.addEventListener(
+    "click",
+    () => {
 
-        intercept.textContent = "GLOBAL SIGNAL NETWORK // ALL SIGNALS";
-      });
-  });
+      const country =
+        s.country ||
+        COUNTRY_BY_CITY[s.city]?.country;
+
+
+      /* ★ 현재 필터 기억 */
+      activeCountry = country;
+
+
+      const countryLogs =
+        getCountryLogs(country);
+
+
+      renderLogs(countryLogs);
+
+
+      /* 기존 선택 효과 제거 */
+      document
+        .querySelectorAll(".map-node")
+        .forEach((n) => {
+
+          n.classList.remove(
+            "is-selected-country"
+          );
+
+        });
+
+
+      /* 같은 국가 도시 전부 강조 */
+      document
+        .querySelectorAll(".map-node")
+        .forEach((n) => {
+
+          const city =
+            n.dataset.city;
+
+          const nodeCountry =
+            COUNTRY_BY_CITY[city]?.country;
+
+
+          if (nodeCountry === country) {
+
+            n.classList.add(
+              "is-selected-country"
+            );
+
+          }
+
+        });
+
+
+      /* 필터 상태 표시 */
+      intercept.innerHTML = `
+
+        <span class="filter-status">
+          FILTERED // ${country}
+          // ${countryLogs.length} SIGNALS
+        </span>
+
+        <button id="clearCountryFilter">
+          SHOW ALL ×
+        </button>
+
+      `;
+
+
+      /* SHOW ALL */
+      document
+        .getElementById(
+          "clearCountryFilter"
+        )
+        ?.addEventListener(
+          "click",
+          (event) => {
+
+            event.stopPropagation();
+
+
+            /* ★ 필터 해제 */
+            activeCountry = null;
+
+
+            renderLogs();
+
+
+            document
+              .querySelectorAll(
+                ".map-node"
+              )
+              .forEach(
+                (n) =>
+                  n.classList.remove(
+                    "is-selected-country"
+                  )
+              );
+
+
+            intercept.textContent =
+              "GLOBAL SIGNAL NETWORK // ALL SIGNALS";
+
+          }
+        );
+
+    }
+  );
+
+
   worldMap.appendChild(node);
+
 });
 
+
+/* =========================================
+   로그 출력
+========================================= */
+
 function renderLogs(logs = history) {
+
   let visibleLogs = logs;
 
-  // SHOW ALL / 기본 글로벌 피드에서 한국 로그 2개 보장
-  if (logs === history) {
+
+  /*
+    activeCountry가 없을 때만
+    GLOBAL FEED 처리
+  */
+
+  if (
+    activeCountry === null &&
+    logs === history
+  ) {
+
     const koreanLogs = [
-      ...logs.filter((signal) => signal.country === "KOREA"),
-      ...SIGNALS.filter((signal) => signal.country === "KOREA")
+
+      ...history.filter(
+        (signal) =>
+          signal.country === "KOREA"
+      ),
+
+      ...SIGNALS.filter(
+        (signal) =>
+          signal.country === "KOREA"
+      )
+
     ]
       .filter(
         (signal, index, array) =>
@@ -627,64 +833,222 @@ function renderLogs(logs = history) {
               item.text === signal.text
           ) === index
       )
-      .slice(0, 2)
-      .map((signal) => ({
-        ...signal,
-        time: signal.time || clock()
-      }));
 
-    const globalLogs = logs.filter(
-      (signal) => signal.country !== "KOREA"
-    );
+      .slice(0, 2)
+
+      .map(
+        (signal) => ({
+          ...signal,
+          time:
+            signal.time ||
+            clock()
+        })
+      );
+
+
+    const globalLogs =
+      history.filter(
+        (signal) =>
+          signal.country !== "KOREA"
+      );
+
 
     visibleLogs = [
+
       ...globalLogs.slice(0, 2),
+
       koreanLogs[0],
+
       ...globalLogs.slice(2, 5),
+
       koreanLogs[1],
+
       ...globalLogs.slice(5)
+
     ]
+
       .filter(Boolean)
-      .slice(0, 8);
+
+      .slice(0, 10);
+
   }
 
-  logList.innerHTML = visibleLogs.map((signal) => `
-    <article class="signal-log">
-      <div class="signal-log-meta">
-        <span>${signal.time}</span>
-        <span>
-          ${signal.city} // ${signal.country} // ${signal.lang}
-        </span>
-        <b style="--cat:${signal.color}">
-          ${signal.category}
-        </b>
-      </div>
 
-      <strong>${signal.subject}</strong>
-      <p>"${signal.text}"</p>
-    </article>
-  `).join("");
+  logList.innerHTML =
+    visibleLogs
+      .slice(0, 10)
+      .map(
+        (signal) => `
+
+          <article class="signal-log">
+
+            <div class="signal-log-meta">
+
+              <span>
+                ${signal.time || clock()}
+              </span>
+
+              <span>
+                ${signal.city}
+                //
+                ${signal.country}
+                //
+                ${signal.lang}
+              </span>
+
+              <b
+                style="--cat:${signal.color}"
+              >
+                ${signal.category}
+              </b>
+
+            </div>
+
+
+            <strong>
+              ${signal.subject}
+            </strong>
+
+
+            <p>
+              "${signal.text}"
+            </p>
+
+          </article>
+
+        `
+      )
+      .join("");
+
 }
+
+
+/* =========================================
+   새 실시간 SIGNAL
+========================================= */
 
 function pushSignal() {
-  const s = SIGNALS[cursor % SIGNALS.length];
-  cursor += 1;
-  const log = {...s, time:clock()};
-  history.unshift(log);
-  history = history.slice(0,12);
-  renderLogs();
 
-  document.querySelectorAll(".map-node").forEach(n => n.classList.remove("is-flash"));
-  const node = document.querySelector(`[data-city="${s.city}"]`);
-  if (node) {
-    node.classList.add("is-flash");
-    setTimeout(() => node.classList.remove("is-flash"),900);
+  const s =
+    SIGNALS[
+      cursor % SIGNALS.length
+    ];
+
+  cursor += 1;
+
+
+  const log = {
+    ...s,
+    time: clock()
+  };
+
+
+  history.unshift(log);
+
+
+  /*
+    기존 12개는 너무 적음.
+
+    60개까지 보관해서
+    국가별 필터 데이터 확보
+  */
+  history =
+    history.slice(0, 60);
+
+
+  /*
+    ★ 핵심 수정
+
+    선택된 국가가 있으면
+    그 국가 채팅 화면을 유지한다.
+  */
+
+  if (activeCountry) {
+
+    const filteredLogs =
+      getCountryLogs(
+        activeCountry
+      );
+
+    renderLogs(
+      filteredLogs
+    );
+
+  } else {
+
+    renderLogs();
+
   }
-  intercept.textContent = `INTERCEPTED // ${s.city}: "${s.text}"`;
+
+
+  /* NODE FLASH */
+
+  document
+    .querySelectorAll(".map-node")
+    .forEach(
+      (n) =>
+        n.classList.remove(
+          "is-flash"
+        )
+    );
+
+
+  const node =
+    document.querySelector(
+      `[data-city="${s.city}"]`
+    );
+
+
+  if (node) {
+
+    node.classList.add(
+      "is-flash"
+    );
+
+
+    setTimeout(
+      () =>
+        node.classList.remove(
+          "is-flash"
+        ),
+      900
+    );
+
+  }
+
+
+  /*
+    ★ 국가 필터 중이면
+    INTERCEPT 문구도 덮어쓰지 않는다
+  */
+
+  if (!activeCountry) {
+
+    intercept.textContent =
+      `INTERCEPTED // ${s.city}: "${s.text}"`;
+
+  }
+
 }
 
-for (let i=0;i<6;i++) pushSignal();
-setInterval(pushSignal,3200);
+
+/* =========================================
+   INITIAL SIGNALS
+========================================= */
+
+for (let i = 0; i < 12; i++) {
+
+  pushSignal();
+
+}
+
+
+/* 3.2초마다 신호 발생 */
+
+setInterval(
+  pushSignal,
+  3200
+);
 
 ranking.innerHTML = [...SIGNALS]
   .sort((a,b)=>b.count-a.count)
