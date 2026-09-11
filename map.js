@@ -543,7 +543,6 @@ const worldMap = document.getElementById("worldMap");
 const logList = document.getElementById("signalLogList");
 const intercept = document.getElementById("interceptLine");
 const mapClock = document.getElementById("mapClock");
-const ranking = document.getElementById("nodeRanking");
 
 let cursor = 0;
 let history = [];
@@ -1051,15 +1050,3 @@ setInterval(
   pushSignal,
   3200
 );
-
-ranking.innerHTML = [...SIGNALS]
-  .sort((a,b)=>b.count-a.count)
-  .slice(0,6)
-  .map((s,i)=>`
-    <div class="ranking-row">
-      <span class="ranking-num">${String(i+1).padStart(2,"0")}</span>
-      <span class="ranking-city">${s.city}</span>
-      <span class="ranking-category" style="--cat:${s.color}">${s.category}</span>
-      <span class="ranking-count">${s.count} SIGNALS</span>
-    </div>
-  `).join("");
