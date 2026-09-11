@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSL — Network</title>
+  <title>CSL — 비밀 네트워크</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -22,31 +22,31 @@
 
     <aside class="channel-sidebar">
       <div class="sidebar-head">
-        <span>CSL NETWORK</span>
+        <span>CSL 비밀망</span>
         <small>NODE 01</small>
       </div>
 
-      <p class="channel-label">GENERAL</p>
-      <a class="channel is-active" data-channel="live-stress"># live-stress <span>428</span></a>
-      <a class="channel" data-channel="late-night"># late-night <span>129</span></a>
-      <a class="channel" data-channel="overthinking"># overthinking <span>146</span></a>
+      <p class="channel-label">공용 채널</p>
+      <a class="channel is-active" data-channel="live-stress"># 실시간-스트레스 <span>428</span></a>
+      <a class="channel" data-channel="late-night"># 심야-접속 <span>129</span></a>
+      <a class="channel" data-channel="overthinking"># 과잉생각 <span>146</span></a>
 
-      <p class="channel-label">PRESSURE</p>
-      <a class="channel" data-channel="work"># work-rage <span>183</span></a>
-      <a class="channel" data-channel="school"># school-burnout <span>98</span></a>
-      <a class="channel" data-channel="love"># love-damage <span>112</span></a>
-      <a class="channel" data-channel="people"># people <span>91</span></a>
+      <p class="channel-label">압박 구역</p>
+      <a class="channel" data-channel="work"># 직장-분노 <span>183</span></a>
+      <a class="channel" data-channel="school"># 학업-번아웃 <span>98</span></a>
+      <a class="channel" data-channel="love"># 연애-후유증 <span>112</span></a>
+      <a class="channel" data-channel="people"># 인간관계 <span>91</span></a>
 
-      <p class="channel-label">LIVE LABS</p>
-      <a class="channel lab-channel" href="labs/index.html">SMASH ROOM <span>42</span></a>
-      <a class="channel lab-channel" href="labs/index.html">SCREAM ROOM <span>28</span></a>
-      <a class="channel lab-channel" href="labs/index.html">THROW BAY <span>31</span></a>
+      <p class="channel-label">운영 중인 LAB</p>
+      <a class="channel lab-channel" href="labs/index.html">부수기 LAB <span>42</span></a>
+      <a class="channel lab-channel" href="labs/index.html">소리치기 LAB <span>28</span></a>
+      <a class="channel lab-channel" href="labs/index.html">던지기 LAB <span>31</span></a>
 
       <div class="subject-mini">
         <span class="subject-dot"></span>
         <div>
           <strong>SUBJECT_0284</strong>
-          <small>CONNECTED</small>
+          <small>접속 중</small>
         </div>
       </div>
     </aside>
@@ -54,38 +54,38 @@
     <main class="network-main">
       <header class="channel-topbar">
         <div>
-          <h1 id="networkChannelTitle"># live-stress</h1>
+          <h1 id="networkChannelTitle"># 실시간-스트레스</h1>
           <p id="networkChannelSub">실시간으로 들어오는 익명 스트레스 신호.</p>
         </div>
-        <div class="active-count"><i></i> <span id="networkOnline">428</span> ACTIVE</div>
+        <div class="active-count"><i></i> <span id="networkOnline">428</span>명 접속 중</div>
       </header>
 
       <div class="pinned-signal">
         <div>
-          <small>COMMUNITY TARGET</small>
-          <strong>TODAY // MONDAY</strong>
+          <small>공동 해방 목표</small>
+          <strong>오늘 // 월요일</strong>
         </div>
         <p>같은 스트레스가 쌓이면 공동 Lab이 열린다.</p>
-        <a href="labs/index.html">JOIN RELEASE →</a>
+        <a href="labs/index.html">함께 풀기 →</a>
       </div>
 
       <section class="message-stream" id="networkMessages"></section>
 
       <form class="network-composer" id="networkComposer">
-        <input id="networkInput" maxlength="120" placeholder="Transmit a stress signal...">
-        <button type="submit">SEND</button>
+        <input id="networkInput" maxlength="120" placeholder="익명 스트레스 신호를 남겨보세요...">
+        <button type="submit">전송</button>
       </form>
     </main>
 
     <aside class="members-panel">
-      <div class="members-head">ACTIVE SUBJECTS <span>12</span></div>
+      <div class="members-head">접속 중인 SUBJECT <span>12</span></div>
       <div id="memberList"></div>
 
       <div class="members-card">
-        <small>GLOBAL SIGNAL</small>
-        <strong>WORK ↑</strong>
+        <small>전체 감정 신호</small>
+        <strong>일 ↑</strong>
         <p>가장 많이 감지되는 스트레스 카테고리</p>
-        <a href="map.html">OPEN MAP →</a>
+        <a href="map.html">지도 열기 →</a>
       </div>
     </aside>
   </div>

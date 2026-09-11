@@ -9,10 +9,10 @@
 // =====================================================================
 
 const LABS = [
-  { id: 'crack', name: 'CRACK LAB', tagline: '무언가를 깨뜨리고 싶을 때', color: 'var(--coral)', href: 'crack/index.html' },
-  { id: 'shoot', name: 'SHOOT RANGE', tagline: '타깃에 집중하며 긴장을 풀고 싶을 때', color: 'var(--lime)', href: 'shoot/index.html' },
-  { id: 'dance', name: 'DANCE ROOM', tagline: '몸을 움직이며 박자에 풀고 싶을 때', color: 'var(--purple)', href: 'dance/index.html' },
-  { id: 'click', name: 'CLICK ROOM', tagline: '반복적인 작은 행동이 필요할 때', color: 'var(--mint)', href: 'click/index.html' },
+  { id: 'crack', name: '깨부수기 LAB', tagline: '무언가를 깨뜨리고 싶을 때', color: 'var(--coral)', href: 'crack/index.html' },
+  { id: 'shoot', name: '사격 LAB', tagline: '타깃에 집중하며 긴장을 풀고 싶을 때', color: 'var(--lime)', href: 'shoot/index.html' },
+  { id: 'dance', name: '댄스 LAB', tagline: '몸을 움직이며 박자에 풀고 싶을 때', color: 'var(--purple)', href: 'dance/index.html' },
+  { id: 'click', name: '클릭 LAB', tagline: '반복적인 작은 행동이 필요할 때', color: 'var(--mint)', href: 'click/index.html' },
 ];
 
 // ---------------------------------------------------------------
@@ -57,7 +57,7 @@ if (isReturningSubject) {
     enterSound.play().catch(() => {});
 
     const subject = getSubject();
-    gateSubjectEl.textContent = `SUBJECT #${subject.id} — CURRENT STRESS LEVEL: ${subject.level}%`;
+    gateSubjectEl.textContent = `SUBJECT #${subject.id} — 현재 스트레스 수치: ${subject.level}%`;
     gateSubjectEl.classList.add('is-visible');
     setTimeout(() => {
       gate.classList.add('is-hidden');
@@ -88,7 +88,7 @@ LABS.forEach((lab) => {
   a.innerHTML = `
     <span class="lab-card-name">${lab.name}</span>
     <span class="lab-card-tagline">${lab.tagline}</span>
-    <span class="lab-card-go">ENTER →</span>
+    <span class="lab-card-go">입장 →</span>
   `;
   a.addEventListener('click', () => markLabVisited(lab.id));
   labGrid.appendChild(a);
@@ -178,7 +178,7 @@ function renderFeed() {
         <span class="post-subject">· ${timeAgo(post.ts)}</span>
       </div>
       <p class="post-text">${escapeHtml(post.text)}</p>
-      ${post.lab ? `<p class="post-lab">→ ENTERED <strong>${post.lab}</strong></p>` : ''}
+      ${post.lab ? `<p class="post-lab">→ 참여한 LAB <strong>${post.lab}</strong></p>` : ''}
       <div class="comments">
         ${sortedComments.map((c) => `
           <div class="comment" data-comment-id="${c.id}">

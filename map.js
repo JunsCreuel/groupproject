@@ -547,6 +547,19 @@ const ranking = document.getElementById("nodeRanking");
 let cursor = 0;
 let history = [];
 
+const CATEGORY_LABELS = {
+  WORK: "일",
+  PEOPLE: "사람",
+  LOVE: "연애",
+  MONEY: "돈",
+  MYSELF: "나 자신",
+  OTHER: "기타"
+};
+
+function categoryLabel(category) {
+  return CATEGORY_LABELS[category] || category;
+}
+
 function clock() {
   return new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
 }
@@ -587,10 +600,10 @@ SIGNALS.forEach((s) => {
       });
 
     intercept.innerHTML = `
-      FILTERED // ${country}
+      선택 국가 // ${country}
       // ${s.lang}
-      // ${countryLogs.length} SIGNALS
-      <button id="clearCountryFilter">SHOW ALL ×</button>
+      // 신호 ${countryLogs.length}개
+      <button id="clearCountryFilter">전체 신호 보기 ×</button>
     `;
 
     document
@@ -604,7 +617,7 @@ SIGNALS.forEach((s) => {
           .querySelectorAll(".map-node")
           .forEach((n) => n.classList.remove("is-selected-country"));
 
-        intercept.textContent = "GLOBAL SIGNAL NETWORK // ALL SIGNALS";
+        intercept.textContent = "전 세계 익명 신호망 // 전체 신호";
       });
   });
   worldMap.appendChild(node);
@@ -656,7 +669,7 @@ function renderLogs(logs = history) {
           ${signal.city} // ${signal.country} // ${signal.lang}
         </span>
         <b style="--cat:${signal.color}">
-          ${signal.category}
+          ${categoryLabel(signal.category)}
         </b>
       </div>
 
@@ -680,7 +693,7 @@ function pushSignal() {
     node.classList.add("is-flash");
     setTimeout(() => node.classList.remove("is-flash"),900);
   }
-  intercept.textContent = `INTERCEPTED // ${s.city}: "${s.text}"`;
+  intercept.textContent = `신호 포착 // ${s.city}: "${s.text}"`;
 }
 
 for (let i=0;i<6;i++) pushSignal();
@@ -693,7 +706,7 @@ ranking.innerHTML = [...SIGNALS]
     <div class="ranking-row">
       <span class="ranking-num">${String(i+1).padStart(2,"0")}</span>
       <span class="ranking-city">${s.city}</span>
-      <span class="ranking-category" style="--cat:${s.color}">${s.category}</span>
-      <span class="ranking-count">${s.count} SIGNALS</span>
+      <span class="ranking-category" style="--cat:${s.color}">${categoryLabel(s.category)}</span>
+      <span class="ranking-count">신호 ${s.count}개</span>
     </div>
   `).join("");
