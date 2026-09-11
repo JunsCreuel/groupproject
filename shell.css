@@ -1103,6 +1103,16 @@ body.has-global-rail.archive-body .archive-campaign-page {
   grid-template-rows: 118px minmax(0, 1fr) !important;
   gap: 14px !important;
   padding: 18px 28px 22px !important;
+  /* 위쪽의 범용 규칙(`body.has-global-rail .home-stage, .archive-page {
+     height:auto!important; max-height:none!important; overflow:visible!important }`)
+     이 이 요소에도 그대로 걸리면서, grid-template-rows의 1fr 트랙이 채울
+     실제 높이가 없어져 .campaign-screen(영상 화면)이 항상 0px로 찌그러져
+     화면 크기와 무관하게 아예 안 보이는 버그가 있었다. 이 캠페인 영상
+     페이지만은 뷰포트 높이를 확실히 가져야 grid의 1fr이 의미가 있으므로
+     더 구체적인 선택자로 다시 고정해준다. */
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
 }
 
 body.has-global-rail .archive-campaign-intro {
