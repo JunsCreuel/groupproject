@@ -2379,3 +2379,18 @@ body.has-global-rail .network-os {
 
   transform: translate(-50%, -50%) !important;
 }
+/* 예: 빨간 경고문 위 반짝이 */
+.warning-sparkles {
+  position: absolute;
+  top: -38px;          /* 더 위로 */
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 220px;
+  height: 28px;
+
+  pointer-events: none;
+  overflow: hidden;    /* 아래로 침범하는 반짝이 잘라냄 */
+
+  z-index: 2;
+}

@@ -1291,3 +1291,183 @@ a {
   }
 
 }
+
+/* =========================================================
+   LANDING TYPOGRAPHY SCALE UP
+========================================================= */
+
+/* 상단 시스템 라벨 */
+
+.top-left-status,
+.top-right-status {
+  font-size: 10px !important;
+}
+
+.top-right-status span {
+  font-size: 10px !important;
+}
+
+
+/* 상단 경고 */
+
+.tiny-label {
+  font-size: 10px !important;
+}
+
+.system-flash {
+  font-size: 10px !important;
+}
+
+
+/* 브랜드 서브텍스트 */
+
+.landing-name {
+  font-size: 14px !important;
+}
+
+
+/* ACCESS GRANTED */
+
+.access-status {
+  font-size: 11px !important;
+
+  padding:
+    9px 15px !important;
+}
+
+
+/* 부팅 로그 */
+
+.boot-log {
+  width:
+    min(430px, 92%) !important;
+}
+
+.boot-log > div {
+  min-height:
+    24px !important;
+
+  font-size:
+    9px !important;
+}
+
+.boot-log span {
+  color:
+    #aeb7b1 !important;
+}
+
+.boot-log strong {
+  color:
+    #f0f3ef !important;
+}
+
+
+/* NEW FILE DETECTED */
+
+.access-prompt {
+  font-size:
+    9px !important;
+
+  color:
+    #b4bdb7 !important;
+}
+
+
+/* 핵심 CTA */
+
+.discover-button {
+  font-size:
+    12px !important;
+
+  padding:
+    14px 22px 14px 40px !important;
+}
+
+.discover-button::before {
+  left:
+    16px !important;
+
+  font-size:
+    15px !important;
+}
+
+
+/* 하단 상태 */
+
+.bottom-status {
+  font-size:
+    9px !important;
+}
+
+
+/* =========================================================
+   CLASSIFIED FILE ALSO BIGGER
+========================================================= */
+
+.file-header {
+  font-size:
+    9px !important;
+}
+
+.file-warning {
+  font-size:
+    9px !important;
+}
+
+.file-index {
+  font-size:
+    9px !important;
+}
+
+.file-body p {
+  font-size:
+    15px !important;
+}
+
+.rule-list span {
+  font-size:
+    10px !important;
+}
+
+.government-record span {
+  font-size:
+    8px !important;
+}
+
+.government-record strong {
+  font-size:
+    20px !important;
+}
+
+.classified-note span {
+  font-size:
+    9px !important;
+}
+
+.classified-note strong {
+  font-size:
+    19px !important;
+}
+
+.action-log span {
+  font-size:
+    9px !important;
+}
+
+.csl-intercept span {
+  font-size:
+    9px !important;
+}
+
+.csl-intercept p {
+  font-size:
+    11px !important;
+}
+
+.landing-actions a {
+  font-size:
+    10px !important;
+
+  padding:
+    12px 15px !important;
+}
