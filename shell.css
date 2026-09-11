@@ -1400,3 +1400,10 @@ body.has-global-rail .archive-campaign-intro > p:last-child {
 
   .campaign-footer span { display: none; }
 }
+
+/* CSL DARK SYSTEM — ARCHIVE / CAMPAIGN */
+body.has-global-rail.archive-body { background: #080a0b !important; color: #eef0ef !important; }
+body.has-global-rail .archive-campaign-intro { color: #eef0ef; }
+body.has-global-rail .archive-campaign-intro .eyebrow,
+body.has-global-rail .archive-campaign-intro > p:last-child { color: rgba(235,239,238,.5); }
+.campaign-gateway { border-color: rgba(255,255,255,.14); box-shadow: 0 22px 55px rgba(0,0,0,.55); }

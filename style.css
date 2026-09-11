@@ -821,3 +821,39 @@ body.is-locked { overflow: hidden; height: 100vh; }
   .section-body { font-size: 1.15rem; }
   .nav-bar { padding: 1.7rem 4rem; }
 }
+
+/* CSL DARK SYSTEM — 메인을 NETWORK / MAP과 같은 검은 배경으로 통일 */
+body { background: #080a0b; color: #eef0ef; }
+.nav-bar { background: rgba(8,10,11,.92); border-bottom-color: rgba(255,255,255,.1); }
+.nav-logo img { filter: invert(1) brightness(1.8); }
+.nav-links a { color: #e9eceb; }
+.nav-cta { background: #f1f2ee; color: #0a0c0d !important; }
+.section-origin, .section-explore { background: #080a0b; }
+
+.section-kicker, .section-body, .lab-card-tagline, .explore-more,
+.post-subject, .post-lab, .comment-like, .record-title, .record-label,
+.landing-footer, .confess-response.is-error { color: rgba(235,239,238,.55); }
+
+.section-quote, .comments { border-color: rgba(255,255,255,.14); }
+.lab-card, .post-composer, .feed-post, .record-card, .confess-response, .about-panel {
+  background: #111416;
+  color: #eef0ef;
+  border-color: rgba(255,255,255,.13);
+  box-shadow: 0 12px 30px rgba(0,0,0,.28);
+}
+.lab-card { color: #eef0ef; }
+.lab-card:hover { box-shadow: 0 15px 34px rgba(0,0,0,.48); }
+.category-chip { background: #0c0f10; }
+.composer-input, .comment-add input, .confess-input {
+  background: #0c0f10;
+  color: #eef0ef;
+  border-color: rgba(255,255,255,.18);
+}
+.composer-input::placeholder, .comment-add input::placeholder,
+.confess-input::placeholder { color: rgba(255,255,255,.32); }
+.composer-submit, .footer-cta { background: #eef0ef; color: #090b0c; }
+.comment-add button, .map-track { background: rgba(255,255,255,.09); color: #dfe2e1; }
+.post-lab strong { color: #eef0ef; }
+.stamp { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.38); }
+.about-close { background: #111416; color: #eef0ef; border-color: #eef0ef; }
+.about-section h3 { border-color: #eef0ef; }
