@@ -691,3 +691,19 @@ body.hyped .obj-trash     { animation: trash-jitter calc(0.6s / var(--hype-speed
   color: var(--pink);
   word-break: break-all;
 }
+
+/* CSL DARK SYSTEM — LAB selector */
+body, .stage { background: #080a0b; color: #eef0ef; }
+.logo-img { filter: invert(1) brightness(1.8); }
+.nav a, .sound-toggle, .tagline, .headline, .subhead, .footer { color: #eef0ef; }
+.random-lab, .pick-lab {
+  background: #111416;
+  color: #eef0ef;
+  border-color: rgba(255,255,255,.7);
+}
+.random-lab:hover, .pick-lab:hover { background: #eef0ef; color: #090b0c; }
+.callout-left, .callout-right { color: rgba(235,239,238,.5); }
+.about-panel { background: #111416; color: #eef0ef; }
+.about-close { background: #111416; color: #eef0ef; border-color: #eef0ef; }
+.about-section h3 { border-color: #eef0ef; }
+.about-credit li { color: rgba(235,239,238,.62); }
