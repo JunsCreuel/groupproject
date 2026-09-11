@@ -402,7 +402,7 @@ body.is-locked { overflow: hidden; height: 100vh; }
   font-weight: 700;
   padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  color: #fff;
+  color: #111; /* 카테고리 색이 전부 밝은 파스텔이라, 흰 글자보다 어두운 글자가 대비가 훨씬 낫다 */
 }
 
 .post-text { font-size: 0.95rem; margin-bottom: 0.5rem; }

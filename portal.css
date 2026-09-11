@@ -302,12 +302,12 @@ button, input { font: inherit; }
 /* ---------- NETWORK ---------- */
 
 .app-body {
-  background: var(--paper);
-  color: var(--ink);
+  background: #080a0b;
+  color: #eef0ef;
 }
 
 .network-app {
-  background: var(--paper);
+  background: #080a0b;
 }
 
 .network-rail {
@@ -333,43 +333,48 @@ button, input { font: inherit; }
   background: rgba(255,61,148,.12);
 }
 
+/* 2026-09-11: V2 "off-white 통일" 패스가 NETWORK을 밝은 테마로 만들었는데,
+   이후 body/전체 페이지를 검은 배경으로 다시 통일하면서 이 안쪽 텍스트
+   색(밝은 배경 가정)과 바깥 배경(검은색)이 서로 안 맞아 텍스트가 거의
+   안 보이는 문제가 있었다 — 사이드바/본문을 다시 어두운 배경 + 흰 글자로
+   맞춘다(사이트 전체 통일 방향에 맞춤). */
 .channel-sidebar {
-  background: #ecebe6;
+  background: #0c0f10;
   border-right: 1px solid var(--line-light);
-  color: var(--ink);
+  color: #eef0ef;
 }
 
 .sidebar-head {
-  color: var(--ink);
+  color: #eef0ef;
   border-bottom-color: var(--line-light);
 }
 
 .sidebar-head small,
 .channel-label {
-  color: #8f918e;
+  color: rgba(238,240,239,.45);
 }
 
 .channel {
-  color: #666967;
+  color: rgba(238,240,239,.6);
 }
 
 .channel span {
-  color: #a1a29e;
+  color: rgba(238,240,239,.4);
 }
 
 .channel:hover,
 .channel.is-active {
-  background: #f8f7f3;
-  color: var(--ink);
+  background: #171b1d;
+  color: #fff;
 }
 
 .channel.is-active {
   border-left-color: var(--pink);
-  box-shadow: inset 0 0 0 1px rgba(17,18,20,.05);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
 }
 
 .lab-channel {
-  color: #3f4343;
+  color: rgba(238,240,239,.75);
 }
 
 .subject-mini {
@@ -377,11 +382,11 @@ button, input { font: inherit; }
 }
 
 .subject-mini strong {
-  color: var(--ink);
+  color: #eef0ef;
 }
 
 .subject-mini small {
-  color: #8c8e8c;
+  color: rgba(238,240,239,.45);
 }
 
 .subject-dot {
@@ -389,24 +394,23 @@ button, input { font: inherit; }
   box-shadow: inset 0 0 0 1px #303536;
 }
 
-/* main content = light editorial surface */
 .network-main {
-  background: #f8f7f3;
-  color: var(--ink);
+  background: #0a0c0d;
+  color: #eef0ef;
 }
 
 .channel-topbar {
-  background: rgba(248,247,243,.96);
+  background: rgba(10,12,13,.96);
   border-bottom-color: var(--line-light);
 }
 
 .channel-topbar h1 {
-  color: var(--ink);
+  color: #eef0ef;
 }
 
 .channel-topbar p,
 .active-count {
-  color: #7b7e7c;
+  color: rgba(238,240,239,.55);
 }
 
 /* pinned item is where dystopian system tone appears */
@@ -432,11 +436,11 @@ button, input { font: inherit; }
 }
 
 .message-stream {
-  background: #f8f7f3;
+  background: #0a0c0d;
 }
 
 .net-message {
-  border-bottom-color: rgba(17,18,20,.09);
+  border-bottom-color: rgba(255,255,255,.08);
 }
 
 .avatar-placeholder {
@@ -445,19 +449,19 @@ button, input { font: inherit; }
 }
 
 .net-message-head strong {
-  color: #444746;
+  color: #eef0ef;
 }
 
 .net-message-head time {
-  color: #9b9d9b;
+  color: rgba(238,240,239,.4);
 }
 
 .net-message p {
-  color: #1d1f20;
+  color: rgba(238,240,239,.85);
 }
 
 .net-actions {
-  color: #8a8d8b;
+  color: rgba(238,240,239,.45);
 }
 
 .net-actions button:hover {
@@ -465,22 +469,22 @@ button, input { font: inherit; }
 }
 
 .network-composer {
-  background: #fff;
-  border-color: rgba(17,18,20,.18);
-  box-shadow: 0 8px 26px rgba(17,18,20,.05);
+  background: #111416;
+  border-color: rgba(255,255,255,.14);
+  box-shadow: 0 8px 26px rgba(0,0,0,.3);
 }
 
 .network-composer input {
-  color: var(--ink);
+  color: #eef0ef;
 }
 
 .network-composer input::placeholder {
-  color: #aaa9a5;
+  color: rgba(238,240,239,.35);
 }
 
 .network-composer button {
-  border-left-color: rgba(17,18,20,.14);
-  color: #5d605f;
+  border-left-color: rgba(255,255,255,.12);
+  color: rgba(238,240,239,.6);
 }
 
 .network-composer button:hover {
@@ -490,22 +494,22 @@ button, input { font: inherit; }
 
 /* right users panel */
 .members-panel {
-  background: #ecebe6;
-  color: var(--ink);
+  background: #0c0f10;
+  color: #eef0ef;
   border-left-color: var(--line-light);
 }
 
 .members-head {
   border-bottom-color: var(--line-light);
-  color: #7f817f;
+  color: rgba(238,240,239,.5);
 }
 
 .member strong {
-  color: #343736;
+  color: #eef0ef;
 }
 
 .member small {
-  color: #969895;
+  color: rgba(238,240,239,.45);
 }
 
 .members-card {
@@ -525,29 +529,31 @@ button, input { font: inherit; }
 /* ---------- MAP ---------- */
 
 .map-body {
-  background: var(--paper);
-  color: var(--ink);
+  background: #080a0b;
+  color: #eef0ef;
 }
 
 .portal-nav-dark {
-  background: rgba(247,246,242,.96);
-  color: var(--ink);
+  background: rgba(8,10,11,.96);
+  color: #eef0ef;
   border-color: var(--line-light);
 }
 
 .map-page {
-  background: var(--paper);
+  background: #080a0b;
 }
 
 .map-page-intro > p:last-child {
-  color: #696d6c;
+  color: rgba(238,240,239,.55);
 }
 
-/* 지도는 "감시 시스템 화면"이라 dark 유지 */
+/* 지도는 "감시 시스템 화면"이라 dark 유지 — 다만 .signal-ranking 계열이
+   var(--ink)(어두운 글자)를 그대로 쓰고 있어서 이 어두운 패널 위에서
+   글자가 안 보이고 있었다. 밝은 색으로 맞춘다. */
 .map-console {
   background: var(--terminal);
-  border: 1px solid rgba(17,18,20,.2);
-  box-shadow: 0 22px 55px rgba(17,18,20,.12);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 22px 55px rgba(0,0,0,.4);
 }
 
 .world-panel {
@@ -559,33 +565,33 @@ button, input { font: inherit; }
 }
 
 .signal-ranking {
-  color: var(--ink);
+  color: #eef0ef;
 }
 
 .ranking-row {
-  border-color: rgba(17,18,20,.16);
+  border-color: rgba(255,255,255,.12);
 }
 
 .ranking-num {
-  color: #a09f9a;
+  color: rgba(238,240,239,.4);
 }
 
 .ranking-city {
-  color: var(--ink);
+  color: #eef0ef;
 }
 
 .ranking-count {
-  color: #777a78;
+  color: rgba(238,240,239,.5);
 }
 
 /* ---------- ARCHIVE ---------- */
 
 .archive-body {
-  background: var(--paper);
+  background: #080a0b;
 }
 
 .archive-page {
-  background: var(--paper);
+  background: #080a0b;
 }
 
 .case-file {
@@ -631,11 +637,11 @@ button, input { font: inherit; }
   .channel-topbar,
   .network-main,
   .message-stream {
-    background: #f8f7f3;
+    background: #0a0c0d;
   }
 
   .network-composer {
-    background: #fff;
+    background: #111416;
   }
 }
 

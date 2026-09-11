@@ -925,7 +925,7 @@ body.has-global-rail .map-page-intro h1 {
 
   margin: 0 !important;
 
-  color: #101214;
+  color: #eef0ef; /* 밝은 배경 가정하고 적었던 어두운 글자색(#101214) — 검은 배경 통일 후 안 보이던 것 수정 */
   font-family:
     ui-monospace,
     "SFMono-Regular",
