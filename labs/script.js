@@ -53,10 +53,10 @@ function setMusic(on) {
   if (musicOn) {
     bgMusic.volume = locked ? masterVolume : bgMusic.volume; // 충전 중이면 rampLoop가 매 프레임 갱신하므로 그대로 둠
     bgMusic.play().catch(() => {}); // 브라우저 자동재생 정책으로 실패할 수 있어 catch 처리
-    soundState.textContent = '🔊 켜짐';
+    soundState.textContent = '🔊 ON';
   } else {
     bgMusic.pause();
-    soundState.textContent = '🔇 꺼짐';
+    soundState.textContent = '🔇 OFF';
   }
 }
 
@@ -123,7 +123,7 @@ function lockHype() {
   bgMusic.volume = masterVolume;
   setHypeSpeed(MAX_SPEED);
   setGauge(1);
-  hypeHint.textContent = '스트레스 해방 완료';
+  hypeHint.textContent = 'STRESS RELEASED';
   hypeGauge.classList.add('is-charged'); // 게이지 UI는 서서히 사라짐
 }
 

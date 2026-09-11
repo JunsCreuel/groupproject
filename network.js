@@ -1,6 +1,6 @@
 const CHANNELS = {
   "live-stress": {
-    title: "# 실시간-스트레스",
+    title: "# live-stress",
     sub: "실시간으로 들어오는 익명 스트레스 신호.",
     online: 428,
     messages: [
@@ -13,7 +13,7 @@ const CHANNELS = {
     ]
   },
   "late-night": {
-    title: "# 심야-접속",
+    title: "# late-night",
     sub: "잠들지 못한 사람들의 채널.",
     online: 129,
     messages: [
@@ -24,7 +24,7 @@ const CHANNELS = {
     ]
   },
   "overthinking": {
-    title: "# 과잉생각",
+    title: "# overthinking",
     sub: "생각이 멈추지 않을 때.",
     online: 146,
     messages: [
@@ -34,8 +34,8 @@ const CHANNELS = {
     ]
   },
   work: {
-    title: "# 직장-분노",
-    sub: "마감. 회의. 괜찮은 척하기.",
+    title: "# work-rage",
+    sub: "Deadlines. Meetings. Pretending to be fine.",
     online: 183,
     messages: [
       ["SUBJECT_2031","상사는 우리가 진짜 로봇인 줄 아나 봐.",124],
@@ -45,7 +45,7 @@ const CHANNELS = {
     ]
   },
   school: {
-    title: "# 학업-번아웃",
+    title: "# school-burnout",
     sub: "과제, 시험, 비교, 압박.",
     online: 98,
     messages: [
@@ -55,7 +55,7 @@ const CHANNELS = {
     ]
   },
   love: {
-    title: "# 연애-후유증",
+    title: "# love-damage",
     sub: "사랑도 스트레스가 될 때.",
     online: 112,
     messages: [
@@ -65,7 +65,7 @@ const CHANNELS = {
     ]
   },
   people: {
-    title: "# 인간관계",
+    title: "# people",
     sub: "사람 때문에 지칠 때.",
     online: 91,
     messages: [
@@ -77,14 +77,14 @@ const CHANNELS = {
 };
 
 const MEMBERS = [
-  ["SUBJECT_0821","#실시간-스트레스 접속 중"],
-  ["SUBJECT_4410","입력 중..."],
-  ["SUBJECT_7732","부수기 LAB 참여 중"],
-  ["SUBJECT_0912","대기 중"],
-  ["SUBJECT_6621","#직장-분노 접속 중"],
-  ["SUBJECT_1209","온라인"],
-  ["SUBJECT_5530","#심야-접속 접속 중"],
-  ["SUBJECT_2031","온라인"]
+  ["SUBJECT_0821","in #live-stress"],
+  ["SUBJECT_4410","typing..."],
+  ["SUBJECT_7732","in SMASH ROOM"],
+  ["SUBJECT_0912","idle"],
+  ["SUBJECT_6621","in #work-rage"],
+  ["SUBJECT_1209","online"],
+  ["SUBJECT_5530","in #late-night"],
+  ["SUBJECT_2031","online"]
 ];
 
 const titleEl = document.getElementById("networkChannelTitle");
@@ -122,10 +122,10 @@ function renderChannel() {
         </div>
         <p>${text}</p>
         <div class="net-actions">
-          <button data-same> 나도 그래 ${same}</button>
-          <button>답글</button>
-          <button>공유</button>
-          <button>LAB 입장</button>
+          <button data-same> SAME ${same}</button>
+          <button>REPLY</button>
+          <button>SHARE</button>
+          <button>JOIN LAB</button>
         </div>
       </div>
     </article>
@@ -148,7 +148,7 @@ stream.addEventListener("click", (e) => {
   if (!btn) return;
   const match = btn.textContent.match(/(\d+)/);
   const n = match ? Number(match[1]) + 1 : 1;
-  btn.textContent = `나도 그래 ${n}`;
+  btn.textContent = `SAME ${n}`;
 });
 
 composer.addEventListener("submit", (e) => {

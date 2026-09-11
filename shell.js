@@ -30,7 +30,7 @@
     <a
       href="${new URL('index.html', base).href}"
       class="global-rail-logo ${active === 'home' ? 'is-active' : ''}"
-      data-label="홈"
+      data-label="HOME"
     >
       CSL
     </a>
@@ -38,7 +38,7 @@
     <a
       href="${new URL('network.html', base).href}"
       class="global-rail-btn ${active === 'network' ? 'is-active' : ''}"
-      data-label="비밀망"
+      data-label="NETWORK"
     >
       N
     </a>
@@ -46,7 +46,7 @@
     <a
       href="${new URL('map.html', base).href}"
       class="global-rail-btn ${active === 'map' ? 'is-active' : ''}"
-      data-label="지도"
+      data-label="MAP"
     >
       M
     </a>
@@ -54,7 +54,7 @@
     <a
       href="${new URL('archive.html', base).href}"
       class="global-rail-btn ${active === 'archive' ? 'is-active' : ''}"
-      data-label="기록"
+      data-label="ARCHIVE"
     >
       A
     </a>
@@ -62,7 +62,7 @@
     <a
       href="${new URL('labs/index.html', base).href}"
       class="global-rail-btn is-labs ${active === 'labs' ? 'is-active' : ''}"
-      data-label="LAB"
+      data-label="LABS"
     >
       L
     </a>
