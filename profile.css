@@ -20,21 +20,25 @@ button, input, select { font: inherit; }
   background: var(--paper);
 }
 
-body.has-global-rail.profile-body { overflow-y: auto !important; }
+body.has-global-rail.profile-body { overflow: hidden !important; }
 
 .profile-page {
-  width: min(1440px, calc(100vw - 72px));
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: clamp(30px, 4vw, 64px);
+  width: calc(100vw - 72px);
+  max-width: none !important;
+  height: 100dvh;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .profile-intro {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: 40px;
-  margin-bottom: 28px;
+  margin-bottom: 0;
   color: var(--ink);
 }
 
@@ -57,13 +61,13 @@ body.has-global-rail.profile-body { overflow-y: auto !important; }
 }
 
 .profile-intro h1 {
-  font: 400 clamp(3.5rem, 7vw, 6.7rem)/.86 "Anton", Impact, sans-serif;
+  font: 400 clamp(2.6rem, 4.2vw, 4.5rem)/.86 "Anton", Impact, sans-serif;
   letter-spacing: -.025em;
 }
 
 .profile-intro > p {
   max-width: 430px;
-  padding-bottom: 7px;
+  padding-bottom: 0;
   color: #646969;
   font-size: .82rem;
   line-height: 1.65;
@@ -72,14 +76,16 @@ body.has-global-rail.profile-body { overflow-y: auto !important; }
 .profile-layout {
   display: grid;
   grid-template-columns: minmax(390px, .82fr) minmax(520px, 1.18fr);
-  min-height: 650px;
-  border: 1px solid #272b2c;
+  min-height: 0;
+  height: 100%;
+  border: 0;
   background: var(--panel);
-  box-shadow: 0 24px 60px rgba(17,18,20,.15);
+  box-shadow: none;
 }
 
-.profile-panel, .friends-panel { min-width: 0; padding: 24px; }
+.profile-panel, .friends-panel { min-width: 0; min-height: 0; padding: 24px; overflow: hidden; }
 .profile-panel { border-right: 1px solid var(--line); }
+.friends-panel { display: flex; flex-direction: column; }
 
 .panel-head {
   display: flex;
@@ -165,7 +171,7 @@ body.has-global-rail.profile-body { overflow-y: auto !important; }
 .friend-feedback { min-height: 25px; padding-top: 7px; color: #8c9394; font-size: .58rem; }
 .friend-tools { display: grid; grid-template-columns: 1fr 112px; gap: 10px; margin: 8px 0 12px; }
 
-.friend-list { border-top: 1px solid var(--line); }
+.friend-list { min-height: 0; overflow-y: auto; border-top: 1px solid var(--line); }
 .friend-card {
   display: grid;
   grid-template-columns: 42px 1fr auto;
@@ -193,12 +199,16 @@ body.has-global-rail.profile-body { overflow-y: auto !important; }
 .friends-empty p { margin-top: 8px; font-size: .65rem; }
 
 @media (max-width: 1050px) {
-  .profile-layout { grid-template-columns: 1fr; }
+  body.has-global-rail.profile-body { overflow-y: auto !important; }
+  .profile-page { height: auto; min-height: 100dvh; grid-template-rows: auto auto; }
+  .profile-layout { height: auto; grid-template-columns: 1fr; }
   .profile-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+  .profile-panel, .friends-panel { overflow: visible; }
+  .friend-list { overflow: visible; }
 }
 
 @media (max-width: 680px) {
-  .profile-page { width: calc(100vw - 54px); padding: 22px 14px 40px; }
+  .profile-page { width: calc(100vw - 54px); padding: 0; }
   .profile-intro { display: block; }
   .profile-intro > p { margin-top: 15px; }
   .profile-panel, .friends-panel { padding: 17px; }
