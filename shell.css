@@ -748,3 +748,276 @@ body.has-global-rail:not(.app-body):not(.map-body) {
   overflow-y: auto !important;
 }
 
+/* SHOW ALL — GLOBAL MAP */
+body.has-global-rail.map-body .intercept-line {
+  position: relative;
+  padding-right: 150px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#clearCountryLogs,
+#clearCountryFilter {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+
+  margin: 0 !important;
+  padding: 8px 13px !important;
+
+  transform: translateY(-50%);
+
+  border: 1px solid #ff3d94 !important;
+  border-radius: 2px !important;
+
+  background: #ff3d94 !important;
+  color: #080a0b !important;
+
+  font-family: "Space Grotesk", sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  box-shadow:
+    0 0 0 1px rgba(255, 61, 148, 0.25),
+    0 0 16px rgba(255, 61, 148, 0.45);
+
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+#clearCountryLogs:hover,
+#clearCountryFilter:hover {
+  background: #090b0c !important;
+  color: #ff3d94 !important;
+
+  box-shadow:
+    0 0 0 1px #ff3d94,
+    0 0 24px rgba(255, 61, 148, 0.7);
+}
+
+#clearCountryLogs:focus-visible,
+#clearCountryFilter:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* MAP NODE VISUAL RESET */
+body.has-global-rail.map-body .map-node {
+  width: 14px !important;
+  height: 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* 기본 노드: 어두운 시안 */
+body.has-global-rail.map-body .map-node-core {
+  inset: 4px !important;
+  background: #63dfe2 !important;
+  border: 0 !important;
+  box-shadow: 0 0 6px rgba(99, 223, 226, 0.55) !important;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+/* 바깥 링은 얇고 은은하게 */
+body.has-global-rail.map-body .map-node-ring {
+  inset: 1px !important;
+  border: 1px solid rgba(99, 223, 226, 0.42) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 0.55;
+}
+
+/* 도시명 */
+body.has-global-rail.map-body .map-node-label {
+  left: 17px !important;
+  top: 1px !important;
+  color: rgba(220, 230, 230, 0.46) !important;
+  font-size: 0.44rem !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 4px #000;
+}
+
+/* 마우스 오버: 애시드 그린 */
+body.has-global-rail.map-body .map-node:hover .map-node-core {
+  background: #caff3d !important;
+  transform: scale(1.4);
+  box-shadow: 0 0 12px rgba(202, 255, 61, 0.75) !important;
+}
+
+body.has-global-rail.map-body .map-node:hover .map-node-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 선택된 국가: 핫핑크 */
+body.has-global-rail.map-body .map-node.is-selected-country .map-node-core {
+  background: #ff3d94 !important;
+  transform: scale(1.65) !important;
+  box-shadow:
+    0 0 8px #ff3d94,
+    0 0 18px rgba(255, 61, 148, 0.55) !important;
+}
+
+body.has-global-rail.map-body .map-node.is-selected-country .map-node-ring {
+  border-color: #ff3d94 !important;
+  opacity: 1 !important;
+}
+
+body.has-global-rail.map-body .map-node.is-selected-country .map-node-label {
+  color: #fff !important;
+}
+
+/* =====================================================
+   MAP INTRO — DYSTOPIAN LIVE TERMINAL
+===================================================== */
+
+body.has-global-rail .map-page {
+  grid-template-rows: 128px minmax(0, 1fr) !important;
+}
+
+/* 3개 요소를 모두 한 행에 배치 */
+body.has-global-rail .map-page-intro {
+  position: relative;
+  z-index: 10;
+
+  width: 100%;
+  height: 128px !important;
+
+  display: grid !important;
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    minmax(250px, 0.48fr) !important;
+
+  align-items: center !important;
+  gap: clamp(20px, 2.3vw, 46px) !important;
+
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* 왼쪽 시스템 라벨 */
+body.has-global-rail .map-page-intro .eyebrow {
+  margin: 0 !important;
+  white-space: nowrap;
+
+  color: #747a7b !important;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+/* 메인 헤드라인 */
+body.has-global-rail .map-page-intro h1 {
+  display: flex !important;
+  align-items: center;
+  gap: clamp(12px, 1.2vw, 22px);
+
+  margin: 0 !important;
+
+  color: #101214;
+  font-family:
+    ui-monospace,
+    "SFMono-Regular",
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace !important;
+
+  font-size: clamp(1.9rem, 3vw, 3.65rem) !important;
+  font-weight: 700 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.075em !important;
+  white-space: nowrap !important;
+
+  text-shadow:
+    2px 0 rgba(255, 30, 68, 0.14),
+    -2px 0 rgba(34, 220, 226, 0.12);
+}
+
+/* 오른쪽 설명 — 맵 뒤로 안 들어가게 */
+body.has-global-rail .map-page-intro .map-page-note {
+  position: relative;
+  z-index: 11;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  color: #656b6c !important;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(0.68rem, 0.8vw, 0.86rem);
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+}
+
+/* 빨간 LIVE 레이더 */
+.map-live-orb {
+  position: relative;
+  flex: 0 0 auto;
+
+  width: clamp(22px, 1.8vw, 32px);
+  height: clamp(22px, 1.8vw, 32px);
+
+  border: 1px solid rgba(255, 37, 70, 0.75);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #ff243f 0 15%,
+      rgba(255, 36, 63, 0.3) 17% 34%,
+      transparent 36%
+    );
+
+  box-shadow:
+    0 0 8px rgba(255, 36, 63, 0.7),
+    0 0 22px rgba(255, 36, 63, 0.28);
+}
+
+.map-live-orb::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+
+  border: 1px solid #ff243f;
+  border-radius: 50%;
+
+  animation: mapLivePulse 1.7s ease-out infinite;
+}
+
+.map-live-orb::after {
+  content: "LIVE";
+
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 7px);
+  transform: translateX(-50%);
+
+  color: #e5243f;
+  font-family: monospace;
+  font-size: 0.38rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+@keyframes mapLivePulse {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
