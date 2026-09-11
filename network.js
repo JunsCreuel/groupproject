@@ -96,6 +96,19 @@ const input = document.getElementById("networkInput");
 const memberList = document.getElementById("memberList");
 let activeChannel = "live-stress";
 
+try {
+  const subject = JSON.parse(localStorage.getItem("csl-subject") || "null");
+  const savedProfile = JSON.parse(localStorage.getItem("csl-profile") || "null");
+  const miniName = document.querySelector(".subject-mini strong");
+  if (miniName && subject?.id) {
+    miniName.textContent = savedProfile?.name
+      ? `${savedProfile.name} // SUBJECT_${subject.id}`
+      : `SUBJECT_${subject.id}`;
+  }
+} catch {
+  // 저장된 프로필이 손상된 경우 기본 SUBJECT 표기를 유지한다.
+}
+
 function renderMembers() {
   memberList.innerHTML = MEMBERS.map(([name,status]) => `
     <div class="member">

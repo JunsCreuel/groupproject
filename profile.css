@@ -1,0 +1,212 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --paper: #efeee9;
+  --ink: #111214;
+  --panel: #0c0f10;
+  --panel-2: #121617;
+  --line: rgba(255,255,255,.11);
+  --muted: #747b7d;
+  --pink: #ff3d94;
+}
+
+html, body { min-height: 100%; }
+body { font-family: "Space Grotesk", sans-serif; }
+button, input, select { font: inherit; }
+
+.profile-body {
+  min-height: 100vh;
+  color: #eef0f0;
+  background: var(--paper);
+}
+
+body.has-global-rail.profile-body { overflow-y: auto !important; }
+
+.profile-page {
+  width: min(1440px, calc(100vw - 72px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: clamp(30px, 4vw, 64px);
+}
+
+.profile-intro {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 28px;
+  color: var(--ink);
+}
+
+.profile-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+  color: #737878;
+  font: 700 .65rem ui-monospace, monospace;
+  letter-spacing: .13em;
+}
+
+.profile-eyebrow i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #69ff8e;
+  box-shadow: 0 0 10px #69ff8e;
+}
+
+.profile-intro h1 {
+  font: 400 clamp(3.5rem, 7vw, 6.7rem)/.86 "Anton", Impact, sans-serif;
+  letter-spacing: -.025em;
+}
+
+.profile-intro > p {
+  max-width: 430px;
+  padding-bottom: 7px;
+  color: #646969;
+  font-size: .82rem;
+  line-height: 1.65;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(390px, .82fr) minmax(520px, 1.18fr);
+  min-height: 650px;
+  border: 1px solid #272b2c;
+  background: var(--panel);
+  box-shadow: 0 24px 60px rgba(17,18,20,.15);
+}
+
+.profile-panel, .friends-panel { min-width: 0; padding: 24px; }
+.profile-panel { border-right: 1px solid var(--line); }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-head > div { display: flex; align-items: center; gap: 12px; }
+.panel-head span, .panel-head small { color: #656c6e; font: 700 .55rem ui-monospace, monospace; letter-spacing: .11em; }
+.panel-head h2 { font-size: .78rem; letter-spacing: .1em; }
+.panel-head small b { color: var(--pink); }
+
+.identity-card {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 15px;
+  margin: 22px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+}
+
+.profile-avatar, .friend-avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--profile-color, var(--friend-color)) 16%, #1b2021);
+  border: 1px solid var(--profile-color, var(--friend-color));
+  color: var(--profile-color, var(--friend-color));
+  font-weight: 700;
+}
+
+.profile-avatar { width: 64px; height: 64px; font-size: 1.25rem; }
+.identity-card strong { display: block; font-size: .78rem; }
+.identity-card p { margin-top: 7px; color: #8d9495; font-size: .67rem; }
+.profile-online { color: #6f7778; font: 700 .52rem ui-monospace, monospace; }
+.profile-online i { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: #69ff8e; box-shadow: 0 0 8px #69ff8e; }
+
+.profile-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.profile-form label, .profile-form fieldset { display: grid; gap: 7px; border: 0; }
+.profile-form label:nth-child(1), .profile-form label:nth-child(2) { grid-column: 1 / -1; }
+.profile-form label span, .profile-form legend { color: #6c7375; font: 700 .52rem ui-monospace, monospace; letter-spacing: .1em; }
+
+.profile-form input, .profile-form select, .friend-add input, .friend-tools input, .friend-tools select {
+  min-width: 0;
+  height: 43px;
+  border: 1px solid #343a3c;
+  outline: 0;
+  padding: 0 12px;
+  background: #111516;
+  color: #e9ebeb;
+  font-size: .7rem;
+}
+
+.profile-form input:focus, .profile-form select:focus, .friend-add input:focus, .friend-tools input:focus { border-color: var(--pink); }
+
+.color-options { display: flex; gap: 8px; padding-top: 5px; }
+.color-options button { width: 27px; height: 27px; border: 1px solid var(--choice); border-radius: 50%; background: color-mix(in srgb, var(--choice) 20%, transparent); cursor: pointer; }
+.color-options button.is-selected { box-shadow: 0 0 0 3px #0c0f10, 0 0 0 4px var(--choice), 0 0 14px var(--choice); }
+
+.save-profile {
+  grid-column: 1 / -1;
+  height: 45px;
+  border: 0;
+  background: var(--pink);
+  color: #090b0c;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+
+.save-profile:hover { background: #fff; }
+.save-notice { grid-column: 1 / -1; min-height: 16px; color: #79e99a; font-size: .6rem; }
+.privacy-note { margin-top: 13px; color: #606769; font-size: .58rem; line-height: 1.55; }
+
+.friend-add { display: grid; grid-template-columns: 1fr 90px; margin-top: 22px; }
+.friend-add button { border: 0; background: var(--pink); color: #090b0c; font-size: .65rem; font-weight: 700; cursor: pointer; }
+.friend-feedback { min-height: 25px; padding-top: 7px; color: #8c9394; font-size: .58rem; }
+.friend-tools { display: grid; grid-template-columns: 1fr 112px; gap: 10px; margin: 8px 0 12px; }
+
+.friend-list { border-top: 1px solid var(--line); }
+.friend-card {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 104px;
+  padding: 15px 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.friend-avatar { width: 42px; height: 42px; font-size: .8rem; }
+.friend-name { display: flex; align-items: center; gap: 9px; }
+.friend-name strong { font-size: .72rem; }
+.friend-state { color: #5f6668; font: 700 .46rem ui-monospace, monospace; }
+.friend-state.is-online { color: #69ff8e; }
+.friend-info small { display: block; margin-top: 3px; color: #505759; font-size: .5rem; }
+.friend-info p { margin-top: 7px; color: #c7cbcb; font-size: .68rem; }
+.friend-channel { display: block; margin-top: 6px; color: var(--friend-color); font: 700 .5rem ui-monospace, monospace; }
+.friend-actions { display: grid; gap: 7px; }
+.friend-actions a, .friend-actions button { min-width: 68px; padding: 7px 8px; border: 1px solid #353b3d; background: transparent; color: #8a9192; text-align: center; text-decoration: none; font-size: .5rem; cursor: pointer; }
+.friend-actions a:hover { border-color: var(--pink); color: #fff; }
+.friend-actions button:hover { border-color: #ef544e; color: #ef544e; }
+.friends-empty { padding: 70px 20px; text-align: center; color: #646b6d; }
+.friends-empty strong { font-family: "Anton"; font-size: 1.5rem; font-weight: 400; }
+.friends-empty p { margin-top: 8px; font-size: .65rem; }
+
+@media (max-width: 1050px) {
+  .profile-layout { grid-template-columns: 1fr; }
+  .profile-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+
+@media (max-width: 680px) {
+  .profile-page { width: calc(100vw - 54px); padding: 22px 14px 40px; }
+  .profile-intro { display: block; }
+  .profile-intro > p { margin-top: 15px; }
+  .profile-panel, .friends-panel { padding: 17px; }
+  .profile-form { grid-template-columns: 1fr; }
+  .profile-form label, .profile-form fieldset { grid-column: 1 / -1; }
+  .identity-card { grid-template-columns: 52px 1fr; }
+  .profile-avatar { width: 52px; height: 52px; }
+  .profile-online { grid-column: 2; }
+  .friend-card { grid-template-columns: 38px 1fr; }
+  .friend-actions { grid-column: 2; display: flex; }
+}

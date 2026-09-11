@@ -18,6 +18,7 @@
   if (currentPath.includes('network.html')) active = 'network';
   else if (currentPath.includes('map.html')) active = 'map';
   else if (currentPath.includes('archive.html')) active = 'archive';
+  else if (currentPath.includes('profile.html')) active = 'profile';
   else if (currentPath.includes('/labs/')) active = 'labs';
 
   // 중복 생성 방지
@@ -57,6 +58,14 @@
       data-label="ARCHIVE"
     >
       A
+    </a>
+
+    <a
+      href="${new URL('profile.html', base).href}"
+      class="global-rail-btn ${active === 'profile' ? 'is-active' : ''}"
+      data-label="MY NODE"
+    >
+      P
     </a>
 
     <a
