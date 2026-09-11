@@ -63,7 +63,7 @@
     <a
       href="${new URL('profile.html', base).href}"
       class="global-rail-btn ${active === 'profile' ? 'is-active' : ''}"
-      data-label="MY NODE"
+      data-label="PROFILE"
     >
       P
     </a>
