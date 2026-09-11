@@ -544,11 +544,6 @@ const logList = document.getElementById("signalLogList");
 const intercept = document.getElementById("interceptLine");
 const mapClock = document.getElementById("mapClock");
 const ranking = document.getElementById("nodeRanking");
-const worldMap = document.getElementById("worldMap");
-const logList = document.getElementById("signalLogList");
-const intercept = document.getElementById("interceptLine");
-const mapClock = document.getElementById("mapClock");
-const ranking = document.getElementById("nodeRanking");
 
 let cursor = 0;
 let history = [];
@@ -651,6 +646,13 @@ SIGNALS.forEach((s) => {
   node.className = "map-node";
 
   node.dataset.city = s.city;
+
+  node.type = "button";
+
+  node.setAttribute(
+    "aria-label",
+    `${s.city}, ${s.country || COUNTRY_BY_CITY[s.city]?.country} 신호 보기`
+  );
 
   node.style.left = `${s.x}%`;
 
