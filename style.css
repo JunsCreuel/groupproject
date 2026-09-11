@@ -611,6 +611,66 @@ body.is-locked { overflow: hidden; height: 100vh; }
 }
 
 /* ==================================================================
+   07. TELL NO ONE BUT US
+   ================================================================== */
+.confess-box {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.confess-input {
+  border: 1.5px solid rgba(17, 17, 17, 0.15);
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 90px;
+  outline: none;
+}
+
+.confess-input:focus { border-color: var(--pink); }
+
+.confess-submit {
+  align-self: flex-end;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+
+.confess-submit:hover { background: var(--pink); }
+.confess-submit:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+.confess-response {
+  margin-top: 1.2rem;
+  background: #fff;
+  border: 1.5px dashed rgba(17, 17, 17, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  font-family: "Permanent Marker", "Comic Sans MS", "Segoe Print", cursive;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--ink);
+  box-shadow: 0 10px 26px rgba(17, 17, 17, 0.06);
+}
+
+.confess-response.is-error {
+  font-family: inherit;
+  font-weight: 500;
+  color: rgba(17, 17, 17, 0.5);
+}
+
+/* ==================================================================
    푸터
    ================================================================== */
 .landing-footer {

@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+# 사이트가 전부 정적 HTML/CSS/JS(각 미니앱은 이미 빌드된 결과물이 커밋되어
+# 있음)라 별도 빌드 단계는 필요 없다. 이 워크플로우가 하는 유일한 일은,
+# 저장소에는 절대 커밋하지 않는 Gemini API 키(secrets.GEMINI_API_KEY)를
+# 배포 직전에 config.js로 구워 넣는 것 — 그래서 깃 히스토리에는 키가
+# 남지 않는다.
+#
+# 주의: config.js는 브라우저에서 직접 fetch되므로, 배포된 사이트에서는
+# 여전히 누구나 네트워크 탭으로 키 값을 볼 수 있다. 이 워크플로우는
+# "깃허브 저장소에 영구히 남는 것"만 막아줄 뿐이니, Google AI Studio에서
+# 이 키를 우리 Pages 도메인으로 HTTP 리퍼러 제한을 꼭 걸어둘 것.
+on:
+  push:
+    branches: [claude/local-remote-control-2iryi9]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject Gemini API key into config.js
+        run: |
+          echo "window.CSL_GEMINI_KEY = \"${GEMINI_API_KEY}\";" > config.js
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

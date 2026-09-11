@@ -32,6 +32,7 @@
     <a href="#explore">LABS</a>
     <a href="#transmissions">FEED</a>
     <a href="#map">MAP</a>
+    <a href="#confess">CONFESS</a>
     <a href="#" id="aboutLink">ABOUT</a>
     <a href="labs/index.html" class="nav-cta">LAB SELECTOR ↗</a>
   </nav>
@@ -125,6 +126,22 @@
     </div>
   </section>
 
+  <!-- 07. TELL NO ONE BUT US — 심리상담이 아니라, 남한테 말하기 애매한 얘기
+       던지면 AI가 위트있게 반응해주는 가벼운 기능. Gemini API를 백엔드 없이
+       브라우저에서 직접 호출한다(script.js 참고) — 대화 내용은 어디에도
+       저장하지 않는다. -->
+  <section class="section section-confess" id="confess">
+    <p class="section-kicker">07 — TELL NO ONE BUT US</p>
+    <h2 class="section-headline">SAY THE THING<br>YOU CAN'T SAY<span class="star-accent">*</span></h2>
+    <p class="section-body">진지한 상담은 아니고, 그냥 아무한테도 말 못할 그 얘기 던지면 AI가 드립으로 받아준다. 어디에도 저장 안 되고, 아무도 안 봄.</p>
+
+    <div class="confess-box">
+      <textarea id="confessInput" class="confess-input" maxlength="300" placeholder="예: 썸녀랑 데이트했는데 차였다 근데 잠은 잤다 이거 뭐임"></textarea>
+      <button class="confess-submit" id="confessSubmit">반응 듣기 →</button>
+    </div>
+    <div class="confess-response" id="confessResponse" hidden></div>
+  </section>
+
   <footer class="landing-footer">
     <p>CYBER STRESS LAB — DON'T HOLD IT IN. LET IT OUT.</p>
     <a href="labs/index.html" class="footer-cta">ENTER THE FULL LAB SELECTOR ↗</a>
@@ -187,6 +204,11 @@
   </div>
 </div>
 
+<!-- config.js는 저장소에 커밋되지 않는다 — 배포 시 GitHub Actions가
+     secrets.GEMINI_API_KEY로 자동 생성한다(.github/workflows/deploy-pages.yml).
+     로컬에선 파일이 없어서 404가 나는데, <script> 태그가 404면 브라우저가
+     조용히 무시하고 넘어가므로 나머지 스크립트 실행엔 지장이 없다. -->
+<script src="config.js"></script>
 <script src="data.js"></script>
 <script src="script.js"></script>
 </body>

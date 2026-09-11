@@ -1,2 +1,7 @@
 node_modules/
 .DS_Store
+
+# Gemini API 키가 들어가는 파일 — GitHub Actions가 배포 시점에
+# secrets.GEMINI_API_KEY로 자동 생성한다. config.example.js를 복사해서
+# 로컬 테스트용 키를 넣어 쓰되, 이 파일 자체는 절대 커밋하지 않는다.
+config.js
