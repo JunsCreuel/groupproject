@@ -600,10 +600,10 @@ SIGNALS.forEach((s) => {
       });
 
     intercept.innerHTML = `
-      선택 국가 // ${country}
+      ${country}에서 온 이야기
       // ${s.lang}
-      // 신호 ${countryLogs.length}개
-      <button id="clearCountryFilter">전체 신호 보기 ×</button>
+      // ${countryLogs.length}개
+      <button id="clearCountryFilter">모든 이야기 보기 ×</button>
     `;
 
     document
@@ -617,7 +617,7 @@ SIGNALS.forEach((s) => {
           .querySelectorAll(".map-node")
           .forEach((n) => n.classList.remove("is-selected-country"));
 
-        intercept.textContent = "전 세계 익명 신호망 // 전체 신호";
+        intercept.textContent = "지금 세계 곳곳에서 올라오는 이야기";
       });
   });
   worldMap.appendChild(node);
@@ -693,7 +693,7 @@ function pushSignal() {
     node.classList.add("is-flash");
     setTimeout(() => node.classList.remove("is-flash"),900);
   }
-  intercept.textContent = `신호 포착 // ${s.city}: "${s.text}"`;
+  intercept.textContent = `${s.city}에서 방금 올라온 이야기: "${s.text}"`;
 }
 
 for (let i=0;i<6;i++) pushSignal();
@@ -707,6 +707,6 @@ ranking.innerHTML = [...SIGNALS]
       <span class="ranking-num">${String(i+1).padStart(2,"0")}</span>
       <span class="ranking-city">${s.city}</span>
       <span class="ranking-category" style="--cat:${s.color}">${categoryLabel(s.category)}</span>
-      <span class="ranking-count">신호 ${s.count}개</span>
+      <span class="ranking-count">${s.count}개</span>
     </div>
   `).join("");
