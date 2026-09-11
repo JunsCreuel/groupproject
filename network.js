@@ -4,12 +4,12 @@ const CHANNELS = {
     sub: "실시간으로 들어오는 익명 스트레스 신호.",
     online: 428,
     messages: [
-      ["SUBJECT_4172","i can't remember the last time i felt okay",47],
-      ["SUBJECT_1209","same here",12],
-      ["SUBJECT_3341","work tomorrow again...",31],
-      ["SUBJECT_7816","does anyone else just feel empty?",64],
-      ["SUBJECT_0923","you're not alone.",53],
-      ["SUBJECT_5530","let it out here.",28]
+      ["SUBJECT_4172","마지막으로 괜찮았던 때가 언제인지 기억나지 않아.",47],
+      ["SUBJECT_1209","나도 그래.",12],
+      ["SUBJECT_3341","내일 또 출근이라니...",31],
+      ["SUBJECT_7816","그냥 텅 빈 기분 드는 사람 있어?",64],
+      ["SUBJECT_0923","너 혼자 아니야.",53],
+      ["SUBJECT_5530","여기서는 그냥 다 털어놔.",28]
     ]
   },
   "late-night": {
@@ -17,10 +17,10 @@ const CHANNELS = {
     sub: "잠들지 못한 사람들의 채널.",
     online: 129,
     messages: [
-      ["SUBJECT_0118","2am and my brain decided to replay everything",88],
-      ["SUBJECT_8801","anyone else awake?",76],
-      ["SUBJECT_2224","yeah. unfortunately.",42],
-      ["SUBJECT_6400","tomorrow is already stressing me out",57]
+      ["SUBJECT_0118","새벽 두 시인데 머릿속이 모든 일을 다시 재생한다.",88],
+      ["SUBJECT_8801","아직 안 자는 사람 있어?",76],
+      ["SUBJECT_2224","응. 나도 잠이 안 와.",42],
+      ["SUBJECT_6400","벌써 내일 때문에 숨 막혀.",57]
     ]
   },
   "overthinking": {
@@ -28,9 +28,9 @@ const CHANNELS = {
     sub: "생각이 멈추지 않을 때.",
     online: 146,
     messages: [
-      ["SUBJECT_9190","i have invented six problems that do not exist yet",105],
-      ["SUBJECT_1182","same",48],
-      ["SUBJECT_4204","can someone turn my brain off",87]
+      ["SUBJECT_9190","아직 생기지도 않은 문제를 여섯 개나 상상했다.",105],
+      ["SUBJECT_1182","나도 똑같아.",48],
+      ["SUBJECT_4204","누가 내 머리 좀 꺼줬으면.",87]
     ]
   },
   work: {
@@ -38,10 +38,10 @@ const CHANNELS = {
     sub: "Deadlines. Meetings. Pretending to be fine.",
     online: 183,
     messages: [
-      ["SUBJECT_2031","my boss seriously thinks we're robots",124],
-      ["SUBJECT_7712","i worked 12 hours again. what is the point?",99],
-      ["SUBJECT_6621","team project... doing everything alone",131],
-      ["SUBJECT_1189","i'm so tired of pretending to be fine",86]
+      ["SUBJECT_2031","상사는 우리가 진짜 로봇인 줄 아나 봐.",124],
+      ["SUBJECT_7712","오늘도 12시간 일했다. 이게 무슨 의미지?",99],
+      ["SUBJECT_6621","팀 프로젝트인데 또 나 혼자 다 한다.",131],
+      ["SUBJECT_1189","괜찮은 척하는 것도 이제 지쳤어.",86]
     ]
   },
   school: {
@@ -49,9 +49,9 @@ const CHANNELS = {
     sub: "과제, 시험, 비교, 압박.",
     online: 98,
     messages: [
-      ["SUBJECT_2109","everyone looks ahead of me",77],
-      ["SUBJECT_5541","finals week is not real life",62],
-      ["SUBJECT_9904","i opened the assignment and immediately closed it",91]
+      ["SUBJECT_2109","다들 나보다 앞서 있는 것 같아.",77],
+      ["SUBJECT_5541","시험 기간은 사람 사는 게 아니다.",62],
+      ["SUBJECT_9904","과제 파일 열자마자 다시 닫았다.",91]
     ]
   },
   love: {
@@ -59,9 +59,9 @@ const CHANNELS = {
     sub: "사랑도 스트레스가 될 때.",
     online: 112,
     messages: [
-      ["SUBJECT_1132","i keep checking a message that is not coming",101],
-      ["SUBJECT_8290","i miss who i was before them",117],
-      ["SUBJECT_0201","why is moving on so boring",54]
+      ["SUBJECT_1132","오지도 않을 메시지를 계속 확인하게 돼.",101],
+      ["SUBJECT_8290","그 사람을 만나기 전의 내가 그리워.",117],
+      ["SUBJECT_0201","잊는 과정은 왜 이렇게 지루하지.",54]
     ]
   },
   people: {
@@ -69,9 +69,9 @@ const CHANNELS = {
     sub: "사람 때문에 지칠 때.",
     online: 91,
     messages: [
-      ["SUBJECT_5550","everyone wants something from me",96],
-      ["SUBJECT_7120","i just want one day with no social obligations",83],
-      ["SUBJECT_3101","small talk is violence today",62]
+      ["SUBJECT_5550","모두가 나한테 뭔가를 원해.",96],
+      ["SUBJECT_7120","사람 만날 의무가 없는 하루만 있었으면.",83],
+      ["SUBJECT_3101","오늘은 가벼운 대화조차 너무 버겁다.",62]
     ]
   }
 };
@@ -95,6 +95,19 @@ const composer = document.getElementById("networkComposer");
 const input = document.getElementById("networkInput");
 const memberList = document.getElementById("memberList");
 let activeChannel = "live-stress";
+
+try {
+  const subject = JSON.parse(localStorage.getItem("csl-subject") || "null");
+  const savedProfile = JSON.parse(localStorage.getItem("csl-profile") || "null");
+  const miniName = document.querySelector(".subject-mini strong");
+  if (miniName && subject?.id) {
+    miniName.textContent = savedProfile?.name
+      ? `${savedProfile.name} // SUBJECT_${subject.id}`
+      : `SUBJECT_${subject.id}`;
+  }
+} catch {
+  // 저장된 프로필이 손상된 경우 기본 SUBJECT 표기를 유지한다.
+}
 
 function renderMembers() {
   memberList.innerHTML = MEMBERS.map(([name,status]) => `

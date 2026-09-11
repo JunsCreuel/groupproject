@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSL — My Node</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="profile.css">
+  <script src="shell.js" defer></script>
+</head>
+<body class="profile-body">
+  <main class="profile-page">
+    <header class="profile-intro">
+      <div>
+        <p class="profile-eyebrow"><i></i> PERSONAL NODE // PRIVATE</p>
+        <h1>MY NODE.</h1>
+      </div>
+      <p>친구에게만 보여줄 프로필을 설정하고, 연결된 SUBJECT를 확인하세요.</p>
+    </header>
+
+    <div class="profile-layout">
+      <section class="profile-panel" aria-labelledby="profileHeading">
+        <div class="panel-head">
+          <div>
+            <span>01</span>
+            <h2 id="profileHeading">PROFILE SETTINGS</h2>
+          </div>
+          <small>LOCAL ONLY</small>
+        </div>
+
+        <div class="identity-card">
+          <div class="profile-avatar" id="profileAvatar">S</div>
+          <div>
+            <strong id="profileSubject">SUBJECT_----</strong>
+            <p id="profilePreviewStatus">아직 상태 메시지가 없습니다.</p>
+          </div>
+          <span class="profile-online"><i></i> ONLINE</span>
+        </div>
+
+        <form class="profile-form" id="profileForm">
+          <label>
+            <span>DISPLAY NAME</span>
+            <input id="displayName" maxlength="16" placeholder="친구에게 보일 이름">
+          </label>
+
+          <label>
+            <span>STATUS MESSAGE</span>
+            <input id="statusMessage" maxlength="40" placeholder="지금 상태를 짧게 적어보세요">
+          </label>
+
+          <label>
+            <span>FAVORITE LAB</span>
+            <select id="favoriteLab">
+              <option value="">NOT SELECTED</option>
+              <option>CRACK LAB</option>
+              <option>SHOOT RANGE</option>
+              <option>DANCE ROOM</option>
+              <option>CLICK ROOM</option>
+            </select>
+          </label>
+
+          <fieldset>
+            <legend>NODE COLOR</legend>
+            <div class="color-options" id="colorOptions">
+              <button type="button" data-color="#ff3d94" style="--choice:#ff3d94" aria-label="핑크"></button>
+              <button type="button" data-color="#62d9e8" style="--choice:#62d9e8" aria-label="시안"></button>
+              <button type="button" data-color="#c9f64b" style="--choice:#c9f64b" aria-label="라임"></button>
+              <button type="button" data-color="#a989ff" style="--choice:#a989ff" aria-label="퍼플"></button>
+            </div>
+          </fieldset>
+
+          <label>
+            <span>PROFILE VISIBILITY</span>
+            <select id="profileVisibility">
+              <option value="friends">FRIENDS ONLY</option>
+              <option value="private">ONLY ME</option>
+            </select>
+          </label>
+
+          <button class="save-profile" type="submit">SAVE PROFILE →</button>
+          <p class="save-notice" id="saveNotice" role="status"></p>
+        </form>
+
+        <p class="privacy-note">프로필과 친구 목록은 이 브라우저에만 저장됩니다. 다른 사용자에게 자동으로 공개되지 않습니다.</p>
+      </section>
+
+      <section class="friends-panel" aria-labelledby="friendsHeading">
+        <div class="panel-head">
+          <div>
+            <span>02</span>
+            <h2 id="friendsHeading">FRIENDS</h2>
+          </div>
+          <small><b id="friendCount">0</b> CONNECTED</small>
+        </div>
+
+        <form class="friend-add" id="friendAddForm">
+          <input id="friendCode" maxlength="12" placeholder="SUBJECT_0000" aria-label="친구 SUBJECT 코드">
+          <button type="submit">ADD</button>
+        </form>
+        <p class="friend-feedback" id="friendFeedback" role="status"></p>
+
+        <div class="friend-tools">
+          <input id="friendSearch" placeholder="SEARCH FRIENDS..." aria-label="친구 검색">
+          <select id="friendFilter" aria-label="접속 상태 필터">
+            <option value="all">ALL</option>
+            <option value="online">ONLINE</option>
+            <option value="offline">OFFLINE</option>
+          </select>
+        </div>
+
+        <div class="friend-list" id="friendList"></div>
+        <div class="friends-empty" id="friendsEmpty" hidden>
+          <strong>NO SIGNAL FOUND.</strong>
+          <p>검색 결과가 없거나 아직 연결된 친구가 없습니다.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="profile.js"></script>
+</body>
+</html>

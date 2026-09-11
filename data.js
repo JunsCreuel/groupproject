@@ -30,7 +30,7 @@ const SEED_POSTS = [
     id: 'seed-2',
     subject: 'SUBJECT 1194',
     category: 'myself',
-    text: 'I am so done with today.',
+    text: '오늘은 진짜 더 못 버티겠다.',
     lab: 'SCREAM BOOTH',
     comments: [
       { id: 'c3', text: 'same. 오늘 같이 소리질러요', likes: 9 },

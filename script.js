@@ -343,47 +343,20 @@ function renderRecord() {
 // ---------------------------------------------------------------
 // ABOUT 모달
 // ---------------------------------------------------------------
-// 07. TELL NO ONE BUT US — Gemini API(무료 티어)를 백엔드 없이 브라우저에서
-// 직접 호출한다. 키는 config.js(배포 시 GitHub Actions가 저장소 secret으로
-// 생성 — 소스에는 절대 커밋되지 않음)의 window.CSL_GEMINI_KEY에서 읽는다.
-// 로컬에서 config.js 없이 열면 키가 없으니 안내 메시지만 보여주고 실제
-// 호출은 하지 않는다. 대화 내용은 어디에도 저장하지 않고 그 자리에서만
-// 보여준다.
+// 07. TELL NO ONE BUT US — 사용자 입력과 API 키가 브라우저에 노출되지 않도록
+// 외부 AI 직접 호출은 비활성화했다. 서버 측 프록시가 준비되면 이 함수만
+// 안전한 내부 엔드포인트 호출로 교체한다.
 // ---------------------------------------------------------------
-const GEMINI_MODEL = 'gemini-2.0-flash';
-const CONFESS_SYSTEM_PROMPT = `너는 친한 친구처럼 반말로 편하게 반응해주는 챗봇이야.
-사용자가 남한테 말하기 애매하거나 웃긴 고민/사건을 털어놓으면, 위트있고
-MZ스러운 드립으로 짧게 반응해줘. "전문 상담사처럼" 진지한 조언을 길게
-늘어놓지 말고, 공감 반 드립 반으로 3문장 이내, 이모지 없이 답해.`;
-
 const confessInput = document.getElementById('confessInput');
 const confessSubmit = document.getElementById('confessSubmit');
 const confessResponse = document.getElementById('confessResponse');
 
 async function askGemini(text) {
-  const key = window.CSL_GEMINI_KEY;
-  if (!key || key === 'YOUR_GEMINI_API_KEY_HERE') {
-    return { ok: false, message: '지금은 이 기능을 쓸 수 없어 — 배포된 사이트에서만 동작해.' };
-  }
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: CONFESS_SYSTEM_PROMPT }] },
-          contents: [{ parts: [{ text }] }],
-        }),
-      }
-    );
-    if (!res.ok) throw new Error(`Gemini API ${res.status}`);
-    const data = await res.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    return { ok: true, message: reply || '음... 할 말을 잃었어.' };
-  } catch {
-    return { ok: false, message: '지금은 반응을 받아올 수 없어 — 잠시 후 다시 시도해봐.' };
-  }
+  void text;
+  return {
+    ok: false,
+    message: '익명 응답 채널은 보안 점검 중이야. 입력한 내용은 전송되거나 저장되지 않았어.'
+  };
 }
 
 if (confessSubmit) {

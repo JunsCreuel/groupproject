@@ -205,11 +205,6 @@
   </div>
 </div>
 
-<!-- config.js는 저장소에 커밋되지 않는다 — 배포 시 GitHub Actions가
-     secrets.GEMINI_API_KEY로 자동 생성한다(.github/workflows/deploy-pages.yml).
-     로컬에선 파일이 없어서 404가 나는데, <script> 태그가 404면 브라우저가
-     조용히 무시하고 넘어가므로 나머지 스크립트 실행엔 지장이 없다. -->
-<script src="config.js"></script>
 <script src="data.js"></script>
 <script src="script.js"></script>
 </body>

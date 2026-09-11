@@ -4,77 +4,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSL — Classified Archive</title>
+  <title>CSL — 비밀 기록</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="portal.css">
 </head>
 <body class="archive-body">
-  <header class="portal-nav">
-    <a class="portal-brand" href="index.html">
-      <img src="assets/images/CSL-logo.png" alt="CSL">
-      <span>CYBER STRESS LAB</span>
-    </a>
-    <nav>
-      <a href="network.html">NETWORK</a>
-      <a href="map.html">MAP</a>
-      <a href="labs/index.html">LABS</a>
-      <a class="is-current" href="archive.html">ARCHIVE</a>
-    </nav>
-    <div class="portal-status portal-status-red">CLASSIFIED</div>
-  </header>
-
-  <main class="archive-page">
-    <header class="archive-intro">
-      <p class="eyebrow">CLASSIFIED FILES // ACCESS LEVEL 02</p>
-      <h1>THEY CALLED IT<br>EMOTIONAL ORDER.</h1>
-      <p>공식 기록과 실제 신호 사이의 차이를 확인하십시오.</p>
+  <main class="archive-page archive-campaign-page">
+    <header class="archive-intro archive-campaign-intro">
+      <p class="eyebrow"><i></i> 익명 채널 // 지금 접속 가능</p>
+      <h1>아무도 모르게, 잠깐.</h1>
+      <p>숨겨둔 마음을 꺼내는 데는 이름도, 설명도 필요하지 않습니다.</p>
     </header>
 
-    <section class="case-grid">
-      <article class="case-file">
-        <div class="case-number">FILE 01</div>
-        <div class="case-image office-case"></div>
-        <p class="case-system">OFFICIAL RECORD // COMPLIANCE: NORMAL</p>
-        <h2>GOOD PEOPLE DON'T<br>SHOW TOO MUCH FEELING.</h2>
-        <p>
-          효율과 질서를 위해 사회는 감정 표현을 제한하기 시작했다.
-          화내지 말 것. 울지 말 것. 무너지지 말 것.
-        </p>
-        <button class="reveal-btn" data-reveal="file1">INTERCEPT FILE →</button>
-        <div class="hidden-record" id="file1">
-          <small>UNFILTERED RECORD</small>
-          <strong>“오늘도 괜찮은 척했다.”</strong>
-          <p>SUBJECT_7318 // OFFICE // 21:47</p>
-        </div>
-      </article>
+    <section class="campaign-gateway" aria-label="CSL 캠페인 영상">
+      <div class="campaign-screen" id="campaignScreen">
+        <video id="campaignVideo" data-src="assets/videos/csl-campaign.mp4" playsinline preload="none"></video>
+        <div class="campaign-noise" aria-hidden="true"></div>
+        <div class="campaign-scanline" aria-hidden="true"></div>
 
-      <article class="case-file">
-        <div class="case-number">FILE 02</div>
-        <div class="case-image terminal-case"></div>
-        <p class="case-system">UNAUTHORIZED NODE // STATUS: ACTIVE</p>
-        <h2>BUT WE FOUND<br>A WAY.</h2>
-        <p>
-          익명의 화이트해커 집단은 감시망 밖에 비밀 네트워크를 만들었다.
-          감정을 치료하거나 교정하는 곳이 아니라, 직접 표출하는 공간.
-        </p>
-        <button class="reveal-btn" data-reveal="file2">OPEN NODE →</button>
-        <div class="hidden-record" id="file2">
-          <small>CSL PROTOCOL</small>
-          <strong>CLICK. BREAK. SQUISH. THROW. SCREAM. MOVE.</strong>
-          <p>DON'T HOLD IT IN. LET IT OUT.</p>
+        <div class="campaign-hud" aria-hidden="true">
+          <span>CHANNEL 04</span>
+          <span><i></i> LIVE</span>
         </div>
-      </article>
+
+        <button class="campaign-access" id="campaignAccess" type="button">
+          <span class="campaign-access-mark" aria-hidden="true"></span>
+          <small>기록이 남지 않는 접속</small>
+          <strong>익명 채널 열기</strong>
+          <em>클릭하면 영상이 시작됩니다</em>
+        </button>
+
+        <button class="campaign-replay" id="campaignReplay" type="button">처음부터 보기</button>
+      </div>
+
+      <footer class="campaign-footer">
+        <p>참고 있던 마음을 잠깐 내려놓으세요.</p>
+        <span>익명 접속 · 기록 없음 · 눈치 볼 필요 없음</span>
+      </footer>
     </section>
   </main>
 
   <script>
-    document.querySelectorAll('[data-reveal]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        document.getElementById(btn.dataset.reveal).classList.toggle('is-open');
-        btn.textContent = btn.textContent.includes('CLOSE') ? 'INTERCEPT FILE →' : 'CLOSE FILE ×';
-      });
+    const screen = document.getElementById('campaignScreen');
+    const video = document.getElementById('campaignVideo');
+    const access = document.getElementById('campaignAccess');
+    const replay = document.getElementById('campaignReplay');
+
+    access.addEventListener('click', async () => {
+      if (!video.src) {
+        video.src = video.dataset.src;
+        video.load();
+      }
+
+      screen.classList.add('is-connecting');
+      access.querySelector('strong').textContent = '보안 채널 연결 중';
+      access.querySelector('em').textContent = '신호를 복호화하고 있습니다';
+
+      try {
+        await video.play();
+        video.controls = true;
+        screen.classList.remove('is-connecting');
+        screen.classList.add('is-live');
+      } catch (error) {
+        screen.classList.remove('is-connecting');
+        access.querySelector('strong').textContent = '영상 연결 대기 중';
+        access.querySelector('em').textContent = '캠페인 영상 파일을 확인해주세요';
+      }
+    });
+
+    replay.addEventListener('click', () => {
+      video.currentTime = 0;
+      video.play();
     });
   </script>
 </body>
