@@ -22,24 +22,32 @@ body {
   background: #fdfdfb;
   color: var(--ink);
   overflow: hidden; /* 스크롤 자체를 없애고 .stage 스케일로만 화면 크기에 대응 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* ---------- stage (모니터 크기에 맞춰 통째로 스케일되는 고정 캔버스) ----------
    1600x1000 고정 해상도로 디자인하고, script.js가 창 크기에 맞춰
-   transform: scale()로 축소/확대 + 화면 가운데 배치한다.
-   (ZEP/게더타운 같은 가상공간이 맵을 화면에 꽉 차게 띄우는 방식과 동일) */
+   transform: translate() scale()로 축소/확대 + 배치한다.
+   (ZEP/게더타운 같은 가상공간이 맵을 화면에 꽉 차게 띄우는 방식과 동일)
 
+   예전엔 body를 flex로 가운데 정렬하고 .stage에는 scale()만 걸었는데,
+   flexbox의 정렬 계산은 transform 적용 "전" 레이아웃 크기(1600x1000)를
+   기준으로 이뤄져서, 왼쪽에 고정폭 사이드 레일(shell.js의
+   .global-rail)이 붙어 body에 padding-left가 생기면 정렬 기준 폭과
+   실제로 화면에 그려지는 스케일된 폭이 어긋나 버렸다 — 그래서 레일
+   뒤로 일부가 가려지고 반대쪽은 화면 밖으로 잘려나갔다. 이제
+   position:fixed로 flexbox 정렬에서 완전히 빼내고, script.js가
+   transform: translate() scale()로 위치와 크기를 한 번에 정확히
+   계산해서 넣어준다. */
 .stage {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 1600px;
   height: 1000px;
-  flex: none;
   display: flex;
   flex-direction: column;
   background: #fdfdfb;
-  transform-origin: center center;
+  transform-origin: top left;
 }
 
 /* ---------- topbar ---------- */
@@ -140,6 +148,18 @@ body {
   padding: 1.5rem 3rem;
   flex: 1; /* .stage 안에서 topbar/footer를 뺀 나머지 높이를 전부 차지 */
   min-height: 0; /* flex 자식이 내용 크기 때문에 넘치지 않도록 */
+  /* shell.css가 사이드 레일과 겹치지 않도록 모든 <main>에
+     max-width: calc(100vw - 72px)를 걸어두는데, .board는 <main> 태그이면서
+     이미 스케일되는 .stage(1600px 가상 캔버스) 안에 들어있다. 100vw는
+     .stage에 걸린 transform:scale()과 무관하게 "진짜" 브라우저 뷰포트
+     기준으로 계산되기 때문에, 화면이 작아질수록 .board의 내부 레이아웃
+     폭이 실제 디자인 폭(1600px)보다 훨씬 좁게 잘못 계산되고, 그 결과
+     헤드라인 같은 콘텐츠가 자기 grid 셀 폭을 넘겨 overflow:hidden에
+     잘려나갔다. .stage 안에서는 레일 간섭을 이미 script.js가 처리하고
+     있으므로, 여기서는 그 규칙을 무효화해야 한다.
+     (shell.css의 `body.has-global-rail main` 규칙과 명시도가 같아서,
+     로드 순서에 기대지 않고 반드시 이기도록 !important를 쓴다) */
+  max-width: none !important;
 }
 
 .cell {

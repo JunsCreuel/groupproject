@@ -11,19 +11,53 @@ window.addEventListener('keydown', (e) => {
 });
 
 // 화면 크기 대응 — .stage(1600x1000 고정 캔버스, style.css 참고)를
-// 실제 창 크기에 맞춰 비율 유지한 채 scale()로 축소/확대해서, 모니터
-// 크기와 무관하게 스크롤 없이 전체 화면이 항상 다 보이도록 하는 로직
+// 실제 창 크기에 맞춰 비율 유지한 채 축소/확대 + 배치해서, 모니터 크기와
+// 무관하게 스크롤 없이 전체 화면이 항상 다 보이도록 하는 로직.
+//
+// .stage는 position:fixed라 flexbox 정렬에 영향받지 않는다 — 대신 여기서
+// translate()로 위치를, scale()로 크기를 직접 계산해서 넣는다(순서 중요:
+// transform-origin이 top left이므로 "scale로 축소 → translate로 이동"
+// 순서가 되도록 translate(...) scale(...)로 적어야 한다).
+//
+// shell.js가 왼쪽에 고정폭 사이드 레일(.global-rail)을 붙이면 body에
+// padding-left가 생기는데, 그만큼을 사용 가능 폭에서 미리 빼줘야
+// 레일 뒤에 가려지거나 반대쪽이 화면 밖으로 잘려나가지 않는다.
 const STAGE_WIDTH = 1600;
 const STAGE_HEIGHT = 1000;
 const stage = document.getElementById('stage');
 
 function fitStageToScreen() {
-  const scale = Math.min(window.innerWidth / STAGE_WIDTH, window.innerHeight / STAGE_HEIGHT);
-  stage.style.transform = `scale(${scale})`;
+  const rail = document.querySelector('.global-rail');
+  const railWidth = rail ? rail.getBoundingClientRect().width : 0;
+  const availWidth = window.innerWidth - railWidth;
+  const availHeight = window.innerHeight;
+
+  const scale = Math.min(availWidth / STAGE_WIDTH, availHeight / STAGE_HEIGHT);
+  const offsetX = railWidth + (availWidth - STAGE_WIDTH * scale) / 2;
+  const offsetY = (availHeight - STAGE_HEIGHT * scale) / 2;
+
+  stage.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
 }
 
 window.addEventListener('resize', fitStageToScreen);
 fitStageToScreen();
+
+// shell.js는 defer라 이 스크립트보다 늦게 실행되고, 게다가 .global-rail의
+// 실제 스타일(shell.css)은 shell.js가 동적으로 삽입한 <link>를 통해
+// "비동기로" 불러온다 — 그래서 레일이 DOM에 존재하더라도 그 시점엔
+// 아직 스타일이 적용 안 돼 width:auto(화면 전체 폭)로 잘못 측정될 수
+// 있다. "언제 다시 계산할지"를 시점으로 추측하는 대신, 레일의 실제
+// 렌더 크기가 바뀔 때마다(스타일시트가 늦게 적용되는 순간 포함) 그 자체를
+// 관찰해서 다시 계산하면 이런 타이밍 문제에서 완전히 자유로워진다.
+function observeRail() {
+  const rail = document.querySelector('.global-rail');
+  if (!rail) {
+    requestAnimationFrame(observeRail); // 레일이 아직 없으면 다음 프레임에 재시도
+    return;
+  }
+  new ResizeObserver(fitStageToScreen).observe(rail);
+}
+observeRail();
 
 // 오브제 클릭 애니메이션 공통 트리거 — 아래 SCREAM/SQUISH/CRACK 등
 // 모든 태그 클릭 핸들러가 재사용하는 헬퍼
