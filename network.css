@@ -2140,3 +2140,242 @@ body.has-global-rail .network-os {
 .network-composer-meta {
   color: #68736c !important;
 }
+
+/* =========================================================
+   GLOBAL TYPOGRAPHY SCALE UP
+========================================================= */
+
+/* top bar */
+
+.network-topbar {
+  font-size: 10px !important;
+}
+
+.network-brand strong {
+  font-size: 13px !important;
+}
+
+.network-brand span {
+  font-size: 9px !important;
+}
+
+.network-live {
+  font-size: 10px !important;
+}
+
+.network-clock {
+  font-size: 9px !important;
+}
+
+
+/* =========================================================
+   LEFT NAV
+========================================================= */
+
+.authority-tag {
+  font-size: 8px !important;
+  line-height: 1.6 !important;
+}
+
+.channel-head {
+  font-size: 9px !important;
+}
+
+.channel-list a {
+  font-size: 11px !important;
+  min-height: 40px !important;
+}
+
+.channel-link.is-active::after {
+  font-size: 7px !important;
+}
+
+.channel-user {
+  font-size: 9px !important;
+}
+
+.you-label {
+  font-size: 7px !important;
+}
+
+
+/* =========================================================
+   CHANNEL HEADER
+========================================================= */
+
+.chat-hash {
+  font-size: 32px !important;
+}
+
+.chat-header h1 {
+  font-size: 17px !important;
+}
+
+.chat-header h1::before {
+  font-size: 9px !important;
+}
+
+.chat-header p {
+  font-size: 12px !important;
+}
+
+.channel-status {
+  font-size: 9px !important;
+}
+
+
+/* =========================================================
+   CONTROL / CCTV
+========================================================= */
+
+.control-screen-top {
+  font-size: 8px !important;
+}
+
+.camera-top {
+  font-size: 8px !important;
+}
+
+.camera-data {
+  font-size: 7px !important;
+}
+
+.control-block span {
+  font-size: 7px !important;
+}
+
+.control-block strong {
+  font-size: 18px !important;
+}
+
+.control-log-title {
+  font-size: 8px !important;
+}
+
+.control-log-lines p {
+  font-size: 7px !important;
+}
+
+.control-hack-strip {
+  font-size: 7px !important;
+}
+
+
+/* =========================================================
+   MESSAGE AREA
+========================================================= */
+
+.message-avatar {
+  font-size: 8px !important;
+}
+
+.message-meta {
+  font-size: 8px !important;
+}
+
+.message-content p {
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
+
+.message-actions button,
+.message-actions a {
+  font-size: 8px !important;
+  padding: 6px 10px !important;
+  min-height: 28px !important;
+}
+
+
+/* =========================================================
+   COMPOSER
+========================================================= */
+
+.composer-warning {
+  font-size: 7px !important;
+}
+
+.network-input-row textarea {
+  font-size: 13px !important;
+}
+
+.network-input-row button {
+  font-size: 10px !important;
+}
+
+.network-composer-meta {
+  font-size: 7px !important;
+}
+
+
+/* =========================================================
+   RIGHT SUBJECTS
+========================================================= */
+
+.subjects-head {
+  font-size: 8px !important;
+}
+
+.subject-row {
+  font-size: 9px !important;
+  min-height: 38px !important;
+}
+
+
+/* =========================================================
+   SPACING FOR BIGGER TEXT
+========================================================= */
+
+.channel-panel {
+  min-width: 0;
+}
+
+.channel-list {
+  gap: 3px;
+}
+
+.network-message {
+  padding-top: 13px !important;
+  padding-bottom: 13px !important;
+}
+
+.message-actions {
+  margin-top: 9px !important;
+}
+
+/* =========================================================
+   CCTV TARGET CIRCLE — EXACT CENTER
+========================================================= */
+
+.camera-person::before {
+  content: "";
+
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  width: 48px !important;
+  height: 48px !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  border: 1px solid rgba(202, 255, 61, .65) !important;
+  border-radius: 50% !important;
+
+  box-shadow:
+    0 0 8px rgba(202, 255, 61, .12),
+    inset 0 0 8px rgba(202, 255, 61, .04) !important;
+
+  pointer-events: none;
+}
+
+
+/* 사람 추적 박스와 빨간 조준선도 완전히 같은 중심점 사용 */
+
+.camera-person,
+.camera-crosshair {
+  left: 50% !important;
+  top: 50% !important;
+
+  transform: translate(-50%, -50%) !important;
+}
