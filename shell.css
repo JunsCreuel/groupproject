@@ -1,0 +1,687 @@
+.global-rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: 72px;
+  height: 100dvh;
+
+  z-index: 999999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 14px;
+  padding: 18px 10px;
+
+  background: #111214;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+
+.global-rail-logo,
+.global-rail-btn {
+  position: relative;
+
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  text-decoration: none;
+
+  color: rgba(255,255,255,.43);
+
+  border: 1px solid rgba(255,255,255,.15);
+
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+
+  transition: .18s ease;
+}
+
+.global-rail-logo {
+  margin-bottom: 12px;
+
+  color: white;
+  font-size: 16px;
+}
+
+.global-rail-btn {
+  border-radius: 12px;
+}
+
+.global-rail-btn:hover {
+  color: white;
+  border-color: #ff3d94;
+}
+
+.global-rail-btn.is-active,
+.global-rail-logo.is-active {
+  color: white;
+
+  border-color: #ff3d94;
+
+  background: rgba(255,61,148,.12);
+}
+
+/* LABS 맨 아래 고정 */
+.global-rail-btn.is-labs {
+  margin-top: auto;
+}
+
+.global-rail-btn::after {
+  content: attr(data-label);
+
+  position: absolute;
+  left: 60px;
+
+  padding: 7px 10px;
+
+  white-space: nowrap;
+
+  background: #111214;
+  color: white;
+
+  font-size: 10px;
+  letter-spacing: .08em;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transform: translateX(-5px);
+
+  transition: .15s ease;
+}
+
+.global-rail-btn:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+body.has-global-rail {
+  padding-left: 72px !important;
+}
+
+/* 기존 NETWORK rail 제거 */
+body.has-global-rail .network-rail {
+  display: none !important;
+}
+
+body.has-global-rail .network-app {
+  grid-template-columns:
+    250px
+    minmax(480px, 1fr)
+    250px !important;
+}
+
+/* LAB selector 자체가 화면 전체를 강제로 잡아도 rail은 유지 */
+body.has-global-rail #app,
+body.has-global-rail main {
+  max-width: calc(100vw - 72px);
+}
+
+@media (max-width: 680px) {
+  .global-rail {
+    width: 54px;
+    padding: 12px 6px;
+    gap: 10px;
+  }
+
+  .global-rail-logo,
+  .global-rail-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  body.has-global-rail {
+    padding-left: 54px !important;
+  }
+}
+
+/* =====================================================
+   LABS = SPECIAL ENTRY
+   일반 active pink와 완전히 다른 color system
+===================================================== */
+
+.global-rail-btn.is-labs {
+  margin-top: auto !important;
+  margin-bottom: 6px;
+
+  color: #111 !important;
+
+  background: #caff3d !important;
+
+  border: 1px solid #caff3d !important;
+  border-radius: 4px !important;
+
+  box-shadow:
+    0 0 0 1px rgba(202,255,61,.15),
+    0 0 18px rgba(202,255,61,.16) !important;
+
+  font-weight: 900;
+}
+
+/* hover */
+.global-rail-btn.is-labs:hover {
+  color: #caff3d !important;
+
+  background: #111214 !important;
+
+  border-color: #caff3d !important;
+
+  box-shadow:
+    0 0 20px rgba(202,255,61,.3) !important;
+
+  transform: translateY(-2px);
+}
+
+/* LABS 페이지에 들어와 있을 때 */
+.global-rail-btn.is-labs.is-active {
+  color: #111 !important;
+
+  background: #caff3d !important;
+
+  border: 2px solid #caff3d !important;
+
+  box-shadow:
+    0 0 0 3px #111214,
+    0 0 0 4px #caff3d,
+    0 0 24px rgba(202,255,61,.35) !important;
+}
+/* =====================================================
+   FULL VIEWPORT APP LAYOUT
+   바깥 페이지는 스크롤 X / 필요한 패널만 내부 스크롤
+===================================================== */
+
+html,
+body {
+  height: 100%;
+}
+
+/* 전체 페이지 고정 */
+body.has-global-rail {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* HOME */
+body.has-global-rail.portal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+body.has-global-rail .portal-nav {
+  flex: 0 0 64px;
+}
+
+body.has-global-rail .home-stage {
+  flex: 1;
+  min-height: 0 !important;
+  height: auto !important;
+
+  padding-top: 2.5vh !important;
+  padding-bottom: 2.5vh !important;
+}
+
+body.has-global-rail .terminal-scene {
+  min-height: 0 !important;
+  height: 100%;
+  max-height: calc(100dvh - 130px);
+}
+
+body.has-global-rail .terminal-shell {
+  min-height: 0 !important;
+  height: 78%;
+  max-height: 520px;
+}
+
+body.has-global-rail .home-strip {
+  display: none !important;
+}
+
+body.has-global-rail .portal-footer {
+  display: none !important;
+}
+
+
+/* NETWORK */
+body.has-global-rail.app-body,
+body.has-global-rail .network-app {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.has-global-rail .channel-sidebar,
+body.has-global-rail .network-main,
+body.has-global-rail .members-panel {
+  height: 100dvh;
+  min-height: 0;
+}
+
+body.has-global-rail .message-stream {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+
+/* MAP */
+body.has-global-rail.map-body {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.has-global-rail.map-body .portal-nav {
+  display: none;
+}
+
+body.has-global-rail .map-page {
+  height: 100dvh;
+  max-width: none;
+
+  padding:
+    24px
+    28px
+    22px !important;
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 18px;
+
+  overflow: hidden;
+}
+
+body.has-global-rail .map-page-intro {
+  margin: 0 !important;
+}
+
+body.has-global-rail .map-page-intro h1 {
+  font-size: clamp(2.6rem, 4.2vw, 4.8rem);
+}
+
+body.has-global-rail .map-console {
+  min-height: 0 !important;
+  height: 100%;
+}
+
+body.has-global-rail .world-map {
+  min-height: 0 !important;
+  height: calc(100dvh - 230px);
+}
+
+body.has-global-rail .signal-log-list {
+  height: calc(100dvh - 180px);
+  overflow-y: auto;
+}
+
+/* 아래 ranking은 별도 스크롤 없이 숨김 */
+body.has-global-rail .signal-ranking {
+  display: none;
+}
+
+
+/* ARCHIVE */
+body.has-global-rail.archive-body {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.has-global-rail.archive-body .portal-nav {
+  display: none;
+}
+
+body.has-global-rail .archive-page {
+  height: 100dvh;
+
+  padding:
+    26px
+    30px !important;
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 20px;
+
+  overflow: hidden;
+}
+
+body.has-global-rail .archive-intro {
+  margin: 0 !important;
+}
+
+body.has-global-rail .archive-intro h1 {
+  font-size: clamp(2.8rem, 4.5vw, 5rem);
+}
+
+body.has-global-rail .archive-intro > p:last-child {
+  margin-top: 10px;
+}
+
+body.has-global-rail .case-grid {
+  min-height: 0;
+  height: 100%;
+}
+
+body.has-global-rail .case-file {
+  min-height: 0;
+  overflow-y: auto;
+
+  padding: 20px !important;
+}
+
+body.has-global-rail .case-image {
+  aspect-ratio: 16 / 5.8;
+}
+
+
+/* LABS */
+body.has-global-rail #app,
+body.has-global-rail main {
+  max-height: 100dvh;
+}
+
+body.has-global-rail:has(.global-rail-btn.is-labs.is-active) {
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+body.has-global-rail:has(.global-rail-btn.is-labs.is-active) main,
+body.has-global-rail:has(.global-rail-btn.is-labs.is-active) #app {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+
+/* 노트북처럼 세로가 낮은 화면 */
+@media (max-height: 780px) and (min-width: 681px) {
+  body.has-global-rail .home-stage {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  body.has-global-rail .discovery-copy h1 {
+    font-size: clamp(3rem, 5vw, 4.7rem);
+  }
+
+  body.has-global-rail .home-lead {
+    margin-top: 14px;
+    line-height: 1.55;
+  }
+
+  body.has-global-rail .primary-link {
+    margin-top: 14px;
+  }
+
+  body.has-global-rail .terminal-shell {
+    max-height: 440px;
+  }
+
+  body.has-global-rail .archive-intro h1,
+  body.has-global-rail .map-page-intro h1 {
+    font-size: 3rem;
+  }
+}
+
+
+/* 모바일은 앱 패널 자체를 화면 높이에 맞춤 */
+@media (max-width: 680px) {
+  body.has-global-rail {
+    height: 100dvh !important;
+  }
+
+  body.has-global-rail .map-page,
+  body.has-global-rail .archive-page {
+    padding: 14px !important;
+  }
+
+  body.has-global-rail .map-console {
+    grid-template-columns: 1fr;
+  }
+
+  body.has-global-rail .world-map {
+    height: 40dvh;
+  }
+
+  body.has-global-rail .signal-log-list {
+    height: 35dvh;
+  }
+}
+
+
+/* =====================================================
+   MAP — FIT ENTIRE PAGE INSIDE VIEWPORT
+===================================================== */
+
+body.has-global-rail.map-body {
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* 전체 MAP 페이지 */
+body.has-global-rail .map-page {
+  width: 100%;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  max-width: none !important;
+
+  padding: 18px 24px 18px !important;
+
+  display: grid !important;
+  grid-template-rows: 150px minmax(0, 1fr) !important;
+  gap: 12px !important;
+
+  overflow: hidden !important;
+}
+
+/* 상단 설명 */
+body.has-global-rail .map-page-intro {
+  height: 150px !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  display: grid !important;
+  grid-template-columns: 0.9fr 1.2fr !important;
+  align-items: center !important;
+
+  gap: 40px !important;
+}
+
+body.has-global-rail .map-page-intro h1 {
+  font-size: clamp(2.8rem, 4vw, 4.5rem) !important;
+  line-height: 0.9 !important;
+  margin: 0 !important;
+}
+
+body.has-global-rail .map-page-intro .eyebrow {
+  margin: 0 !important;
+}
+
+body.has-global-rail .map-page-intro > p:last-child {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* 지도 + LIVE SIGNALS */
+body.has-global-rail .map-console {
+  width: 100%;
+  height: 100% !important;
+
+  min-height: 0 !important;
+
+  display: grid !important;
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(300px, 0.72fr) !important;
+
+  overflow: hidden !important;
+}
+
+
+/* 왼쪽 지도 */
+body.has-global-rail .world-panel {
+  height: 100% !important;
+  min-height: 0 !important;
+
+  display: grid !important;
+  grid-template-rows:
+    46px
+    minmax(0, 1fr)
+    40px !important;
+
+  overflow: hidden !important;
+}
+
+body.has-global-rail .console-head {
+  height: 46px !important;
+  min-height: 46px !important;
+}
+
+body.has-global-rail .world-map {
+  width: 100%;
+  height: auto !important;
+
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow: hidden !important;
+}
+
+body.has-global-rail .intercept-line {
+  height: 40px !important;
+  min-height: 40px !important;
+}
+
+
+/* 오른쪽 LIVE SIGNAL */
+body.has-global-rail .signal-log-panel {
+  height: 100% !important;
+  min-height: 0 !important;
+
+  display: grid !important;
+  grid-template-rows:
+    46px
+    minmax(0, 1fr) !important;
+
+  overflow: hidden !important;
+}
+
+body.has-global-rail .signal-log-list {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+
+/* 예전에 있던 ranking은 이 화면에서는 제거 */
+body.has-global-rail .signal-ranking {
+  display: none !important;
+}
+
+
+/* 세로 낮은 노트북 */
+@media (max-height: 760px) and (min-width: 681px) {
+  body.has-global-rail .map-page {
+    grid-template-rows: 115px minmax(0, 1fr) !important;
+    padding: 12px 18px !important;
+  }
+
+  body.has-global-rail .map-page-intro {
+    height: 115px !important;
+  }
+
+  body.has-global-rail .map-page-intro h1 {
+    font-size: 3rem !important;
+  }
+}
+
+
+/* =====================================================
+   COUNTRY + LANGUAGE FILTER
+===================================================== */
+
+.signal-language {
+  padding: 2px 6px;
+
+  border: 1px solid rgba(255,255,255,.17);
+
+  color: rgba(255,255,255,.7);
+
+  font-size: 9px;
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+.country-signal-log {
+  position: relative;
+}
+
+.country-signal-log::before {
+  content: attr(data-language);
+
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+
+  color: rgba(255,255,255,.12);
+
+  font-family: monospace;
+  font-size: 8px;
+  letter-spacing: .08em;
+}
+
+
+.map-node.is-selected-country .map-node-core {
+  transform: scale(1.8);
+
+  box-shadow:
+    0 0 8px var(--node),
+    0 0 22px var(--node);
+}
+
+.map-node.is-selected-country .map-node-ring {
+  opacity: 1;
+  animation-duration: 1.25s;
+}
+
+.map-node.is-selected-country .map-node-label {
+  color: #fff;
+  font-weight: 800;
+}
+
+
+#clearCountryFilter {
+  margin-left: 12px;
+
+  padding: 4px 8px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.2);
+
+  background: transparent;
+  color: rgba(255,255,255,.55);
+
+  font: inherit;
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+#clearCountryFilter:hover {
+  color: #fff;
+  border-color: #ff3d94;
+}
+
